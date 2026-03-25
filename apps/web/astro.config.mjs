@@ -3,7 +3,7 @@ import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://laak.app',
+  site: 'https://laakapp.olanai.tech',
   output: 'static',
   integrations: [sitemap()],
   vite: {
