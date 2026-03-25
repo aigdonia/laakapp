@@ -51,7 +51,7 @@ export function TranslationForm({
 
     const form = new FormData(e.currentTarget)
     const key = (form.get("key") as string).trim()
-    const namespace = form.get("namespace") as string
+    const namespace = (form.get("namespace") as string) ?? existingNamespace ?? "common"
 
     const items: Array<{
       key: string
@@ -73,15 +73,14 @@ export function TranslationForm({
       return
     }
 
-    try {
-      await bulkUpsertTranslations(items)
+    const result = await bulkUpsertTranslations(items)
+    if (result.error) {
+      toast.error(result.error)
+    } else {
       toast.success(isEditing ? `Updated "${key}"` : `Created "${key}"`)
       onOpenChange(false)
-    } catch {
-      toast.error("Failed to save translations")
-    } finally {
-      setLoading(false)
     }
+    setLoading(false)
   }
 
   return (
