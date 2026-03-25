@@ -1,0 +1,32 @@
+---
+import { getFAQs } from '../data/faqs';
+
+const faqs = await getFAQs();
+---
+
+<section id="faq" class="py-24 sm:py-32">
+  <div class="max-w-3xl mx-auto px-6">
+    <div class="text-center mb-16 animate-on-scroll">
+      <h2 class="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl mb-4">
+        Questions?
+      </h2>
+      <p class="text-text-secondary text-lg">Here are the ones we get most.</p>
+    </div>
+
+    <div class="space-y-3 animate-on-scroll">
+      {faqs.map((faq) => (
+        <details class="group bg-white/[0.03] border border-white/[0.06] rounded-xl overflow-hidden transition-colors hover:border-white/10">
+          <summary class="flex items-center justify-between gap-4 p-5 sm:p-6 font-medium text-text-primary">
+            <span class="text-start">{faq.question}</span>
+            <svg class="faq-chevron w-5 h-5 text-text-muted shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </summary>
+          <div class="faq-content px-5 sm:px-6 pb-5 sm:pb-6">
+            <p class="text-text-secondary leading-relaxed">{faq.answer}</p>
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>

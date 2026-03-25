@@ -1,0 +1,78 @@
+---
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 pointer-events-none">
+  <div class="max-w-[90rem] mx-auto px-6 sm:px-8 py-5 flex items-center justify-between">
+    <!-- Logo — always static, never animates -->
+    <a href="/" class="pointer-events-auto flex items-center group shrink-0">
+      <img src="/images/laak-logo.svg" alt="Laak" class="h-11 sm:h-12 w-auto invert" />
+    </a>
+
+    <!-- Nav pill — this is the only thing that animates -->
+    <div
+      id="nav-pill"
+      class="pointer-events-auto hidden md:flex items-center gap-1 rounded-full px-1.5 py-1.5 nav-pill-top"
+    >
+      <a href="/#features" class="text-text-secondary hover:text-text-primary hover:bg-white/[0.08] transition-all text-sm px-5 py-2 rounded-full">Features</a>
+      <a href="/#privacy" class="text-text-secondary hover:text-text-primary hover:bg-white/[0.08] transition-all text-sm px-5 py-2 rounded-full">Privacy</a>
+      <a href="/#how-it-works" class="text-text-secondary hover:text-text-primary hover:bg-white/[0.08] transition-all text-sm px-5 py-2 rounded-full">How it works</a>
+      <a href="/#faq" class="text-text-secondary hover:text-text-primary hover:bg-white/[0.08] transition-all text-sm px-5 py-2 rounded-full">FAQ</a>
+
+      <!-- Download CTA — hidden by default, reveals when hero CTA scrolls away -->
+      <a
+        id="nav-cta"
+        href="/#download"
+        class="bg-accent text-surface font-bold text-sm px-5 py-2 rounded-full transition-all duration-300 nav-cta-hidden"
+      >
+        Download
+      </a>
+    </div>
+
+    <!-- Spacer to keep layout balanced when CTA is hidden -->
+    <div class="w-11 sm:w-12 shrink-0"></div>
+  </div>
+</header>
+
+<script>
+  const pill = document.getElementById('nav-pill')!;
+  const cta = document.getElementById('nav-cta')!;
+
+  // Track scroll for pill morph
+  let ticking = false;
+
+  function onScroll() {
+    if (window.scrollY > 40) {
+      pill.classList.remove('nav-pill-top');
+      pill.classList.add('nav-pill-scrolled');
+    } else {
+      pill.classList.remove('nav-pill-scrolled');
+      pill.classList.add('nav-pill-top');
+    }
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(onScroll);
+      ticking = true;
+    }
+  }, { passive: true });
+
+  // Track hero CTA visibility to reveal/hide nav download button
+  const heroCtas = document.getElementById('hero-ctas');
+  if (heroCtas) {
+    const ctaObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          cta.classList.add('nav-cta-hidden');
+          cta.classList.remove('nav-cta-visible');
+        } else {
+          cta.classList.remove('nav-cta-hidden');
+          cta.classList.add('nav-cta-visible');
+        }
+      },
+      { threshold: 0 }
+    );
+    ctaObserver.observe(heroCtas);
+  }
+</script>

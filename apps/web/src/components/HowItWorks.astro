@@ -1,0 +1,48 @@
+---
+const steps = [
+  {
+    number: '01',
+    title: 'Add your stocks',
+    description: 'Search any supported market. Add holdings in seconds.',
+  },
+  {
+    number: '02',
+    title: 'See the full picture',
+    description: 'Performance, allocation, and trends — all in one view.',
+  },
+  {
+    number: '03',
+    title: 'Check compliance',
+    description: 'Compliance screening data from trusted sources, clearly explained.',
+  },
+];
+---
+
+<section id="how-it-works" class="relative">
+  <!-- Accent band -->
+  <div class="bg-accent/10 border-y border-accent/20 py-24 sm:py-32 lg:py-36">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-16 sm:mb-20 animate-on-scroll">
+        <h2 class="font-heading font-black text-[clamp(2.5rem,6vw,5rem)] leading-[1] tracking-tight">
+          HOW IT WORKS
+        </h2>
+        <p class="mt-4 text-text-secondary text-lg sm:text-xl">Three steps. That's it.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 sm:gap-16 relative">
+        {/* Connecting line (desktop only) */}
+        <div class="hidden md:block absolute top-14 start-[20%] end-[20%] h-px bg-gradient-to-r from-accent/0 via-accent/40 to-accent/0"></div>
+
+        {steps.map((step, i) => (
+          <div class={`animate-on-scroll animate-delay-${(i + 1) * 100} relative text-center`}>
+            <div class="relative z-10 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-accent text-surface mb-8">
+              <span class="font-heading font-extrabold text-xl">{step.number}</span>
+            </div>
+            <h3 class="font-heading font-bold text-xl sm:text-2xl mb-3">{step.title}</h3>
+            <p class="text-text-secondary text-sm sm:text-base leading-relaxed max-w-xs mx-auto">{step.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

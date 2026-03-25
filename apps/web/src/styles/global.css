@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+@source "../**/*.astro";
+
+@theme inline {
+  --font-sans: 'Geist Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Nunito Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, monospace;
+  --font-serif: 'Lora', ui-serif, Georgia, serif;
+
+  --color-surface: #1c1c1e;
+  --color-surface-light: #2c2c2e;
+  --color-surface-lighter: #3a3a3c;
+  --color-accent: #FFD60A;
+  --color-accent-dim: #FFD60A66;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #71717a;
+}
+
+/* Scroll-triggered animation base */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animation utility classes */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(2rem);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.animate-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animate-delay-100 { transition-delay: 0.1s; }
+.animate-delay-200 { transition-delay: 0.2s; }
+.animate-delay-300 { transition-delay: 0.3s; }
+.animate-delay-400 { transition-delay: 0.4s; }
+
+/* Nav pill — transition on the center nav only */
+#nav-pill {
+  transition: background 0.5s ease,
+              border-color 0.5s ease,
+              box-shadow 0.5s ease,
+              padding 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              backdrop-filter 0.5s ease;
+}
+
+/* Nav pill at top — subtle bg, no glass */
+.nav-pill-top {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* Nav pill scrolled — glassmorphism floating pill */
+.nav-pill-scrolled {
+  background: rgba(28, 28, 30, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  backdrop-filter: blur(20px) saturate(1.6);
+  padding-inline-start: 1rem;
+  padding-inline-end: 0.375rem;
+}
+
+/* Nav CTA — reveal animation */
+.nav-cta-hidden {
+  max-width: 0;
+  padding-inline: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin-inline-start: 0;
+}
+
+.nav-cta-visible {
+  max-width: 10rem;
+  padding-inline: 1.25rem;
+  opacity: 1;
+  overflow: hidden;
+  margin-inline-start: 0.25rem;
+  transition: max-width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              padding-inline 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.3s ease 0.1s,
+              margin-inline-start 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-cta-hidden {
+  transition: max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              padding-inline 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.15s ease,
+              margin-inline-start 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* FAQ accordion animation */
+details summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+details[open] .faq-chevron {
+  transform: rotate(180deg);
+}
+
+.faq-chevron {
+  transition: transform 0.3s ease;
+}
+
+details[open] .faq-content {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection color */
+::selection {
+  background: rgba(255, 214, 10, 0.3);
+  color: white;
+}
+
+/* Gold glow effect */
+.gold-glow {
+  box-shadow: 0 0 80px 20px rgba(255, 214, 10, 0.15), 0 0 160px 60px rgba(255, 214, 10, 0.05);
+}
+
+.gold-glow-subtle {
+  box-shadow: 0 0 60px 15px rgba(255, 214, 10, 0.08);
+}
+
+/* Floating decorative animations */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(3deg); }
+}
+
+@keyframes float-slower {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(-2deg); }
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+.animate-float-slower {
+  animation: float-slower 8s ease-in-out infinite;
+}
