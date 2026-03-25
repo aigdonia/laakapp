@@ -20,6 +20,9 @@ dist/
 .DS_Store
 Thumbs.db
 
+# Archives
+*.zip
+
 # IDE
 .vscode/
 .idea/
