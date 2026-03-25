@@ -35,7 +35,10 @@
       "expo-sqlite",
       "expo-font",
       "expo-localization",
-      "expo-web-browser"
+      "expo-web-browser",
+      ["expo-local-authentication", {
+        "faceIDPermission": "Allow Laak to use Face ID to unlock the app"
+      }]
     ],
     "experiments": {
       "typedRoutes": true

@@ -8,6 +8,8 @@ import * as SecureStore from 'expo-secure-store'
 // --- Types ---
 
 export type ThemePreference = 'light' | 'dark' | 'system'
+export type LockMethod = 'biometric' | 'pin'
+export type LockTimeout = 0 | 30 | 60 | 300
 
 /** Maps default market exchange to country code */
 export const MARKET_COUNTRY: Record<string, string> = {
@@ -24,6 +26,9 @@ interface PreferencesState {
   shariaAuthority: string
   language: string
   countryCode: string
+  appLockEnabled: boolean
+  lockMethod: LockMethod
+  lockTimeout: LockTimeout
 }
 
 interface PreferencesActions {
@@ -34,6 +39,9 @@ interface PreferencesActions {
   setShariaAuthority: (value: string) => void
   setLanguage: (value: string) => void
   setCountryCode: (value: string) => void
+  setAppLockEnabled: (value: boolean) => void
+  setLockMethod: (value: LockMethod) => void
+  setLockTimeout: (value: LockTimeout) => void
 }
 
 // --- MMKV instance ---
@@ -59,6 +67,9 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
       shariaAuthority: 'AAOIFI',
       language: 'en',
       countryCode: 'EG',
+      appLockEnabled: false,
+      lockMethod: 'biometric',
+      lockTimeout: 0,
 
       // Actions
       setTheme: (value) => {
@@ -72,6 +83,9 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
       setShariaAuthority: (value) => set({ shariaAuthority: value }),
       setLanguage: (value) => set({ language: value }),
       setCountryCode: (value) => set({ countryCode: value }),
+      setAppLockEnabled: (value) => set({ appLockEnabled: value }),
+      setLockMethod: (value) => set({ lockMethod: value }),
+      setLockTimeout: (value) => set({ lockTimeout: value }),
     }),
     {
       name: 'preferences',
@@ -84,7 +98,7 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
         }
         return state
       },
-      partialize: ({ theme, amountsVisible, defaultMarket, baseCurrency, shariaAuthority, language, countryCode }) => ({
+      partialize: ({ theme, amountsVisible, defaultMarket, baseCurrency, shariaAuthority, language, countryCode, appLockEnabled, lockMethod, lockTimeout }) => ({
         theme,
         amountsVisible,
         defaultMarket,
@@ -92,6 +106,9 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
         shariaAuthority,
         language,
         countryCode,
+        appLockEnabled,
+        lockMethod,
+        lockTimeout,
       }),
     },
   ),

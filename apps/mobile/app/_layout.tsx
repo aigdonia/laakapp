@@ -14,6 +14,8 @@ import { initAppDb, useUserDbMigrations } from '@/src/db'
 import { queryClient } from '@/src/lib/query-client'
 import { prefetchAppData } from '@/src/lib/prefetch'
 import { SplashView } from '@/src/components/splash-view'
+import { LockScreen } from '@/src/components/app-lock/lock-screen'
+import { useAppStateLock } from '@/src/hooks/use-app-state-lock'
 import { migrateFromSecureStore, applyThemePreference } from '@/src/store/preferences'
 
 export { ErrorBoundary } from 'expo-router'
@@ -28,6 +30,7 @@ migrateFromSecureStore()
 applyThemePreference()
 
 export default function RootLayout() {
+  useAppStateLock()
   const colorScheme = useColorScheme()
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -78,6 +81,7 @@ export default function RootLayout() {
           </BottomSheetModalProvider>
         </ThemeProvider>
       </QueryClientProvider>
+      <LockScreen />
     </GestureHandlerRootView>
   )
 }
