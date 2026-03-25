@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/sidebar"
 import { sidebarConfig } from "@/config/sidebar"
 import Link from "next/link"
-import { IconCoinBitcoin } from "@tabler/icons-react"
+import { LaakLogo } from "@/components/laak-logo"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -28,8 +28,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:p-1.5!"
               render={<Link href="/" />}
             >
-              <IconCoinBitcoin className="size-5!" />
-              <span className="text-base font-semibold">fin-ai</span>
+              <LaakLogo size={32} className="shrink-0 !size-8" />
+              <span className="text-base font-semibold">Admin Portal</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
