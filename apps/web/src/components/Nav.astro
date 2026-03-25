@@ -74,5 +74,9 @@
       { threshold: 0 }
     );
     ctaObserver.observe(heroCtas);
+  } else {
+    // No hero section (inner pages) — always show the download button
+    cta.classList.remove('nav-cta-hidden');
+    cta.classList.add('nav-cta-visible');
   }
 </script>
