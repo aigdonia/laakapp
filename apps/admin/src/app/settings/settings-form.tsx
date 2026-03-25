@@ -1,0 +1,116 @@
+"use client"
+
+import { useState } from "react"
+import type { AppSettings, Language } from "@fin-ai/shared"
+import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
+import { Separator } from "@/components/ui/separator"
+import { updateAppSettings } from "./actions"
+import { toast } from "sonner"
+
+export function SettingsForm({
+  settings,
+  languages,
+}: {
+  settings: AppSettings
+  languages: Language[]
+}) {
+  const [loading, setLoading] = useState(false)
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setLoading(true)
+
+    const form = new FormData(e.currentTarget)
+    const data = {
+      maintenanceMode: form.get("maintenanceMode") === "on",
+      defaultLanguage: form.get("defaultLanguage") as string,
+      onboardingEnabled: form.get("onboardingEnabled") === "on",
+    }
+
+    try {
+      await updateAppSettings(data)
+      toast.success("Settings updated")
+    } catch {
+      toast.error("Failed to update settings")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-2xl space-y-6"
+    >
+      <div className="rounded-lg border p-6 space-y-6">
+        <div>
+          <h3 className="text-base font-medium">General</h3>
+          <p className="text-sm text-muted-foreground">
+            Core application settings.
+          </p>
+        </div>
+
+        <Separator />
+
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <Label htmlFor="maintenanceMode">Maintenance Mode</Label>
+            <p className="text-sm text-muted-foreground">
+              When enabled, the app shows a maintenance page to all users.
+            </p>
+          </div>
+          <Switch
+            id="maintenanceMode"
+            name="maintenanceMode"
+            defaultChecked={settings.maintenanceMode}
+          />
+        </div>
+
+        <Separator />
+
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <Label htmlFor="onboardingEnabled">Onboarding Flow</Label>
+            <p className="text-sm text-muted-foreground">
+              Show the onboarding wizard for new users.
+            </p>
+          </div>
+          <Switch
+            id="onboardingEnabled"
+            name="onboardingEnabled"
+            defaultChecked={settings.onboardingEnabled}
+          />
+        </div>
+
+        <Separator />
+
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="defaultLanguage">Default Language</Label>
+          <select
+            id="defaultLanguage"
+            name="defaultLanguage"
+            defaultValue={settings.defaultLanguage}
+            className="h-9 w-full max-w-xs rounded-md border border-input bg-transparent px-2.5 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+          >
+            {languages.map((lang) => (
+              <option key={lang.code} value={lang.code}>
+                {lang.name} ({lang.code})
+              </option>
+            ))}
+          </select>
+          <p className="text-sm text-muted-foreground">
+            The default language for new users.
+          </p>
+        </div>
+      </div>
+
+      <div className="flex justify-end">
+        <Button type="submit" disabled={loading}>
+          {loading ? "Saving..." : "Save Changes"}
+        </Button>
+      </div>
+    </form>
+  )
+}
