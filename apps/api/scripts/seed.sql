@@ -369,7 +369,7 @@ If any provision of these Terms is found to be unenforceable, the remaining prov
 ## 21. Contact
 
 If you have questions about these Terms, contact us at:
-**Email:** support@laak.app
+**Email:** laak@olanai.tech
 
 ---
 
@@ -554,7 +554,7 @@ Regardless of where you live, you have the right to:
 - **Withdraw consent** — disable cloud backup or stop using AI features at any time
 - **Object** — since we don''t process your data for profiling or marketing, there''s nothing to object to
 
-For GDPR, CCPA, or other data protection requests, contact us at privacy@laak.app.
+For GDPR, CCPA, or other data protection requests, contact us at laak@olanai.tech.
 
 ## 14. International Users
 
@@ -584,8 +584,8 @@ We may update this Privacy Policy from time to time. Material changes will be co
 
 If you have questions or concerns about this Privacy Policy, contact us at:
 
-**Privacy inquiries:** privacy@laak.app
-**General support:** support@laak.app
+**Privacy inquiries:** laak@olanai.tech
+**General support:** laak@olanai.tech
 
 ---
 
