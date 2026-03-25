@@ -1,2 +1,2 @@
 // @fin-ai/shared — barrel export
-export {};
+export * from "./types";
