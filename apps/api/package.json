@@ -2,7 +2,24 @@
   "name": "@fin-ai/api",
   "version": "0.0.0",
   "private": true,
-  "scripts": {},
-  "dependencies": {},
-  "devDependencies": {}
+  "scripts": {
+    "dev": "wrangler dev --port 12003",
+    "build": "wrangler deploy --dry-run --outdir dist",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "wrangler d1 migrations apply fin-ai-db --local",
+    "db:seed": "wrangler d1 execute fin-ai-db --local --file=scripts/seed.sql",
+    "db:seed-lookups": "wrangler d1 execute fin-ai-db --local --file=scripts/seed-lookups.sql"
+  },
+  "dependencies": {
+    "@fin-ai/shared": "workspace:*",
+    "drizzle-orm": "^0.38.0",
+    "hono": "^4.7.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250313.0",
+    "drizzle-kit": "^0.30.0",
+    "typescript": "^5.7.0",
+    "wrangler": "^4.0.0"
+  }
 }

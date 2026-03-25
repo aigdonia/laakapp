@@ -1,0 +1,1 @@
+ALTER TABLE `article_categories` ADD `translations` text DEFAULT '{}' NOT NULL;

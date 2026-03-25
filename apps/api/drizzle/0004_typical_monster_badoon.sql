@@ -1,0 +1,1 @@
+ALTER TABLE `asset_classes` ADD `fields` text DEFAULT '[]' NOT NULL;
