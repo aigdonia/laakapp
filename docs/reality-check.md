@@ -253,6 +253,280 @@ Ranked by impact if proven wrong:
 
 ---
 
+## 11. Ad Monetization — Bridge Revenue Strategy & Pricing Deep Dive
+
+### 11.1 Why Ads Are Being Considered
+
+The affiliate strategy (Section 7) has structural weaknesses for Phase 1:
+
+| Weakness | Detail |
+|---|---|
+| Most platforms have no public affiliate program | Only Thndr has a confirmed referral program — capped at 15 referrals/year |
+| BD leverage at 2K MAU is zero | Solo dev with small user base can't negotiate partnership terms |
+| CPA assumptions ($25-30) are unverified | No confirmed data for Egyptian platform CPAs |
+| Conversion funnel is long | Impression → click → signup → fund account → payout. Months of delay |
+| Affiliate revenue is a Phase 2/3 source at best | Not reliable for Phase 1 break-even |
+
+Ads serve as **bridge revenue** — temporary, feature-flagged, designed to be replaced by affiliates and credit purchases at scale.
+
+### 11.2 Ad Pricing Fundamentals
+
+#### The Basic Unit: An Impression
+
+One ad shown to one user = one impression. All ad pricing is math on top of this.
+
+#### CPM (Cost Per Mille)
+
+What an **advertiser pays** to show 1,000 impressions.
+
+```
+Advertiser says: "I'll pay $2 CPM"
+Meaning: "I'll pay $2 for every 1,000 times my ad is shown"
+One impression = $2 / 1,000 = $0.002
+```
+
+This is the advertiser's number. Visible in their dashboards (Meta Ads, Google Ads). As a publisher (us), we care about eCPM.
+
+#### eCPM (Effective Cost Per Mille)
+
+What **we actually earn** per 1,000 impressions. This is our number.
+
+```
+eCPM = (Total earnings / Total impressions) × 1,000
+```
+
+Why "effective"? Because we're not always paid per impression. Different ads pay differently:
+
+| Ad Type | Advertiser Pays For | How eCPM Is Calculated |
+|---|---|---|
+| CPM ads | Impressions (showing the ad) | Direct — what they bid |
+| CPC ads | Clicks only | Show 1,000 ads, 20 get clicked at $0.10 = $2.00 eCPM |
+| CPI ads | App installs | Show 1,000 ads, 2 install at $1.50 = $3.00 eCPM |
+| CPA ads | Actions (signup, purchase) | Show 1,000 ads, 1 signs up at $5 = $5.00 eCPM |
+
+eCPM normalizes everything into one comparable number regardless of how the advertiser pays.
+
+#### Real Example — Mixed Ad Types in a Day
+
+```
+Morning:  CPC ad shown 500 times, 10 clicks × $0.08  = $0.80
+Midday:   CPM ad shown 300 times, pays $3 CPM         = $0.90
+Evening:  CPI ad shown 200 times, 1 install × $2.00   = $2.00
+
+Total: 1,000 impressions, $3.70 earned
+eCPM = ($3.70 / 1,000) × 1,000 = $3.70
+```
+
+We never control the mix — the ad network's auction decides what fills each slot.
+
+### 11.3 The Auction — How eCPM Is Determined
+
+Every time the app requests an ad, this happens in ~100ms:
+
+```
+App requests ad
+        ↓
+Ad network runs real-time auction
+        ↓
+Advertiser A bids $1.50 CPM (wants brand awareness)
+Advertiser B bids $0.12 CPC (wants clicks)
+Advertiser C bids $2.00 CPI (wants installs)
+        ↓
+Network picks the highest expected revenue bid
+        ↓
+Ad is shown to user
+        ↓
+We get paid based on what happens (view, click, or install)
+```
+
+### 11.4 What Determines Our eCPM
+
+Same ad format, wildly different eCPM depending on these factors:
+
+#### Factor 1: Geography (Biggest Factor)
+
+| Country | Banner eCPM | Interstitial eCPM | Rewarded Video eCPM |
+|---|---|---|---|
+| USA | $0.50-2.00 | $4-10 | $10-20 |
+| Saudi Arabia | $0.30-1.00 | $2-6 | $5-12 |
+| Malaysia | $0.20-0.80 | $1.50-4 | $3-8 |
+| Egypt | $0.10-0.40 | $0.80-2 | $2-5 |
+| Nigeria | $0.05-0.20 | $0.30-1 | $1-3 |
+
+Egypt is 5-10x lower than US. This is why ad revenue is supplemental, not the business model.
+
+#### Factor 2: Ad Format (Second Biggest)
+
+Egypt-specific eCPM ranges:
+
+```
+Banner:           $0.10-0.40  ← garbage revenue
+Interstitial:     $0.80-2.00  ← annoying, moderate revenue
+Rewarded Video:   $2.00-5.00  ← best revenue, user-initiated
+Native:           $0.50-1.50  ← if network-served
+```
+
+Rewarded video earns 10-20x more than banners.
+
+#### Factor 3: User Engagement Signals
+
+| Signal | Effect on eCPM |
+|---|---|
+| User watches full video (rewarded) | Higher — advertiser got full attention |
+| User skips/closes quickly | Lower — network learns users don't engage |
+| High click-through rate | Higher — users are valuable to advertisers |
+| Finance app category | Higher — finance users are high-intent, advertisers pay more |
+| Session length | Higher — more data for targeting, better ad relevance |
+
+#### Factor 4: Fill Rate — The Hidden Killer
+
+```
+Fill rate = ads actually served / ads requested
+```
+
+Request 100 ads, network has ads for 70 of them = 70% fill rate. The other 30 show nothing, earn nothing.
+
+In Egypt, fill rates can be 50-70% depending on the network. Always multiply by fill rate when projecting revenue:
+
+```
+Theoretical: 1,000 requests × $3 eCPM / 1,000 = $3.00
+Actual:      1,000 requests × 70% fill × $3 eCPM / 1,000 = $2.10
+```
+
+### 11.5 ARPDAU (Average Revenue Per Daily Active User)
+
+The primary metric for tracking ad revenue performance:
+
+```
+ARPDAU = Daily ad revenue / Daily active users
+```
+
+For context:
+- Top finance apps: $0.05-0.15 ARPDAU
+- Our projected ARPDAU (Egypt, rewarded-only): ~$0.003
+- Low, but this is Egypt eCPMs + rewarded-only (small subset of users) — supplemental revenue, not the business model
+
+### 11.6 Revenue Projection — Phase 1 Egypt (Rewarded Video Only)
+
+```
+2,000 MAU
+× 30% opt into watching rewarded ads = 600 users
+× 1.5 ads/day average = 900 impressions/day
+× 70% fill rate = 630 filled impressions/day
+× $3.00 eCPM / 1,000 = $1.89/day
+× 30 days = ~$57/month
+```
+
+**$57/month covers most of Phase 1 burn ($35-85/month).** Not life-changing, but closes the gap that affiliates can't fill yet.
+
+### 11.7 Ad Network Comparison for Our Case
+
+| Network | Rewarded Video eCPM (Egypt) | Fill Rate (MENA) | Haram Filtering | Verdict |
+|---|---|---|---|---|
+| Google AdMob | $2-4 | 60-75% | Category blocks, imperfect | Best overall for MENA |
+| Meta Audience Network | $2-5 | 40-60% | Weak filtering | Higher eCPM but lower fill, less control |
+| Unity Ads | $3-6 | 30-50% | Gaming-focused, irrelevant ads | Bad fit for finance app |
+| AppLovin/MAX (mediation) | Varies | 70-85% | Aggregates networks, better fill | Best fill rate via mediation |
+
+**Mediation** — instead of using one network, a mediation layer (AppLovin MAX, AdMob mediation, ironSource) auctions each impression across multiple networks simultaneously and picks the highest bid. Improves both eCPM and fill rate. Worth setting up from day 1 if ads are implemented.
+
+### 11.8 Ad Types — Fit Assessment for Laak
+
+#### Acceptable (If Ever Introduced)
+
+**1. Rewarded Video Ads (Best Fit — Bridge Revenue Workhorse)**
+- User taps "Watch ad for 2 credits" when credits run out
+- User-initiated — preserves "calm, clear, no pressure" identity
+- Best eCPM format ($2-5 in Egypt)
+- Keeps users in the credit ecosystem — they earn credits, not just eyeballs
+- Great for Egypt/SEA users who won't pay but will trade attention
+
+**2. Native Content Cards**
+- Looks like existing dashboard learning cards or affiliate placements
+- "Sponsored insight" or "Partner spotlight" — single card, dismissible, clearly labeled
+- We control the content, format, and placement
+- Fits progressive disclosure pattern — doesn't break the visual language
+- Example: a Bokra or Thndr branded card in the Learn tab
+
+**3. Sponsored Articles in Learn Tab**
+- Partner-written article alongside evergreen content
+- "Sponsored by Bokra: Understanding Sukuk investing"
+- Educational, on-brand, high CPM (content marketing, not display ads)
+- We vet it before it ships — zero haram risk
+
+#### Never Introduce
+
+**1. Banner Ads**
+- Destroys "calm, clear" visual identity
+- Lowest CPMs ($0.10-0.40 in Egypt), highest trust erosion
+- Screams "cheap app" — kills credibility with Saudi/GCC premium users
+
+**2. Interstitial / Full-Screen Ads**
+- A financial app showing full-screen ads between portfolio views = uninstalls
+- Especially toxic after a screening result or zakat calculation — sacred context interrupted by noise
+
+**3. Programmatic Display (AdMob Display, Meta Audience Network banners)**
+- Lose content control entirely — haram ads will slip through
+- Alcohol, conventional banking, gambling ads will appear. Ad network filtering is unreliable
+- One screenshot of a Heineken ad in a Sharia compliance app goes viral and the brand is destroyed
+- MENA users are vocal about this — it has happened to other Islamic apps
+
+**4. Pre-Roll Video (Forced)**
+- Same problem as interstitials but worse — user is trapped
+- Contradicts "no pressure" and "nothing breaks when credits run out"
+
+**5. Notification / Push Ads**
+- Instant uninstall trigger, especially in finance apps
+- App Store review policy violation risk
+
+### 11.9 Haram Content Safeguards — Non-Negotiable
+
+If any ad network is used, these safeguards are mandatory:
+
+| Safeguard | Why |
+|---|---|
+| Whitelist-only advertisers | Blacklists leak — must approve every advertiser |
+| No programmatic bidding for display | RTB = zero control over what shows up |
+| Manual review pipeline | Every creative reviewed before it runs |
+| Category blocks are insufficient | "Financial services" category includes conventional banks with riba products |
+| Regional content review | An ad fine in Malaysia might be haram in Saudi context |
+
+This is why native content cards and sponsored articles are the only formats with **full editorial control**. Rewarded video is acceptable because it's user-initiated (opt-in changes the dynamic).
+
+### 11.10 Feature Flag Structure
+
+```
+ads.rewarded_video: true       // Phase 1 bridge revenue
+ads.native_card: true          // Manual placement, our content
+ads.banner: false              // Never
+ads.interstitial: false        // Never
+ads.show_after_days: 7         // 1-week grace period
+ads.hide_above_credits: 0      // No credit threshold — rewarded is opt-in, self-selects
+```
+
+No credit-balance threshold needed. If ads are opt-in (rewarded), users with credits won't bother watching. Users without credits will. It self-selects naturally.
+
+### 11.11 Revenue Stack by Phase
+
+| Phase | Primary Revenue | Bridge Revenue (Ads) | Future Revenue |
+|---|---|---|---|
+| Phase 1 (Egypt) | Credits | Rewarded video + 1 native card | Affiliates (prospecting) |
+| Phase 2 (Saudi) | Credits + "Unlock All" | Native cards only (no cheap ads for premium market) | Affiliates (leverage from downloads) |
+| Phase 3 (scale) | Credits | Affiliates replace ads | Ads removed or kept only for zero-credit users |
+
+### 11.12 Key Questions to Validate
+
+| Assumption | Verify Against |
+|---|---|
+| Egypt rewarded video eCPM $2-5 | AdMob benchmarks, developer forums for MENA |
+| 70% fill rate in Egypt | AdMob mediation reports, test with real traffic |
+| 30% of free users opt into rewarded ads | Industry benchmarks for finance apps (gaming apps see 40-60%, finance likely lower) |
+| AdMob category filtering blocks haram content reliably | Test with real ad requests in Egypt — monitor what actually serves |
+| Rewarded video doesn't hurt App Store ratings | Monitor reviews post-launch, A/B test with feature flag |
+| Mediation (AppLovin MAX) improves eCPM + fill rate over single network | Compare after 1 month of data with AdMob alone vs mediation |
+
+---
+
 ## Instructions for Reviewer
 
 Please validate each section against current market data. For each assumption:
