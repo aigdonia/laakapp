@@ -2,7 +2,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { useFonts } from 'expo-font'
-import { Stack } from 'expo-router'
+import { Stack, useRouter } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react'
 import { useColorScheme } from 'react-native'
@@ -19,6 +19,8 @@ import { useAppStateLock } from '@/src/hooks/use-app-state-lock'
 import { migrateFromSecureStore, applyThemePreference } from '@/src/store/preferences'
 import { initPurchases } from '@/src/lib/purchases'
 import { useCredits } from '@/src/store/credits'
+import { useOnboarding } from '@/src/store/onboarding'
+import { useOnboardingScreens } from '@/src/hooks/use-onboarding-screens'
 
 export { ErrorBoundary } from 'expo-router'
 
@@ -32,6 +34,14 @@ migrateFromSecureStore()
 applyThemePreference()
 
 export default function RootLayout() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RootLayoutInner />
+    </QueryClientProvider>
+  )
+}
+
+function RootLayoutInner() {
   useAppStateLock()
   const colorScheme = useColorScheme()
   const [loaded, error] = useFonts({
@@ -62,29 +72,38 @@ export default function RootLayout() {
     }
   }, [loaded, migrated])
 
+  const router = useRouter()
+  const onboardingCompleted = useOnboarding((s) => s.completed)
+  const { data: onboardingScreens } = useOnboardingScreens()
+
+  useEffect(() => {
+    if (dataReady && !onboardingCompleted && onboardingScreens && onboardingScreens.length > 0) {
+      router.replace('/onboarding')
+    }
+  }, [dataReady, onboardingCompleted, onboardingScreens, router])
+
   if (!loaded || !migrated || !dataReady) {
     return <SplashView progress={progress} />
   }
 
   return (
     <GestureHandlerRootView className="flex-1">
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <BottomSheetModalProvider>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="add-holding" options={{ presentation: 'modal', headerShown: false }} />
-              <Stack.Screen name="holding/[id]" options={{ presentation: 'modal', headerShown: false }} />
-              <Stack.Screen name="stock/[symbol]" options={{ title: 'Stock Detail' }} />
-              <Stack.Screen name="category/[id]" options={{ headerShown: false }} />
-              <Stack.Screen name="article/[id]" options={{ presentation: 'modal', headerShown: false }} />
-              <Stack.Screen name="credits" options={{ presentation: 'modal', headerShown: false }} />
-              <Stack.Screen name="terms" options={{ presentation: 'modal', headerShown: false }} />
-              <Stack.Screen name="privacy" options={{ presentation: 'modal', headerShown: false }} />
-            </Stack>
-          </BottomSheetModalProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <BottomSheetModalProvider>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="onboarding" options={{ presentation: 'fullScreenModal', headerShown: false, gestureEnabled: false }} />
+            <Stack.Screen name="add-holding" options={{ presentation: 'modal', headerShown: false }} />
+            <Stack.Screen name="holding/[id]" options={{ presentation: 'modal', headerShown: false }} />
+            <Stack.Screen name="stock/[symbol]" options={{ title: 'Stock Detail' }} />
+            <Stack.Screen name="category/[id]" options={{ headerShown: false }} />
+            <Stack.Screen name="article/[id]" options={{ presentation: 'modal', headerShown: false }} />
+            <Stack.Screen name="credits" options={{ presentation: 'modal', headerShown: false }} />
+            <Stack.Screen name="terms" options={{ presentation: 'modal', headerShown: false }} />
+            <Stack.Screen name="privacy" options={{ presentation: 'modal', headerShown: false }} />
+          </Stack>
+        </BottomSheetModalProvider>
+      </ThemeProvider>
       <LockScreen />
     </GestureHandlerRootView>
   )

@@ -111,6 +111,20 @@ export const cachedTranslationBundles = sqliteTable('cached_translation_bundles'
     .$defaultFn(() => new Date()),
 })
 
+export const cachedOnboardingScreens = sqliteTable('cached_onboarding_screens', {
+  id: text('id').primaryKey(),
+  type: text('type').notNull(),
+  slug: text('slug').notNull(),
+  imageUrl: text('image_url').notNull().default(''),
+  choices: text('choices').notNull().default('[]'),
+  order: integer('order').notNull().default(0),
+  enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
+  translations: text('translations').notNull().default('{}'),
+  fetchedAt: integer('fetched_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+})
+
 export const cachedLearningCards = sqliteTable('cached_learning_cards', {
   id: text('id').primaryKey(),
   title: text('title').notNull(),

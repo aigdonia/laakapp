@@ -99,6 +99,18 @@ export function initAppDb() {
       fetched_at INTEGER NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS cached_onboarding_screens (
+      id TEXT PRIMARY KEY NOT NULL,
+      type TEXT NOT NULL,
+      slug TEXT NOT NULL,
+      image_url TEXT NOT NULL DEFAULT '',
+      choices TEXT NOT NULL DEFAULT '[]',
+      "order" INTEGER NOT NULL DEFAULT 0,
+      enabled INTEGER NOT NULL DEFAULT 1,
+      translations TEXT NOT NULL DEFAULT '{}',
+      fetched_at INTEGER NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS cached_learning_cards (
       id TEXT PRIMARY KEY NOT NULL,
       title TEXT NOT NULL,
