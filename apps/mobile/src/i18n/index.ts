@@ -13,7 +13,7 @@ i18n.use(initReactI18next).init({
   lng: resolveLocale(prefs.language || deviceLocale, prefs.countryCode || 'EG'),
   fallbackLng: FALLBACK_LNG,
   defaultNS: 'common',
-  ns: ['common', 'portfolio', 'insights', 'screening', 'learn', 'settings', 'onboarding', 'errors', 'add_holding'],
+  ns: ['common', 'portfolio', 'insights', 'screening', 'learn', 'settings', 'credits', 'onboarding', 'errors', 'add_holding'],
   resources: {
     en: defaults,
   },
