@@ -21,6 +21,9 @@ import { initPurchases } from '@/src/lib/purchases'
 import { useCredits } from '@/src/store/credits'
 import { useOnboarding } from '@/src/store/onboarding'
 import { useOnboardingScreens } from '@/src/hooks/use-onboarding-screens'
+import { registerForPushNotifications, setupNotificationListeners } from '@/src/lib/notifications'
+import { useNotificationStore } from '@/src/store/notifications'
+import { getOrCreateUUID } from '@/src/lib/uuid'
 
 export { ErrorBoundary } from 'expo-router'
 
@@ -71,6 +74,23 @@ function RootLayoutInner() {
       SplashScreen.hideAsync()
     }
   }, [loaded, migrated])
+
+  // Register push notifications once data is ready
+  useEffect(() => {
+    if (!dataReady) return
+
+    const register = async () => {
+      const userId = await getOrCreateUUID()
+      const token = await registerForPushNotifications(userId)
+      if (token) {
+        useNotificationStore.getState().setExpoToken(token)
+        useNotificationStore.getState().setPermissionGranted(true)
+      }
+    }
+    register()
+
+    return setupNotificationListeners()
+  }, [dataReady])
 
   const router = useRouter()
   const onboardingCompleted = useOnboarding((s) => s.completed)
