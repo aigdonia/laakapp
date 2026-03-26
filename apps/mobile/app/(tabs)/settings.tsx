@@ -1,6 +1,7 @@
 import { useCallback, useRef } from 'react'
 import { Alert, ScrollView } from 'react-native'
 import { useRouter } from 'expo-router'
+import Constants from 'expo-constants'
 import {
   IconCoins,
   IconUser,
@@ -311,7 +312,7 @@ export default function SettingsScreen() {
           <SettingsMenuCard
             icon={<IconInfoCircle size={22} color={colors.muted} />}
             label={t('version')}
-            subtitle="1.0.0"
+            subtitle={Constants.expoConfig?.version ?? '0.0.0'}
             showChevron={false}
           />
         </SettingsSection>
