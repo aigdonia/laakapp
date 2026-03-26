@@ -24,16 +24,36 @@ const pillars = [
   <div class="absolute top-1/2 start-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-accent/[0.03] blur-[150px]"></div>
 
   <div class="relative z-10 max-w-6xl mx-auto px-6">
-    <!-- Bold headline -->
-    <div class="text-center mb-20 sm:mb-24 animate-on-scroll">
-      <h2 class="font-heading font-black text-[clamp(2.5rem,6vw,5rem)] leading-[1] tracking-tight">
-        NO EMAIL.<br />
-        NO ACCOUNT FORMS.<br />
-        <span class="text-accent">NO BROKER LOGINS.</span>
-      </h2>
-      <p class="mt-6 text-text-secondary text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed">
-        Your financial data stays on your device. You control when to back it up.
-      </p>
+    <!-- Two-column layout: headline + lock screen -->
+    <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-20 mb-20 sm:mb-24">
+      <!-- Left: headline -->
+      <div class="flex-1 text-center lg:text-start animate-on-scroll">
+        <h2 class="font-heading font-black text-[clamp(2.5rem,6vw,5rem)] leading-[1] tracking-tight">
+          NO EMAIL.<br />
+          NO ACCOUNT FORMS.<br />
+          <span class="text-accent">NO BROKER LOGINS.</span>
+        </h2>
+        <p class="mt-6 text-text-secondary text-lg sm:text-xl max-w-2xl leading-relaxed">
+          Your financial data stays on your device. You control when to back it up.
+        </p>
+      </div>
+
+      <!-- Right: lock screen phone -->
+      <div class="shrink-0 animate-on-scroll animate-delay-200">
+        <div class="relative w-[200px] sm:w-[240px]">
+          <div class="absolute -inset-6 rounded-[3rem] bg-accent/[0.06] blur-[40px]"></div>
+          <div class="relative rounded-[2rem] sm:rounded-[2.5rem] border border-white/10 overflow-hidden shadow-2xl">
+            <img
+              src="/images/screens/lock.webp"
+              alt="Laak lock screen with PIN pad and biometric authentication"
+              class="w-full h-auto block"
+              width="267"
+              height="580"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Pillar cards -->

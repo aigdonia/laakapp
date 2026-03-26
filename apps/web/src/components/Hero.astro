@@ -1,7 +1,7 @@
 ---
 ---
 
-<section class="relative min-h-screen flex flex-col items-center overflow-hidden bg-surface">
+<section class="relative flex flex-col items-center bg-surface">
   <!-- Background effects -->
   <div class="absolute top-[20%] start-1/2 -translate-x-1/2 w-[1000px] h-[600px] rounded-full bg-accent/[0.04] blur-[150px]"></div>
 
@@ -83,119 +83,69 @@
     </div>
   </div>
 
-  <!-- Phone mockups — 3 phones, overlapping, below hero -->
-  <div class="relative z-10 mt-16 sm:mt-20 w-full max-w-5xl mx-auto px-6 pb-8">
-    <div class="relative flex items-end justify-center h-[340px] sm:h-[420px] lg:h-[500px]">
+  <!-- Phone mockups — hidden behind features band, parallax reveals on scroll -->
+  <div id="hero-phones" class="relative z-10 mt-12 sm:mt-16 w-full max-w-5xl mx-auto px-6" style="transform: translateY(200px); will-change: transform;">
+    <div class="relative flex items-end justify-center h-[380px] sm:h-[480px] lg:h-[580px]">
 
-      <!-- Left phone (tilted) -->
+      <!-- Left phone — Insights (tilted) -->
       <div class="absolute start-[5%] sm:start-[10%] lg:start-[15%] bottom-0 w-[180px] sm:w-[220px] lg:w-[260px] -rotate-6 origin-bottom z-10">
-        <div class="bg-surface-light rounded-[1.8rem] sm:rounded-[2.2rem] border border-white/10 overflow-hidden shadow-2xl aspect-[9/18]">
-          <div class="absolute top-0 left-0 right-0 flex justify-center pt-1.5 z-10">
-            <div class="w-20 h-5 bg-surface rounded-b-xl"></div>
-          </div>
-          <div class="p-3 pt-8 h-full bg-gradient-to-b from-surface-lighter/30 to-surface/80">
-            <div class="text-[10px] text-text-secondary mb-2">Portfolio</div>
-            <div class="flex items-center gap-2 mb-3">
-              <div class="h-16 flex-1 flex items-end gap-0.5">
-                <div class="flex-1 bg-accent/30 rounded-t" style="height: 45%"></div>
-                <div class="flex-1 bg-accent/40 rounded-t" style="height: 60%"></div>
-                <div class="flex-1 bg-accent/50 rounded-t" style="height: 40%"></div>
-                <div class="flex-1 bg-accent/70 rounded-t" style="height: 75%"></div>
-                <div class="flex-1 bg-accent rounded-t" style="height: 90%"></div>
-              </div>
-            </div>
-            <div class="space-y-1.5">
-              <div class="flex items-center gap-2 bg-white/5 rounded-lg p-2">
-                <div class="w-5 h-5 rounded bg-red-400/20 flex items-center justify-center text-[8px] font-bold text-red-400">T</div>
-                <span class="text-[10px] text-text-secondary flex-1">TSLA</span>
-                <span class="text-[10px] text-text-primary">108.20</span>
-              </div>
-              <div class="flex items-center gap-2 bg-white/5 rounded-lg p-2">
-                <div class="w-5 h-5 rounded bg-accent/20 flex items-center justify-center text-[8px] font-bold text-accent">C</div>
-                <span class="text-[10px] text-text-secondary flex-1">COMI</span>
-                <span class="text-[10px] text-text-primary">54.30</span>
-              </div>
-            </div>
-          </div>
+        <div class="rounded-[1.8rem] sm:rounded-[2.2rem] border border-white/10 overflow-hidden shadow-2xl">
+          <img
+            src="/images/screens/insights.webp"
+            alt="Laak insights screen showing portfolio score, compliance status, and AI narrative"
+            class="w-full h-auto block"
+            width="267"
+            height="580"
+            loading="lazy"
+          />
         </div>
       </div>
 
-      <!-- Center phone (main, larger) -->
+      <!-- Center phone — Portfolio (main, larger) -->
       <div class="relative z-20 w-[200px] sm:w-[250px] lg:w-[290px]">
         <div class="gold-glow absolute inset-0 rounded-[2rem] sm:rounded-[2.5rem]"></div>
-        <div class="relative bg-surface-light rounded-[2rem] sm:rounded-[2.5rem] border-2 border-white/10 overflow-hidden shadow-2xl aspect-[9/18]">
-          <div class="absolute top-0 left-0 right-0 flex justify-center pt-2 z-10">
-            <div class="w-24 h-6 bg-surface rounded-b-2xl"></div>
-          </div>
-          <div class="p-4 pt-10 h-full bg-gradient-to-b from-surface-lighter/30 to-surface/80">
-            <div class="flex items-center gap-2 mb-1">
-              <img src="/images/laak-logo.svg" alt="" class="w-4 h-4 invert opacity-60" />
-              <span class="text-[10px] text-text-secondary">Main portfolio</span>
-            </div>
-            <div class="flex items-center justify-between mb-3">
-              <div class="text-lg sm:text-xl font-bold text-text-primary">EGP 142,500</div>
-              <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 17 5-5 3 3 4-4"/><path d="M19 13v-2h-2"/></svg>
-            </div>
-            <!-- Chart -->
-            <div class="h-20 sm:h-24 mb-3 relative">
-              <svg class="w-full h-full" viewBox="0 0 200 80" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#FFD60A" stop-opacity="0.3"/>
-                    <stop offset="100%" stop-color="#FFD60A" stop-opacity="0"/>
-                  </linearGradient>
-                </defs>
-                <path d="M0 60 Q20 55 40 50 T80 35 T120 25 T160 30 T200 15" fill="none" stroke="#FFD60A" stroke-width="2.5"/>
-                <path d="M0 60 Q20 55 40 50 T80 35 T120 25 T160 30 T200 15 V80 H0Z" fill="url(#chartGrad)"/>
-              </svg>
-            </div>
-            <div class="flex items-center gap-2 bg-white/5 rounded-xl p-2.5">
-              <div class="w-6 h-6 rounded-lg bg-accent/20 flex items-center justify-center">
-                <span class="text-accent text-[8px] font-bold">B</span>
-              </div>
-              <div class="flex-1">
-                <div class="text-[10px] font-medium text-text-primary">BTC</div>
-              </div>
-              <div class="text-end">
-                <span class="text-[10px] text-red-400 font-medium">-2.56%</span>
-                <svg class="w-3 h-3 text-red-400 inline-block ms-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 7 5 5 3-3 4 4"/></svg>
-              </div>
-            </div>
-          </div>
+        <div class="relative rounded-[2rem] sm:rounded-[2.5rem] border-2 border-white/10 overflow-hidden shadow-2xl">
+          <img
+            src="/images/screens/portfolio.webp"
+            alt="Laak portfolio screen showing holdings across cash, gold, and ETFs"
+            class="w-full h-auto block"
+            width="267"
+            height="580"
+            loading="eager"
+          />
         </div>
       </div>
 
-      <!-- Right phone (tilted) -->
+      <!-- Right phone — Settings (tilted) -->
       <div class="absolute end-[5%] sm:end-[10%] lg:end-[15%] bottom-0 w-[180px] sm:w-[220px] lg:w-[260px] rotate-6 origin-bottom z-10">
-        <div class="bg-surface-light rounded-[1.8rem] sm:rounded-[2.2rem] border border-white/10 overflow-hidden shadow-2xl aspect-[9/18]">
-          <div class="absolute top-0 left-0 right-0 flex justify-center pt-1.5 z-10">
-            <div class="w-20 h-5 bg-surface rounded-b-xl"></div>
-          </div>
-          <div class="p-3 pt-8 h-full bg-gradient-to-b from-surface-lighter/30 to-surface/80">
-            <div class="text-[10px] text-text-secondary mb-2">Screening</div>
-            <div class="space-y-1.5 mt-1">
-              <div class="flex items-center justify-between bg-accent/10 rounded-lg p-2">
-                <span class="text-[10px] text-text-secondary">Debt Ratio</span>
-                <span class="text-[10px] font-semibold text-accent">18.2%</span>
-              </div>
-              <div class="flex items-center justify-between bg-accent/10 rounded-lg p-2">
-                <span class="text-[10px] text-text-secondary">Revenue</span>
-                <span class="text-[10px] font-semibold text-accent">Pass</span>
-              </div>
-              <div class="flex items-center justify-between bg-accent/10 rounded-lg p-2">
-                <span class="text-[10px] text-text-secondary">Interest</span>
-                <span class="text-[10px] font-semibold text-accent">2.1%</span>
-              </div>
-              <div class="mt-2 flex justify-center">
-                <div class="inline-flex items-center gap-1 bg-accent/20 rounded-full px-2.5 py-1">
-                  <div class="w-1.5 h-1.5 rounded-full bg-accent"></div>
-                  <span class="text-accent text-[9px] font-medium">Compliant</span>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="rounded-[1.8rem] sm:rounded-[2.2rem] border border-white/10 overflow-hidden shadow-2xl">
+          <img
+            src="/images/screens/settings.webp"
+            alt="Laak settings screen with credits, account, and market configuration"
+            class="w-full h-auto block"
+            width="267"
+            height="580"
+            loading="lazy"
+          />
         </div>
       </div>
     </div>
   </div>
+
+  <script>
+    const phones = document.getElementById('hero-phones');
+    if (phones) {
+      const startY = 200;   // initial offset (hidden below)
+      const speed = 0.45;   // parallax speed — how fast phones rise relative to scroll
+
+      function updateParallax() {
+        const scrollY = window.scrollY;
+        const offset = Math.max(startY - scrollY * speed, -100);
+        phones.style.transform = `translateY(${offset}px)`;
+      }
+
+      window.addEventListener('scroll', updateParallax, { passive: true });
+      updateParallax();
+    }
+  </script>
 </section>
