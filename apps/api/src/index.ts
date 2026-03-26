@@ -16,10 +16,14 @@ import assetClasses from "./routes/asset-classes";
 import lookups from "./routes/lookups";
 import appSettings from "./routes/app-settings";
 import uiTranslationsRoute from "./routes/ui-translations";
+import credits from "./routes/credits";
+import onboardingScreens from "./routes/onboarding-screens";
 
 export type Env = {
   Bindings: {
     DB: D1Database;
+    RC_SECRET_KEY: string;
+    RC_PROJECT_ID: string;
   };
 };
 
@@ -50,5 +54,7 @@ app.route("/asset-classes", assetClasses);
 app.route("/lookups", lookups);
 app.route("/app-settings", appSettings);
 app.route("/ui-translations", uiTranslationsRoute);
+app.route("/credits", credits);
+app.route("/onboarding-screens", onboardingScreens);
 
 export default app;

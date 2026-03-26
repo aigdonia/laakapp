@@ -230,6 +230,41 @@ export const translationBundleVersions = sqliteTable(
   }
 );
 
+// ─── Credit Transactions ────────────────────────────────────
+export const creditTransactions = sqliteTable("credit_transactions", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  customerId: text("customer_id").notNull(),
+  feature: text("feature").notNull(),
+  amount: integer("amount").notNull(),
+  balanceAfter: integer("balance_after"),
+  status: text("status", { enum: ["completed", "refunded", "failed"] })
+    .notNull()
+    .default("completed"),
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`(current_timestamp)`),
+});
+
+// ─── Onboarding Screens ─────────────────────────────────────
+export const onboardingScreens = sqliteTable("onboarding_screens", {
+  ...timestamps,
+  type: text("type").notNull().default("informative"),
+  slug: text("slug").notNull().unique(),
+  imageUrl: text("image_url").notNull().default(""),
+  choices: text("choices", { mode: "json" })
+    .notNull()
+    .$type<Array<{ value: string }>>()
+    .default([]),
+  order: integer("order").notNull().default(0),
+  enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+  translations: text("translations", { mode: "json" })
+    .notNull()
+    .$type<Record<string, Record<string, string>>>()
+    .default({}),
+});
+
 // ─── App Settings (singleton) ────────────────────────────────
 export const appSettings = sqliteTable("app_settings", {
   ...timestamps,

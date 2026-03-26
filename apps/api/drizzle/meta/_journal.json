@@ -64,6 +64,20 @@
       "when": 1774380187825,
       "tag": "0008_kind_leo",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1774491670366,
+      "tag": "0009_legal_paper_doll",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1774493465390,
+      "tag": "0010_neat_agent_brand",
+      "breakpoints": true
     }
   ]
 }

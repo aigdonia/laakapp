@@ -6,6 +6,16 @@ type RequestOptions = {
   headers?: Record<string, string>
 }
 
+export class ApiError extends Error {
+  constructor(
+    public status: number,
+    public data: unknown,
+  ) {
+    super(`API error: ${status}`)
+    this.name = 'ApiError'
+  }
+}
+
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { method = 'GET', body, headers = {} } = options
 
@@ -19,7 +29,8 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
   })
 
   if (!response.ok) {
-    throw new Error(`API error: ${response.status} ${response.statusText}`)
+    const data = await response.json().catch(() => ({}))
+    throw new ApiError(response.status, data)
   }
 
   return response.json() as Promise<T>
@@ -30,4 +41,6 @@ export const api = {
   post: <T>(path: string, body: unknown) => request<T>(path, { method: 'POST', body }),
   put: <T>(path: string, body: unknown) => request<T>(path, { method: 'PUT', body }),
   delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
+  postWithHeaders: <T>(path: string, body: unknown, headers: Record<string, string>) =>
+    request<T>(path, { method: 'POST', body, headers }),
 }
