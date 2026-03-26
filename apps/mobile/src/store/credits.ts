@@ -58,7 +58,7 @@ export const useCredits = create<CreditsState & CreditsActions>()(
       },
 
       spend: async (feature, payload) => {
-        const { appUserID } = await Purchases.getCustomerInfo()
+        const appUserID = await Purchases.getAppUserID()
         const result = await api.postWithHeaders<SpendResult>(
           '/credits/spend',
           { feature, payload },
