@@ -18,11 +18,13 @@ export const FALLBACK_LNG: Record<string, string[]> = {
   default: ['en'],
 }
 
-export const SUPPORTED_LANGUAGES = [
-  { code: 'en', name: 'English', nativeName: 'English' },
-  { code: 'ar', name: 'Arabic', nativeName: 'العربية' },
-  { code: 'ms', name: 'Malay', nativeName: 'Bahasa Melayu' },
-] as const
+export type TextDirection = 'ltr' | 'rtl'
+
+/** Hardcoded offline fallback — used when API + cache are both empty. */
+export const FALLBACK_LANGUAGES = [
+  { code: 'en', name: 'English', nativeName: 'English', direction: 'ltr' as TextDirection, enabled: true, id: 'en', createdAt: '', updatedAt: '' },
+  { code: 'ar', name: 'Arabic', nativeName: 'العربية', direction: 'rtl' as TextDirection, enabled: true, id: 'ar', createdAt: '', updatedAt: '' },
+]
 
 export const SUPPORTED_COUNTRIES = [
   { code: 'EG', name: 'Egypt', flag: '🇪🇬' },
