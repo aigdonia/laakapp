@@ -1,7 +1,7 @@
 {
   "name": "@fin-ai/mobile",
   "main": "expo-router/entry",
-  "version": "0.0.0",
+  "version": "0.2.0-beta",
   "private": true,
   "scripts": {
     "start": "expo start",

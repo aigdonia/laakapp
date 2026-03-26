@@ -2,7 +2,7 @@
   "expo": {
     "name": "Laak",
     "slug": "laak",
-    "version": "0.1.0",
+    "version": "0.2.0-beta",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "halalwealth",
@@ -36,9 +36,12 @@
       "expo-font",
       "expo-localization",
       "expo-web-browser",
-      ["expo-local-authentication", {
-        "faceIDPermission": "Allow Laak to use Face ID to unlock the app"
-      }]
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow Laak to use Face ID to unlock the app"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
