@@ -14,6 +14,11 @@ export type { AppSettings } from "./app-settings";
 export type { AssetClass, FieldConfig, FieldType } from "./asset-class";
 export type { Lookup } from "./lookup";
 export type {
+  OnboardingScreen,
+  OnboardingScreenType,
+  OnboardingChoice,
+} from "./onboarding-screen";
+export type {
   UiTranslation,
   TranslationBundle,
   TranslationBundleResponse,
