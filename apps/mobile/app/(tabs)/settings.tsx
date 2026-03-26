@@ -2,6 +2,7 @@ import { useCallback, useRef } from 'react'
 import { Alert, ScrollView } from 'react-native'
 import { useRouter } from 'expo-router'
 import {
+  IconCoins,
   IconUser,
   IconLogin,
   IconBuildingBank,
@@ -23,8 +24,10 @@ import {
   IconShieldLock,
   IconClock,
   IconKey,
+  IconRefresh,
 } from '@tabler/icons-react-native'
 import type { BottomSheetModal } from '@gorhom/bottom-sheet'
+
 import { useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
@@ -41,6 +44,8 @@ import { LockTimeoutSheet } from '@/src/components/app-lock/lock-timeout-sheet'
 import { resetUserDb } from '@/src/db'
 import { useThemeColors } from '@/src/theme/colors'
 import { usePreferences } from '@/src/store/preferences'
+import { useCredits } from '@/src/store/credits'
+import { restorePurchases, getLakBalance, invalidateLakCache } from '@/src/lib/purchases'
 import { verifyPin, clearPin } from '@/src/lib/pin'
 import { useDisplayLanguages } from '@/src/hooks/use-languages'
 import { SUPPORTED_COUNTRIES } from '@/src/i18n/locale'
@@ -55,6 +60,8 @@ export default function SettingsScreen() {
   const lockMethod = usePreferences((s) => s.lockMethod)
   const lockTimeout = usePreferences((s) => s.lockTimeout)
   const setAppLockEnabled = usePreferences((s) => s.setAppLockEnabled)
+  const creditBalance = useCredits((s) => s.balance)
+  const setBalance = useCredits((s) => s.setBalance)
   const { t } = useTranslation('settings')
   const router = useRouter()
 
@@ -123,6 +130,18 @@ export default function SettingsScreen() {
     )
   }
 
+  const handleRestore = useCallback(async () => {
+    try {
+      await restorePurchases()
+      await invalidateLakCache()
+      const newBalance = await getLakBalance()
+      setBalance(newBalance)
+      Alert.alert(newBalance > 0 ? t('restore_success') : t('restore_empty'))
+    } catch {
+      Alert.alert(t('restore_failed'))
+    }
+  }, [setBalance, t])
+
   const comingSoon = () => Alert.alert(t('common:coming_soon'))
 
   return (
@@ -132,6 +151,20 @@ export default function SettingsScreen() {
         contentContainerClassName="px-5 pb-32"
         showsVerticalScrollIndicator={false}
       >
+        <SettingsSection title={t('credits_section')}>
+          <SettingsMenuCard
+            icon={<IconCoins size={22} color={colors.accent} />}
+            label={t('credits')}
+            subtitle={t('credits_balance', { count: creditBalance })}
+            onPress={() => router.push('/credits')}
+          />
+          <SettingsMenuCard
+            icon={<IconRefresh size={22} color={colors.muted} />}
+            label={t('restore_purchases')}
+            onPress={handleRestore}
+          />
+        </SettingsSection>
+
         <SettingsSection title={t('account')}>
           <SettingsMenuCard
             icon={<IconUser size={22} color={colors.muted} />}
