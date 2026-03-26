@@ -18,7 +18,7 @@ const palette = {
     input: '#f2f2f7',
     border: '#e5e5ea',
     accent: '#d4a017',
-    tabBar: '#ffffff',
+    tabBar: 'rgba(255, 255, 255, 0.85)',
     tabInactive: '#8e8e93',
   },
   dark: {
@@ -30,7 +30,7 @@ const palette = {
     input: '#2c2c2e',
     border: '#3a3a3c',
     accent,
-    tabBar: '#1c1c1e',
+    tabBar: 'rgba(44, 44, 46, 0.85)',
     tabInactive: '#636366',
   },
 } as const

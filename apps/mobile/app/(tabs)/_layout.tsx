@@ -80,7 +80,7 @@ export default function TabLayout() {
                 router.push('/add-holding')
               }}
             >
-              <View className="w-14 h-14 rounded-full bg-accent items-center justify-center shadow-lg shadow-accent/40">
+              <View className="w-14 h-14 rounded-full bg-accent items-center justify-center shadow-lg shadow-accent/40" style={{ marginBottom: '30%' }}>
                 <IconPlus size={28} color="#1c1c1e" strokeWidth={3} />
               </View>
             </Pressable>
