@@ -10,6 +10,7 @@ import {
 } from '../hooks/use-learn-content'
 import { fetchOrCacheLanguages } from '../hooks/use-languages'
 import { fetchOrCacheOnboardingScreens } from '../hooks/use-onboarding-screens'
+import { fetchOrCachePortfolioPresets } from '../hooks/use-portfolio-presets'
 import { loadRemoteTranslations } from '../i18n'
 import { usePreferences } from '../store/preferences'
 import { resolveLocale } from '../i18n/locale'
@@ -64,6 +65,11 @@ export async function prefetchAppData(
     queryClient.prefetchQuery({
       queryKey: ['onboarding-screens'],
       queryFn: fetchOrCacheOnboardingScreens,
+      staleTime: STALE_24H,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ['portfolio-presets'],
+      queryFn: fetchOrCachePortfolioPresets,
       staleTime: STALE_24H,
     }),
   ]

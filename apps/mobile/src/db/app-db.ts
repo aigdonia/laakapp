@@ -121,6 +121,18 @@ export function initAppDb() {
       language_code TEXT NOT NULL,
       fetched_at INTEGER NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS cached_portfolio_presets (
+      id TEXT PRIMARY KEY NOT NULL,
+      name TEXT NOT NULL,
+      slug TEXT NOT NULL,
+      description TEXT NOT NULL DEFAULT '',
+      "order" INTEGER NOT NULL DEFAULT 0,
+      enabled INTEGER NOT NULL DEFAULT 1,
+      allocations TEXT NOT NULL DEFAULT '{}',
+      translations TEXT NOT NULL DEFAULT '{}',
+      fetched_at INTEGER NOT NULL
+    );
   `)
 
   // Add category_id column to existing cached_articles tables

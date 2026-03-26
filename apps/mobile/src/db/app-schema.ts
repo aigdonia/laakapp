@@ -137,3 +137,15 @@ export const cachedLearningCards = sqliteTable('cached_learning_cards', {
     .notNull()
     .$defaultFn(() => new Date()),
 })
+
+export const cachedPortfolioPresets = sqliteTable('cached_portfolio_presets', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  slug: text('slug').notNull(),
+  description: text('description').notNull().default(''),
+  order: integer('order').notNull().default(0),
+  enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
+  allocations: text('allocations').notNull().default('{}'),
+  translations: text('translations').notNull().default('{}'),
+  fetchedAt: integer('fetched_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+})
