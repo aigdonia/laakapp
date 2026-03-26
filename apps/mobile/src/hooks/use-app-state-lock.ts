@@ -20,9 +20,9 @@ export function useAppStateLock(): void {
     const sub = AppState.addEventListener('change', (state) => {
       if (!appLockEnabled) return
 
-      if (state === 'background' || state === 'inactive') {
+      if (state === 'background') {
         backgroundedAt.current = Date.now()
-      } else if (state === 'active') {
+      } else if (state === 'active' && backgroundedAt.current !== null) {
         const elapsed = backgroundedAt.current
           ? (Date.now() - backgroundedAt.current) / 1000
           : Infinity
