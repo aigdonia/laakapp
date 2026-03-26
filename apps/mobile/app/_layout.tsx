@@ -17,6 +17,8 @@ import { SplashView } from '@/src/components/splash-view'
 import { LockScreen } from '@/src/components/app-lock/lock-screen'
 import { useAppStateLock } from '@/src/hooks/use-app-state-lock'
 import { migrateFromSecureStore, applyThemePreference } from '@/src/store/preferences'
+import { initPurchases } from '@/src/lib/purchases'
+import { useCredits } from '@/src/store/credits'
 
 export { ErrorBoundary } from 'expo-router'
 
@@ -50,6 +52,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (loaded && migrated) {
       prefetchAppData(setProgress).then(() => setDataReady(true))
+      initPurchases().then(() => useCredits.getState().refreshBalance())
     }
   }, [loaded, migrated])
 
@@ -75,6 +78,7 @@ export default function RootLayout() {
               <Stack.Screen name="stock/[symbol]" options={{ title: 'Stock Detail' }} />
               <Stack.Screen name="category/[id]" options={{ headerShown: false }} />
               <Stack.Screen name="article/[id]" options={{ presentation: 'modal', headerShown: false }} />
+              <Stack.Screen name="credits" options={{ presentation: 'modal', headerShown: false }} />
               <Stack.Screen name="terms" options={{ presentation: 'modal', headerShown: false }} />
               <Stack.Screen name="privacy" options={{ presentation: 'modal', headerShown: false }} />
             </Stack>

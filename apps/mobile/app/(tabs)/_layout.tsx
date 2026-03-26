@@ -18,6 +18,7 @@ export default function TabLayout() {
   const { t } = useTranslation()
 
   return (
+    <>
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: colors.accent,
@@ -106,5 +107,6 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+  </>
   )
 }
