@@ -137,32 +137,13 @@ export default function SettingsScreen() {
             icon={<IconUser size={22} color={colors.muted} />}
             label={t('profile')}
             onPress={comingSoon}
+            dimmed
           />
           <SettingsMenuCard
             icon={<IconLogin size={22} color={colors.muted} />}
             label={t('sign_in')}
             onPress={comingSoon}
-          />
-        </SettingsSection>
-
-        <SettingsSection title={t('market')}>
-          <SettingsMenuCard
-            icon={<IconBuildingBank size={22} color={colors.muted} />}
-            label={t('default_market')}
-            subtitle="Egypt / EGX"
-            onPress={comingSoon}
-          />
-          <SettingsMenuCard
-            icon={<IconCurrencyDollar size={22} color={colors.muted} />}
-            label={t('base_currency')}
-            subtitle="EGP"
-            onPress={comingSoon}
-          />
-          <SettingsMenuCard
-            icon={<IconWorld size={22} color={colors.muted} />}
-            label={t('country')}
-            subtitle={currentCountry ? `${currentCountry.flag} ${currentCountry.name}` : countryCode}
-            onPress={() => countrySheetRef.current?.present()}
+            dimmed
           />
         </SettingsSection>
 
@@ -172,11 +153,51 @@ export default function SettingsScreen() {
             label={t('sharia_authority')}
             subtitle="AAOIFI"
             onPress={comingSoon}
+            dimmed
           />
           <SettingsMenuCard
             icon={<IconBell size={22} color={colors.muted} />}
             label={t('compliance_alerts')}
             onPress={comingSoon}
+            dimmed
+          />
+        </SettingsSection>
+
+        <SettingsSection title={t('market')}>
+          <SettingsMenuCard
+            icon={<IconBuildingBank size={22} color={colors.muted} />}
+            label={t('default_market')}
+            subtitle="Egypt / EGX"
+            onPress={comingSoon}
+            dimmed
+          />
+          <SettingsMenuCard
+            icon={<IconCurrencyDollar size={22} color={colors.muted} />}
+            label={t('base_currency')}
+            subtitle="EGP"
+            onPress={comingSoon}
+            dimmed
+          />
+          <SettingsMenuCard
+            icon={<IconWorld size={22} color={colors.muted} />}
+            label={t('country')}
+            subtitle={currentCountry ? `${currentCountry.flag} ${currentCountry.name}` : countryCode}
+            onPress={() => countrySheetRef.current?.present()}
+          />
+        </SettingsSection>
+
+        <SettingsSection title={t('appearance')}>
+          <SettingsMenuCard
+            icon={<IconPalette size={22} color={colors.muted} />}
+            label={t('theme')}
+            subtitle={themeLabel}
+            onPress={() => themeSheetRef.current?.present()}
+          />
+          <SettingsMenuCard
+            icon={<IconLanguage size={22} color={colors.muted} />}
+            label={t('language')}
+            subtitle={currentLanguage?.nativeName ?? language}
+            onPress={() => languageSheetRef.current?.present()}
           />
         </SettingsSection>
 
@@ -210,31 +231,18 @@ export default function SettingsScreen() {
           )}
         </SettingsSection>
 
-        <SettingsSection title={t('appearance')}>
-          <SettingsMenuCard
-            icon={<IconPalette size={22} color={colors.muted} />}
-            label={t('theme')}
-            subtitle={themeLabel}
-            onPress={() => themeSheetRef.current?.present()}
-          />
-          <SettingsMenuCard
-            icon={<IconLanguage size={22} color={colors.muted} />}
-            label={t('language')}
-            subtitle={currentLanguage?.nativeName ?? language}
-            onPress={() => languageSheetRef.current?.present()}
-          />
-        </SettingsSection>
-
         <SettingsSection title={t('data_privacy')}>
           <SettingsMenuCard
             icon={<IconDownload size={22} color={colors.muted} />}
             label={t('export_portfolio')}
             onPress={comingSoon}
+            dimmed
           />
           <SettingsMenuCard
             icon={<IconTrash size={22} color={colors.muted} />}
             label={t('clear_cache')}
             onPress={comingSoon}
+            dimmed
           />
           <SettingsMenuCard
             icon={<IconLock size={22} color={colors.muted} />}
@@ -259,11 +267,13 @@ export default function SettingsScreen() {
             icon={<IconHelp size={22} color={colors.muted} />}
             label={t('help_center')}
             onPress={comingSoon}
+            dimmed
           />
           <SettingsMenuCard
             icon={<IconStar size={22} color={colors.muted} />}
             label={t('rate_app')}
             onPress={comingSoon}
+            dimmed
           />
           <SettingsMenuCard
             icon={<IconInfoCircle size={22} color={colors.muted} />}

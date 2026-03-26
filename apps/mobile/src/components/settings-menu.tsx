@@ -20,6 +20,7 @@ export function SettingsMenuCard({
   onPress,
   showChevron = true,
   destructive,
+  dimmed,
 }: {
   icon: ReactNode
   label: string
@@ -27,6 +28,7 @@ export function SettingsMenuCard({
   onPress?: () => void
   showChevron?: boolean
   destructive?: boolean
+  dimmed?: boolean
 }) {
   const colors = useThemeColors()
 
@@ -40,7 +42,7 @@ export function SettingsMenuCard({
     >
       {icon}
 
-      <View className="flex-1 ml-3">
+      <View className={`flex-1 ml-3 ${dimmed ? 'opacity-30' : ''}`}>
         <Text className={`text-base font-medium ${destructive ? 'text-red-500' : 'text-text'}`}>
           {label}
         </Text>
