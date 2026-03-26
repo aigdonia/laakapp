@@ -3,9 +3,8 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { StateStorage } from 'zustand/middleware'
 
-import Purchases from 'react-native-purchases'
 import { api } from '@/src/lib/api'
-import { getLakBalance, invalidateLakCache } from '@/src/lib/purchases'
+import { getLakBalance, invalidateLakCache, getAppUserID } from '@/src/lib/purchases'
 
 // --- MMKV instance ---
 
@@ -58,7 +57,7 @@ export const useCredits = create<CreditsState & CreditsActions>()(
       },
 
       spend: async (feature, payload) => {
-        const appUserID = await Purchases.getAppUserID()
+        const appUserID = await getAppUserID()
         const result = await api.postWithHeaders<SpendResult>(
           '/credits/spend',
           { feature, payload },
