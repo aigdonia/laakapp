@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 
 import { useHoldings } from '@/src/hooks/use-holdings'
 import { useAssetClasses } from '@/src/hooks/use-asset-classes'
+import { usePortfolioPresets } from '@/src/hooks/use-portfolio-presets'
 import { usePortfolioScore } from '@/src/hooks/use-portfolio-score'
 import { useHealthFactors } from '@/src/hooks/use-health-factors'
 import { usePreferences } from '@/src/store/preferences'
@@ -66,11 +67,15 @@ export default function InsightsScreen() {
   const colors = useThemeColors()
   const { t } = useTranslation('insights')
 
+  const presetSlug = usePreferences((s) => s.portfolioPresetSlug)
+  const { data: presets } = usePortfolioPresets()
+  const selectedPreset = presets?.find((p) => p.slug === presetSlug)
+
   const groups = data?.groups ?? []
   const allHoldings = useMemo(() => groups.flatMap((g) => g.holdings), [groups])
   const isEmpty = groups.length === 0
 
-  const score = usePortfolioScore(groups, assetClasses)
+  const score = usePortfolioScore(groups, assetClasses, selectedPreset?.allocations ?? null)
   const { data: healthFactors } = useHealthFactors()
   const breakdownRef = useRef<BottomSheetModal>(null)
 

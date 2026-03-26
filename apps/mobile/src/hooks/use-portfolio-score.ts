@@ -16,6 +16,7 @@ import { getScoreZone } from '@/src/types/insights'
 export function usePortfolioScore(
   groups: HoldingGroup[],
   assetClasses: AssetClass[] | undefined,
+  presetAllocations?: Record<string, number> | null,
 ): PortfolioScore | null {
   return useMemo(() => {
     if (!assetClasses?.length || groups.length === 0) return null
@@ -23,7 +24,14 @@ export function usePortfolioScore(
     const totalValue = groups.reduce((sum, g) => sum + g.totalValue, 0)
     if (totalValue === 0) return null
 
-    const idealPct = 100 / assetClasses.length
+    // When a preset is active, only show classes defined in the preset
+    const relevantClasses = presetAllocations
+      ? assetClasses.filter((ac) => ac.slug in presetAllocations)
+      : assetClasses
+
+    if (relevantClasses.length === 0) return null
+
+    const equalPct = 100 / relevantClasses.length
 
     // Build a map of actual percentages by slug
     const actualBySlug = new Map<string, number>()
@@ -33,8 +41,9 @@ export function usePortfolioScore(
     }
 
     // Compute per-class contribution
-    const classes: ClassContribution[] = assetClasses.map((ac) => {
+    const classes: ClassContribution[] = relevantClasses.map((ac) => {
       const actualPct = actualBySlug.get(ac.slug) ?? 0
+      const idealPct = presetAllocations ? (presetAllocations[ac.slug] ?? 0) : equalPct
       return {
         slug: ac.slug,
         name: ac.name,
@@ -52,5 +61,5 @@ export function usePortfolioScore(
       zone: getScoreZone(total),
       classes,
     }
-  }, [groups, assetClasses])
+  }, [groups, assetClasses, presetAllocations])
 }

@@ -29,6 +29,7 @@ interface PreferencesState {
   appLockEnabled: boolean
   lockMethod: LockMethod
   lockTimeout: LockTimeout
+  portfolioPresetSlug: string | null
 }
 
 interface PreferencesActions {
@@ -42,6 +43,7 @@ interface PreferencesActions {
   setAppLockEnabled: (value: boolean) => void
   setLockMethod: (value: LockMethod) => void
   setLockTimeout: (value: LockTimeout) => void
+  setPortfolioPresetSlug: (value: string | null) => void
 }
 
 // --- MMKV instance ---
@@ -70,6 +72,7 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
       appLockEnabled: false,
       lockMethod: 'biometric',
       lockTimeout: 0,
+      portfolioPresetSlug: null,
 
       // Actions
       setTheme: (value) => {
@@ -86,19 +89,23 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
       setAppLockEnabled: (value) => set({ appLockEnabled: value }),
       setLockMethod: (value) => set({ lockMethod: value }),
       setLockTimeout: (value) => set({ lockTimeout: value }),
+      setPortfolioPresetSlug: (value) => set({ portfolioPresetSlug: value }),
     }),
     {
       name: 'preferences',
       storage: createJSONStorage(() => mmkvStorage),
-      version: 2,
+      version: 3,
       migrate: (persisted: unknown, version: number) => {
         const state = persisted as PreferencesState & PreferencesActions
         if (version < 2) {
           state.countryCode = MARKET_COUNTRY[state.defaultMarket] ?? 'EG'
         }
+        if (version < 3) {
+          state.portfolioPresetSlug = null
+        }
         return state
       },
-      partialize: ({ theme, amountsVisible, defaultMarket, baseCurrency, shariaAuthority, language, countryCode, appLockEnabled, lockMethod, lockTimeout }) => ({
+      partialize: ({ theme, amountsVisible, defaultMarket, baseCurrency, shariaAuthority, language, countryCode, appLockEnabled, lockMethod, lockTimeout, portfolioPresetSlug }) => ({
         theme,
         amountsVisible,
         defaultMarket,
@@ -109,6 +116,7 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
         appLockEnabled,
         lockMethod,
         lockTimeout,
+        portfolioPresetSlug,
       }),
     },
   ),
