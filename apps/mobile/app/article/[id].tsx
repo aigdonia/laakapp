@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from 'expo-router'
-import { ScrollView, Text } from 'react-native'
+import { ScrollView, Text, useColorScheme } from 'react-native'
 import { useQueryClient } from '@tanstack/react-query'
 import Markdown from 'react-native-markdown-display'
 import type { Article } from '@fin-ai/shared'
@@ -9,6 +9,7 @@ import { useThemeColors } from '@/src/theme/colors'
 
 export default function ArticleScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
+  const isDark = useColorScheme() === 'dark'
   const colors = useThemeColors()
   const queryClient = useQueryClient()
   const { t } = useTranslation('learn')
