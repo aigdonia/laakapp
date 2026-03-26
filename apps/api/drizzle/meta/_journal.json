@@ -78,6 +78,20 @@
       "when": 1774493465390,
       "tag": "0010_neat_agent_brand",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1774537672507,
+      "tag": "0011_faithful_killer_shrike",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1774550345735,
+      "tag": "0012_easy_steel_serpent",
+      "breakpoints": true
     }
   ]
 }

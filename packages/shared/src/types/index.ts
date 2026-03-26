@@ -24,3 +24,17 @@ export type {
   TranslationBundleResponse,
   TranslationVersionMap,
 } from "./ui-translation";
+export type {
+  PortfolioPreset,
+  PortfolioPresetAllocations,
+} from "./portfolio-preset";
+export type {
+  PushToken,
+  Notification,
+  NotificationCategory,
+  NotificationStatus,
+  NotificationTarget,
+  NotificationPrefs,
+  NotificationLog,
+  NotificationWithStats,
+} from "./notification";

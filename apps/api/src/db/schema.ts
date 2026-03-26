@@ -211,6 +211,24 @@ export const assetClasses = sqliteTable("asset_classes", {
     .default({}),
 });
 
+// ─── Portfolio Presets ──────────────────────────────────────
+export const portfolioPresets = sqliteTable("portfolio_presets", {
+  ...timestamps,
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  description: text("description").notNull().default(""),
+  order: integer("order").notNull().default(0),
+  enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+  allocations: text("allocations", { mode: "json" })
+    .notNull()
+    .$type<Record<string, number>>()
+    .default({}),
+  translations: text("translations", { mode: "json" })
+    .notNull()
+    .$type<Record<string, Record<string, string>>>()
+    .default({}),
+});
+
 // ─── UI Translations ────────────────────────────────────────
 export const uiTranslations = sqliteTable("ui_translations", {
   ...timestamps,
@@ -263,6 +281,50 @@ export const onboardingScreens = sqliteTable("onboarding_screens", {
     .notNull()
     .$type<Record<string, Record<string, string>>>()
     .default({}),
+});
+
+// ─── Push Tokens ────────────────────────────────────────────
+export const pushTokens = sqliteTable("push_tokens", {
+  ...timestamps,
+  userId: text("user_id").notNull(),
+  expoToken: text("expo_token").notNull().unique(),
+  platform: text("platform", { enum: ["ios", "android"] }).notNull(),
+  prefs: text("prefs", { mode: "json" })
+    .notNull()
+    .$type<{ marketing: boolean; content: boolean; onboarding: boolean }>()
+    .default({ marketing: true, content: true, onboarding: true }),
+});
+
+// ─── Notifications (campaigns) ──────────────────────────────
+export const notifications = sqliteTable("notifications", {
+  ...timestamps,
+  title: text("title").notNull(),
+  body: text("body").notNull(),
+  category: text("category", {
+    enum: ["marketing", "content", "onboarding"],
+  }).notNull(),
+  deepLink: text("deep_link"),
+  target: text("target", { enum: ["all", "ios", "android"] })
+    .notNull()
+    .default("all"),
+  scheduledAt: text("scheduled_at"),
+  sentAt: text("sent_at"),
+  status: text("status", {
+    enum: ["draft", "scheduled", "sent", "failed"],
+  })
+    .notNull()
+    .default("draft"),
+});
+
+// ─── Notification Logs ──────────────────────────────────────
+export const notificationLogs = sqliteTable("notification_logs", {
+  ...timestamps,
+  notificationId: text("notification_id").notNull(),
+  expoToken: text("expo_token").notNull(),
+  status: text("status", {
+    enum: ["sent", "error", "device_not_registered"],
+  }).notNull(),
+  errorMessage: text("error_message"),
 });
 
 // ─── App Settings (singleton) ────────────────────────────────

@@ -18,6 +18,11 @@ import appSettings from "./routes/app-settings";
 import uiTranslationsRoute from "./routes/ui-translations";
 import credits from "./routes/credits";
 import onboardingScreens from "./routes/onboarding-screens";
+import portfolioPresets from "./routes/portfolio-presets";
+import pushTokensRoute from "./routes/push-tokens";
+import notificationsRoute, {
+  processScheduledNotifications,
+} from "./routes/notifications";
 
 export type Env = {
   Bindings: {
@@ -56,5 +61,18 @@ app.route("/app-settings", appSettings);
 app.route("/ui-translations", uiTranslationsRoute);
 app.route("/credits", credits);
 app.route("/onboarding-screens", onboardingScreens);
+app.route("/portfolio-presets", portfolioPresets);
+app.route("/push-tokens", pushTokensRoute);
+app.route("/notifications", notificationsRoute);
 
-export default app;
+export default {
+  fetch: app.fetch,
+  async scheduled(
+    _event: ScheduledEvent,
+    env: { DB: D1Database },
+    _ctx: ExecutionContext
+  ) {
+    const db = createDb(env.DB);
+    await processScheduledNotifications(db);
+  },
+};
