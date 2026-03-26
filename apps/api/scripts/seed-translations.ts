@@ -177,6 +177,10 @@ const en = {
     lock_after_5m: 'After 5 minutes',
     lock_disable_title: 'Disable App Lock',
     lock_disable_message: 'Enter your PIN to disable app lock.',
+    // Portfolio preset
+    portfolio_preset: 'Portfolio Preset',
+    equal_weight: 'Equal Weight',
+    equal_weight_description: 'All asset classes weighted equally',
     // Reset dialog
     reset_dialog_title: 'Reset All Data',
     reset_dialog_message: 'This will permanently delete all your portfolio data, transactions, and sync history. This action cannot be undone.',
@@ -201,7 +205,7 @@ const en = {
   add_holding: {
     title: 'Add Holding',
     subtitle: 'Search for a stock or pick an asset type',
-    search_stocks: 'Search stocks & ETFs...',
+    search_stock: 'Search stocks & ETFs...',
     total_cost: 'Total Cost',
     more_details: 'More details',
     add_transaction: 'Add Transaction',
@@ -384,6 +388,10 @@ const ar: Record<string, Record<string, string>> = {
     lock_after_5m: 'بعد 5 دقائق',
     lock_disable_title: 'تعطيل قفل التطبيق',
     lock_disable_message: 'أدخل رمز PIN لتعطيل قفل التطبيق.',
+    // Portfolio preset
+    portfolio_preset: 'نمط المحفظة',
+    equal_weight: 'وزن متساوٍ',
+    equal_weight_description: 'جميع فئات الأصول بأوزان متساوية',
     // Reset dialog
     reset_dialog_title: 'إعادة تعيين جميع البيانات',
     reset_dialog_message: 'سيتم حذف جميع بيانات محفظتك والمعاملات وسجل المزامنة نهائياً. لا يمكن التراجع عن هذا الإجراء.',
@@ -408,7 +416,7 @@ const ar: Record<string, Record<string, string>> = {
   add_holding: {
     title: 'إضافة أصل',
     subtitle: 'ابحث عن سهم أو اختر نوع الأصل',
-    search_stocks: 'ابحث عن أسهم وصناديق...',
+    search_stock: 'ابحث عن أسهم وصناديق...',
     total_cost: 'إجمالي التكلفة',
     more_details: 'تفاصيل إضافية',
     add_transaction: 'إضافة معاملة',
@@ -462,6 +470,66 @@ async function main() {
 
   const results = await res.json()
   console.log(`Done! Seeded ${results.length} translation keys.`)
+
+  // --- Seed portfolio presets ---
+  const presets = [
+    {
+      name: 'Conservative',
+      slug: 'conservative',
+      description: 'Low-risk allocation emphasizing sukuk and cash',
+      order: 0,
+      enabled: true,
+      allocations: { sukuk: 50, stock: 20, gold: 15, cash: 15 },
+      translations: {
+        ar: {
+          name: 'محافظ',
+          description: 'توزيع منخفض المخاطر يركز على الصكوك والنقد',
+        },
+      },
+    },
+    {
+      name: 'Balanced',
+      slug: 'balanced',
+      description: 'Moderate mix of stocks and sukuk',
+      order: 1,
+      enabled: true,
+      allocations: { stock: 40, sukuk: 30, gold: 15, cash: 15 },
+      translations: {
+        ar: {
+          name: 'متوازن',
+          description: 'مزيج معتدل من الأسهم والصكوك',
+        },
+      },
+    },
+    {
+      name: 'Growth',
+      slug: 'growth',
+      description: 'Higher stock allocation for long-term growth',
+      order: 2,
+      enabled: true,
+      allocations: { stock: 60, sukuk: 20, gold: 10, cash: 10 },
+      translations: {
+        ar: {
+          name: 'نمو',
+          description: 'تخصيص أعلى للأسهم للنمو طويل المدى',
+        },
+      },
+    },
+  ]
+
+  console.log('Seeding portfolio presets...')
+  for (const preset of presets) {
+    const presetRes = await fetch(`${apiUrl}/portfolio-presets`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(preset),
+    })
+    if (presetRes.ok) {
+      console.log(`  ✓ ${preset.name}`)
+    } else {
+      console.log(`  ✗ ${preset.name} (${presetRes.status})`)
+    }
+  }
 
   // Verify
   const versionsRes = await fetch(`${apiUrl}/ui-translations/versions`)
