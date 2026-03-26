@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next'
 
 import { useThemeColors } from '@/src/theme/colors'
 import { usePreferences } from '@/src/store/preferences'
-import { SUPPORTED_LANGUAGES } from '@/src/i18n/locale'
+import { useDisplayLanguages } from '@/src/hooks/use-languages'
 import { changeLanguage } from '@/src/i18n'
 
 function Backdrop(props: BottomSheetBackdropProps) {
@@ -23,6 +23,7 @@ export const LanguagePickerSheet = forwardRef<BottomSheetModal>(function Languag
   const language = usePreferences((s) => s.language)
   const countryCode = usePreferences((s) => s.countryCode)
   const { t } = useTranslation('settings')
+  const { data: languages = [] } = useDisplayLanguages()
 
   const handleSelect = useCallback(
     (code: string) => {
@@ -44,7 +45,7 @@ export const LanguagePickerSheet = forwardRef<BottomSheetModal>(function Languag
         <Text className="text-lg font-semibold text-text mb-4">{t('language')}</Text>
 
         <View className="gap-2">
-          {SUPPORTED_LANGUAGES.map((lang) => {
+          {languages.map((lang) => {
             const selected = language === lang.code
             return (
               <Pressable

@@ -42,7 +42,8 @@ import { resetUserDb } from '@/src/db'
 import { useThemeColors } from '@/src/theme/colors'
 import { usePreferences } from '@/src/store/preferences'
 import { verifyPin, clearPin } from '@/src/lib/pin'
-import { SUPPORTED_LANGUAGES, SUPPORTED_COUNTRIES } from '@/src/i18n/locale'
+import { useDisplayLanguages } from '@/src/hooks/use-languages'
+import { SUPPORTED_COUNTRIES } from '@/src/i18n/locale'
 
 export default function SettingsScreen() {
   const colors = useThemeColors()
@@ -65,7 +66,8 @@ export default function SettingsScreen() {
   const lockMethodSheetRef = useRef<BottomSheetModal>(null)
   const lockTimeoutSheetRef = useRef<BottomSheetModal>(null)
 
-  const currentLanguage = SUPPORTED_LANGUAGES.find((l) => l.code === language)
+  const { data: displayLanguages = [] } = useDisplayLanguages()
+  const currentLanguage = displayLanguages.find((l) => l.code === language)
   const currentCountry = SUPPORTED_COUNTRIES.find((c) => c.code === countryCode)
 
   const themeLabel = themePreference === 'light' ? t('light')

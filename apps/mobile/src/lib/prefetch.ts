@@ -8,6 +8,7 @@ import {
   fetchOrCacheArticleCategories,
   fetchOrCacheLearningCards,
 } from '../hooks/use-learn-content'
+import { fetchOrCacheLanguages } from '../hooks/use-languages'
 import { loadRemoteTranslations } from '../i18n'
 import { usePreferences } from '../store/preferences'
 import { resolveLocale } from '../i18n/locale'
@@ -18,6 +19,11 @@ export async function prefetchAppData(
   const { language, countryCode } = usePreferences.getState()
   const locale = resolveLocale(language || 'en', countryCode || 'EG')
   const promises = [
+    queryClient.prefetchQuery({
+      queryKey: ['languages'],
+      queryFn: fetchOrCacheLanguages,
+      staleTime: STALE_24H,
+    }),
     loadRemoteTranslations(locale),
     queryClient.prefetchQuery({
       queryKey: ['asset-classes'],

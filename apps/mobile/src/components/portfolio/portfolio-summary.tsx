@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import type { HoldingGroup } from '@/src/hooks/use-holdings'
 import { useThemeColors } from '@/src/theme/colors'
 import { usePreferences } from '@/src/store/preferences'
+import { DirectionalView } from '@/src/components/directional-view'
 import { AllocationChart } from './allocation-chart'
 import { PortfolioOverviewCard } from './portfolio-overview-card'
 import { Redacted } from './redacted'
@@ -45,11 +46,14 @@ export function PortfolioSummary({ costByCurrency, groups, amountsVisible, onTog
     .sort(([, a], [, b]) => b - a)
 
   return (
-    <View className="pt-4 pb-2">
-      {/* Visibility toggle */}
-      <View className="px-5 mb-3">
+    <DirectionalView className="pt-4 pb-2">
+      {/* Header row */}
+      <View className="px-5 mb-3 flex-row items-center justify-between">
+        <Text className="text-lg font-semibold text-text">
+          {t('common:hello_investor')}
+        </Text>
         <Pressable
-          className="flex-row items-center self-end gap-1.5 active:opacity-70 border border-muted rounded-lg px-3 py-1"
+          className="flex-row items-center gap-1.5 active:opacity-70 border border-muted rounded-lg px-3 py-1"
           onPress={onToggleVisibility}
         >
           <Text className="text-sm text-muted">{t('toggle_amounts')}</Text>
@@ -153,6 +157,6 @@ export function PortfolioSummary({ costByCurrency, groups, amountsVisible, onTog
           />
         ))}
       </View>
-    </View>
+    </DirectionalView>
   )
 }
