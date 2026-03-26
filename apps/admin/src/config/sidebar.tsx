@@ -13,6 +13,7 @@ import {
   IconFlag,
   IconMapPin,
   IconPalette,
+  IconPlayerPlay,
   IconQuestionMark,
   IconRobot,
   IconSettings2,
@@ -103,6 +104,11 @@ export const sidebarConfig = {
     {
       label: "Content",
       items: [
+        {
+          title: "Onboarding",
+          url: "/onboarding",
+          icon: <IconPlayerPlay />,
+        },
         {
           title: "Categories",
           url: "/article-categories",
