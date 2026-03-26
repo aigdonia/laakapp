@@ -2,9 +2,11 @@
 
 import {
   IconArticle,
+  IconBell,
   IconBuildingBank,
   IconCategory,
   IconChartBar,
+  IconChartPie,
   IconCoin,
   IconDashboard,
   IconFileText,
@@ -79,6 +81,11 @@ export const sidebarConfig = {
           url: "/lookups",
           icon: <IconTags />,
         },
+        {
+          title: "Portfolio Presets",
+          url: "/portfolio-presets",
+          icon: <IconChartPie />,
+        },
       ],
     },
     {
@@ -98,6 +105,16 @@ export const sidebarConfig = {
           title: "Markets",
           url: "#",
           icon: <IconMapPin />,
+        },
+      ],
+    },
+    {
+      label: "Engagement",
+      items: [
+        {
+          title: "Notifications",
+          url: "/notifications",
+          icon: <IconBell />,
         },
       ],
     },
