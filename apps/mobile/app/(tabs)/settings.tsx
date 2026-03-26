@@ -26,6 +26,7 @@ import {
   IconClock,
   IconKey,
   IconRefresh,
+  IconChartPie,
 } from '@tabler/icons-react-native'
 import type { BottomSheetModal } from '@gorhom/bottom-sheet'
 
@@ -38,6 +39,7 @@ import {
 import { ThemePickerSheet } from '@/src/components/theme-picker-sheet'
 import { LanguagePickerSheet } from '@/src/components/language-picker-sheet'
 import { CountryPickerSheet } from '@/src/components/country-picker-sheet'
+import { PresetPickerSheet } from '@/src/components/preset-picker-sheet'
 import { PinSetupSheet } from '@/src/components/app-lock/pin-setup-sheet'
 import { ChangePinSheet } from '@/src/components/app-lock/change-pin-sheet'
 import { LockMethodSheet } from '@/src/components/app-lock/lock-method-sheet'
@@ -50,6 +52,7 @@ import { restorePurchases, getLakBalance, invalidateLakCache } from '@/src/lib/p
 import { verifyPin, clearPin } from '@/src/lib/pin'
 import { useDisplayLanguages } from '@/src/hooks/use-languages'
 import { SUPPORTED_COUNTRIES } from '@/src/i18n/locale'
+import { usePortfolioPresets } from '@/src/hooks/use-portfolio-presets'
 
 export default function SettingsScreen() {
   const colors = useThemeColors()
@@ -66,9 +69,14 @@ export default function SettingsScreen() {
   const { t } = useTranslation('settings')
   const router = useRouter()
 
+  const presetSlug = usePreferences((s) => s.portfolioPresetSlug)
+  const { data: presets } = usePortfolioPresets()
+  const selectedPreset = presets?.find((p) => p.slug === presetSlug)
+
   const themeSheetRef = useRef<BottomSheetModal>(null)
   const languageSheetRef = useRef<BottomSheetModal>(null)
   const countrySheetRef = useRef<BottomSheetModal>(null)
+  const presetSheetRef = useRef<BottomSheetModal>(null)
   const pinSetupSheetRef = useRef<BottomSheetModal>(null)
   const changePinSheetRef = useRef<BottomSheetModal>(null)
   const lockMethodSheetRef = useRef<BottomSheetModal>(null)
@@ -218,6 +226,12 @@ export default function SettingsScreen() {
             subtitle={currentCountry ? `${currentCountry.flag} ${currentCountry.name}` : countryCode}
             onPress={() => countrySheetRef.current?.present()}
           />
+          <SettingsMenuCard
+            icon={<IconChartPie size={22} color={colors.muted} />}
+            label={t('portfolio_preset')}
+            subtitle={selectedPreset?.name ?? t('equal_weight')}
+            onPress={() => presetSheetRef.current?.present()}
+          />
         </SettingsSection>
 
         <SettingsSection title={t('appearance')}>
@@ -321,6 +335,7 @@ export default function SettingsScreen() {
       <ThemePickerSheet ref={themeSheetRef} />
       <LanguagePickerSheet ref={languageSheetRef} />
       <CountryPickerSheet ref={countrySheetRef} />
+      <PresetPickerSheet ref={presetSheetRef} />
       <PinSetupSheet ref={pinSetupSheetRef} />
       <ChangePinSheet ref={changePinSheetRef} />
       <LockMethodSheet ref={lockMethodSheetRef} />
