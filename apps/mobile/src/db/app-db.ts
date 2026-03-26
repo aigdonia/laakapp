@@ -83,6 +83,15 @@ export function initAppDb() {
       fetched_at INTEGER NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS cached_languages (
+      code TEXT PRIMARY KEY NOT NULL,
+      name TEXT NOT NULL,
+      native_name TEXT NOT NULL,
+      direction TEXT NOT NULL DEFAULT 'ltr',
+      enabled INTEGER NOT NULL DEFAULT 1,
+      fetched_at INTEGER NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS cached_translation_bundles (
       language_code TEXT PRIMARY KEY NOT NULL,
       version INTEGER NOT NULL,

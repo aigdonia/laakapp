@@ -91,6 +91,17 @@ export const cachedLookups = sqliteTable('cached_lookups', {
     .$defaultFn(() => new Date()),
 })
 
+export const cachedLanguages = sqliteTable('cached_languages', {
+  code: text('code').primaryKey(),
+  name: text('name').notNull(),
+  nativeName: text('native_name').notNull(),
+  direction: text('direction').notNull().default('ltr'),
+  enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
+  fetchedAt: integer('fetched_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+})
+
 export const cachedTranslationBundles = sqliteTable('cached_translation_bundles', {
   languageCode: text('language_code').primaryKey(),
   version: integer('version').notNull(),
