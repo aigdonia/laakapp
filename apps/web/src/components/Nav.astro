@@ -1,10 +1,24 @@
 ---
+import type { Locale } from '../i18n/config';
+import { localeConfig } from '../i18n/config';
+import { t, localePath } from '../i18n/utils';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+const switchLabel = localeConfig[locale].switchLabel;
+const currentPath = Astro.url.pathname;
+const switchPath = locale === 'en'
+  ? `/ar${currentPath}`
+  : currentPath.replace(/^\/ar/, '') || '/';
 ---
 
 <header class="fixed top-0 left-0 right-0 z-50 pointer-events-none">
   <div class="max-w-[90rem] mx-auto px-6 sm:px-8 py-5 flex items-center justify-between">
     <!-- Logo — always static, never animates -->
-    <a href="/" class="pointer-events-auto flex items-center group shrink-0">
+    <a href={localePath(locale, '/')} class="pointer-events-auto flex items-center group shrink-0">
       <img src="/images/laak-logo.svg" alt="Laak" class="h-11 sm:h-12 w-auto invert" />
     </a>
 
@@ -13,23 +27,39 @@
       id="nav-pill"
       class="pointer-events-auto hidden md:flex items-center gap-1 rounded-full px-1.5 py-1.5 nav-pill-top"
     >
-      <a href="/#features" class="text-text-secondary hover:text-text-primary hover:bg-white/[0.08] transition-all text-sm px-5 py-2 rounded-full">Features</a>
-      <a href="/#privacy" class="text-text-secondary hover:text-text-primary hover:bg-white/[0.08] transition-all text-sm px-5 py-2 rounded-full">Privacy</a>
-      <a href="/#how-it-works" class="text-text-secondary hover:text-text-primary hover:bg-white/[0.08] transition-all text-sm px-5 py-2 rounded-full">How it works</a>
-      <a href="/#faq" class="text-text-secondary hover:text-text-primary hover:bg-white/[0.08] transition-all text-sm px-5 py-2 rounded-full">FAQ</a>
+      <a href={localePath(locale, '/#features')} class="text-text-secondary hover:text-text-primary hover:bg-white/[0.08] transition-all text-sm px-5 py-2 rounded-full">{t(locale, 'nav.features')}</a>
+      <a href={localePath(locale, '/#privacy')} class="text-text-secondary hover:text-text-primary hover:bg-white/[0.08] transition-all text-sm px-5 py-2 rounded-full">{t(locale, 'nav.privacy')}</a>
+      <a href={localePath(locale, '/#how-it-works')} class="text-text-secondary hover:text-text-primary hover:bg-white/[0.08] transition-all text-sm px-5 py-2 rounded-full">{t(locale, 'nav.howItWorks')}</a>
+      <a href={localePath(locale, '/#faq')} class="text-text-secondary hover:text-text-primary hover:bg-white/[0.08] transition-all text-sm px-5 py-2 rounded-full">{t(locale, 'nav.faq')}</a>
+
+      <!-- Language switcher -->
+      <a
+        href={switchPath}
+        class="text-text-secondary hover:text-text-primary hover:bg-white/[0.08] transition-all text-sm px-5 py-2 rounded-full"
+      >
+        {switchLabel}
+      </a>
 
       <!-- Download CTA — hidden by default, reveals when hero CTA scrolls away -->
       <a
         id="nav-cta"
-        href="/#download"
+        href={localePath(locale, '/#download')}
         class="bg-accent text-surface font-bold text-sm px-5 py-2 rounded-full transition-all duration-300 nav-cta-hidden"
       >
-        Download
+        {t(locale, 'nav.download')}
       </a>
     </div>
 
-    <!-- Spacer to keep layout balanced when CTA is hidden -->
-    <div class="w-11 sm:w-12 shrink-0"></div>
+    <!-- Mobile language switcher + spacer -->
+    <div class="flex items-center gap-3 shrink-0">
+      <a
+        href={switchPath}
+        class="pointer-events-auto md:hidden text-text-secondary hover:text-text-primary text-sm transition-colors"
+      >
+        {switchLabel}
+      </a>
+      <div class="w-0 md:w-11 lg:w-12"></div>
+    </div>
   </div>
 </header>
 

@@ -1,26 +1,21 @@
 ---
-const features = [
-  {
-    title: 'Portfolio at a Glance',
-    description: 'What you own, how it\'s performing, where it\'s allocated. Clear layout, not a spreadsheet.',
-    icon: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>`,
-  },
-  {
-    title: 'Offline-First',
-    description: 'Works without internet. Designed for the real world, not just fast Wi-Fi.',
-    icon: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h.01"/><path d="M8.5 16.5a5 5 0 0 1 7 0"/><path d="M5 12.86a10 10 0 0 1 5.17-2.89"/><path d="M16.85 11.25a10 10 0 0 1 2.22 1.68"/><line x1="2" x2="22" y1="2" y2="22"/></svg>`,
-  },
-  {
-    title: 'Halal Screening',
-    description: 'Know where every stock stands. Screening data from trusted sources, explained in plain language.',
-    icon: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>`,
-  },
-  {
-    title: 'AI Without Opinions',
-    description: 'Ask in plain language. Get facts and sources — never recommendations.',
-    icon: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>`,
-  },
+import type { Locale } from '../i18n/config';
+import { t } from '../i18n/utils';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+
+const icons = [
+  `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>`,
+  `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h.01"/><path d="M8.5 16.5a5 5 0 0 1 7 0"/><path d="M5 12.86a10 10 0 0 1 5.17-2.89"/><path d="M16.85 11.25a10 10 0 0 1 2.22 1.68"/><line x1="2" x2="22" y1="2" y2="22"/></svg>`,
+  `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>`,
+  `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>`,
 ];
+
+const items = t(locale, 'features.items') as { title: string; description: string }[];
 ---
 
 <!-- Accent-colored band transition (like Delta's purple section) -->
@@ -31,7 +26,7 @@ const features = [
     <div class="absolute inset-0 opacity-[0.08]" style="background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22><circle cx=%2220%22 cy=%2220%22 r=%222%22 fill=%22%231c1c1e%22/></svg>'); background-size: 40px 40px;"></div>
     <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
       <h2 class="font-heading font-black text-[clamp(2.5rem,6vw,5rem)] leading-[1] tracking-tight text-surface">
-        EVERYTHING<br class="sm:hidden" /> YOU NEED.
+        {t(locale, 'features.heading')}
       </h2>
     </div>
   </div>
@@ -40,13 +35,13 @@ const features = [
   <div class="bg-surface pb-20 sm:pb-28 lg:pb-32">
     <div class="max-w-7xl mx-auto px-6 -mt-28 sm:-mt-36 lg:-mt-44 relative z-10">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-        {features.map((feature, i) => (
+        {items.map((item, i) => (
           <div class={`animate-on-scroll animate-delay-${(i + 1) * 100} group relative bg-[#2c2c2e] hover:bg-[#333336] border border-white/[0.06] hover:border-accent/20 rounded-3xl p-8 transition-all duration-300`}>
             <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-accent/10 text-accent mb-6 group-hover:scale-110 group-hover:bg-accent/15 transition-all duration-300">
-              <Fragment set:html={feature.icon} />
+              <Fragment set:html={icons[i]} />
             </div>
-            <h3 class="font-heading font-bold text-xl sm:text-2xl mb-3">{feature.title}</h3>
-            <p class="text-text-secondary text-sm sm:text-base leading-relaxed">{feature.description}</p>
+            <h3 class="font-heading font-bold text-xl sm:text-2xl mb-3">{item.title}</h3>
+            <p class="text-text-secondary text-sm sm:text-base leading-relaxed">{item.description}</p>
           </div>
         ))}
       </div>

@@ -1,4 +1,12 @@
 ---
+import type { Locale } from '../i18n/config';
+import { t } from '../i18n/utils';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
 ---
 
 <section class="relative flex flex-col items-center bg-surface overflow-hidden">
@@ -27,14 +35,14 @@
 
     <!-- Headline — display text -->
     <h1 class="font-heading font-black text-[clamp(2.5rem,6vw,5.5rem)] leading-[0.95] tracking-tight">
-      YOUR WEALTH.
+      {t(locale, 'hero.headline1')}
       <br />
-      ONE <span class="text-accent">CLEAR</span> PICTURE.
+      {t(locale, 'hero.headline2.before')}<span class="text-accent">{t(locale, 'hero.headline2.accent')}</span>{t(locale, 'hero.headline2.after')}
     </h1>
 
     <!-- Subtitle -->
     <p class="mt-6 sm:mt-8 text-text-secondary text-lg sm:text-xl max-w-2xl leading-relaxed">
-      Investment portfolio tracker. Private. Offline. On your phone.
+      {t(locale, 'hero.subtitle')}
     </p>
 
     <!-- CTA Button (observed by nav to show/hide nav CTA) -->
@@ -43,25 +51,25 @@
         href="#"
         class="inline-flex items-center justify-center gap-2.5 bg-accent text-surface font-bold rounded-full px-8 py-4 text-base hover:scale-105 hover:shadow-[0_0_30px_rgba(255,214,10,0.3)] transition-all duration-200"
       >
-        Download for free
+        {t(locale, 'hero.cta')}
       </a>
     </div>
 
     <!-- Stats row -->
     <div class="mt-10 sm:mt-12 flex items-center gap-6 sm:gap-10">
       <div class="text-center">
-        <div class="font-heading font-extrabold text-2xl sm:text-3xl text-text-primary">620+</div>
-        <div class="text-text-muted text-xs sm:text-sm mt-1">stocks covered</div>
+        <div class="font-heading font-extrabold text-2xl sm:text-3xl text-text-primary">{t(locale, 'hero.stats.stocks')}</div>
+        <div class="text-text-muted text-xs sm:text-sm mt-1">{t(locale, 'hero.stats.stocksLabel')}</div>
       </div>
       <div class="w-px h-10 bg-white/10"></div>
       <div class="text-center">
-        <div class="font-heading font-extrabold text-2xl sm:text-3xl text-text-primary">100%</div>
-        <div class="text-text-muted text-xs sm:text-sm mt-1">on-device</div>
+        <div class="font-heading font-extrabold text-2xl sm:text-3xl text-text-primary">{t(locale, 'hero.stats.onDevice')}</div>
+        <div class="text-text-muted text-xs sm:text-sm mt-1">{t(locale, 'hero.stats.onDeviceLabel')}</div>
       </div>
       <div class="w-px h-10 bg-white/10"></div>
       <div class="text-center">
-        <div class="font-heading font-extrabold text-2xl sm:text-3xl text-text-primary">3</div>
-        <div class="text-text-muted text-xs sm:text-sm mt-1">markets</div>
+        <div class="font-heading font-extrabold text-2xl sm:text-3xl text-text-primary">{t(locale, 'hero.stats.markets')}</div>
+        <div class="text-text-muted text-xs sm:text-sm mt-1">{t(locale, 'hero.stats.marketsLabel')}</div>
       </div>
     </div>
   </div>

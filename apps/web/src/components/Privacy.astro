@@ -1,21 +1,20 @@
 ---
-const pillars = [
-  {
-    icon: `<svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
-    title: 'On-Device Storage',
-    description: 'All portfolio data stays on your phone — no cloud, no servers.',
-  },
-  {
-    icon: `<svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><path d="M12 18h.01"/></svg>`,
-    title: 'Biometric Lock',
-    description: 'Face ID or fingerprint to open. Nothing leaves the device without you.',
-  },
-  {
-    icon: `<svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
-    title: 'Anonymous by Default',
-    description: 'No email, no account, no sign-up. Your data lives on your device — you choose if and when to back it up.',
-  },
+import type { Locale } from '../i18n/config';
+import { t } from '../i18n/utils';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+
+const pillarIcons = [
+  `<svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+  `<svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><path d="M12 18h.01"/></svg>`,
+  `<svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
 ];
+
+const pillars = t(locale, 'privacy.pillars') as { title: string; description: string }[];
 ---
 
 <section id="privacy" class="relative py-28 sm:py-36 lg:py-44 overflow-hidden">
@@ -29,12 +28,12 @@ const pillars = [
       <!-- Left: headline -->
       <div class="flex-1 text-center lg:text-start animate-on-scroll">
         <h2 class="font-heading font-black text-[clamp(2.5rem,6vw,5rem)] leading-[1] tracking-tight">
-          NO EMAIL.<br />
-          NO ACCOUNT FORMS.<br />
-          <span class="text-accent">NO BROKER LOGINS.</span>
+          {t(locale, 'privacy.heading1')}<br />
+          {t(locale, 'privacy.heading2')}<br />
+          <span class="text-accent">{t(locale, 'privacy.heading3.accent')}</span>
         </h2>
         <p class="mt-6 text-text-secondary text-lg sm:text-xl max-w-2xl leading-relaxed">
-          Your financial data stays on your device. You control when to back it up.
+          {t(locale, 'privacy.subtitle')}
         </p>
       </div>
 
@@ -61,7 +60,7 @@ const pillars = [
       {pillars.map((pillar, i) => (
         <div class={`animate-on-scroll animate-delay-${(i + 1) * 100} group relative bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] hover:border-accent/20 rounded-3xl p-8 sm:p-10 text-center transition-all duration-300`}>
           <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-accent/10 text-accent mb-8 group-hover:scale-110 group-hover:bg-accent/15 transition-all duration-300">
-            <Fragment set:html={pillar.icon} />
+            <Fragment set:html={pillarIcons[i]} />
           </div>
           <h3 class="font-heading font-bold text-xl sm:text-2xl mb-3">{pillar.title}</h3>
           <p class="text-text-secondary text-sm sm:text-base leading-relaxed">{pillar.description}</p>

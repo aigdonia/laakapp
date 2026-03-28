@@ -1,16 +1,23 @@
 ---
-import { getFAQs } from '../data/faqs';
+import type { Locale } from '../i18n/config';
+import { t } from '../i18n/utils';
 
-const faqs = await getFAQs();
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+
+const faqs = t(locale, 'faq.items') as { question: string; answer: string }[];
 ---
 
 <section id="faq" class="py-24 sm:py-32">
   <div class="max-w-3xl mx-auto px-6">
     <div class="text-center mb-16 animate-on-scroll">
       <h2 class="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl mb-4">
-        Questions?
+        {t(locale, 'faq.heading')}
       </h2>
-      <p class="text-text-secondary text-lg">Here are the ones we get most.</p>
+      <p class="text-text-secondary text-lg">{t(locale, 'faq.subtitle')}</p>
     </div>
 
     <div class="space-y-3 animate-on-scroll">

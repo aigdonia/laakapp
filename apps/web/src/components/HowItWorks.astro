@@ -1,21 +1,14 @@
 ---
-const steps = [
-  {
-    number: '01',
-    title: 'Add your holdings',
-    description: 'Search any supported market. Add investments in seconds.',
-  },
-  {
-    number: '02',
-    title: 'See the full picture',
-    description: 'Performance, allocation, and trends — all in one view.',
-  },
-  {
-    number: '03',
-    title: 'Check compliance',
-    description: 'Compliance screening data from trusted sources, clearly explained.',
-  },
-];
+import type { Locale } from '../i18n/config';
+import { t } from '../i18n/utils';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en' } = Astro.props;
+
+const steps = t(locale, 'howItWorks.steps') as { number: string; title: string; description: string }[];
 ---
 
 <section id="how-it-works" class="relative">
@@ -24,9 +17,9 @@ const steps = [
     <div class="max-w-6xl mx-auto px-6">
       <div class="text-center mb-16 sm:mb-20 animate-on-scroll">
         <h2 class="font-heading font-black text-[clamp(2.5rem,6vw,5rem)] leading-[1] tracking-tight">
-          HOW IT WORKS
+          {t(locale, 'howItWorks.heading')}
         </h2>
-        <p class="mt-4 text-text-secondary text-lg sm:text-xl">Three steps. That's it.</p>
+        <p class="mt-4 text-text-secondary text-lg sm:text-xl">{t(locale, 'howItWorks.subtitle')}</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-10 sm:gap-16 relative">
