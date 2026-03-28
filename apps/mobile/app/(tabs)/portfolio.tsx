@@ -14,7 +14,8 @@ import { usePreferences } from '@/src/store/preferences'
 const MAX_INLINE_CARDS = 3
 
 export default function PortfolioScreen() {
-  const { data, isLoading } = useHoldings()
+  const { data, isLoading, error } = useHoldings()
+  if (error) console.error('Holdings query failed:', error)
   const amountsVisible = usePreferences((s) => s.amountsVisible)
   const toggleAmountsVisible = usePreferences((s) => s.toggleAmountsVisible)
   const groups = data?.groups ?? []
