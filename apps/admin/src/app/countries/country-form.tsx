@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import type { Country, Language } from "@fin-ai/shared"
+import type { Country, Language, Lookup } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -24,11 +24,13 @@ export function CountryForm({
   onOpenChange,
   country,
   languages,
+  currencyLookups,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   country?: Country
   languages: Language[]
+  currencyLookups: Lookup[]
 }) {
   const isEditing = !!country
   const [loading, setLoading] = useState(false)
@@ -41,7 +43,7 @@ export function CountryForm({
     const data = {
       name: form.get("name") as string,
       code: (form.get("code") as string).toUpperCase(),
-      currency: (form.get("currency") as string).toUpperCase(),
+      currency: form.get("currency") as string,
       flagEmoji: form.get("flagEmoji") as string,
       enabled: form.get("enabled") === "on",
       translations: extractTranslations(form, ["name"]),
@@ -100,14 +102,23 @@ export function CountryForm({
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="currency">Currency</Label>
-            <Input
+            <select
               id="currency"
               name="currency"
-              placeholder="EGP"
-              maxLength={3}
               defaultValue={country?.currency}
               required
-            />
+              className="h-9 w-full rounded-md border border-input bg-transparent px-2.5 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+            >
+              <option value="">Select currency</option>
+              {currencyLookups.map((l) => {
+                const meta = (l.metadata ?? {}) as Record<string, string>
+                return (
+                  <option key={l.value} value={l.value}>
+                    {meta?.flag ?? ""} {l.value} — {l.label}
+                  </option>
+                )
+              })}
+            </select>
           </div>
 
           <div className="flex flex-col gap-2">

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import type { Country, Language } from "@fin-ai/shared"
+import type { Country, Language, Lookup } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -16,7 +16,7 @@ import { deleteCountry } from "./actions"
 import { CountryForm } from "./country-form"
 import { toast } from "sonner"
 
-export function CountriesTable({ countries, languages }: { countries: Country[]; languages: Language[] }) {
+export function CountriesTable({ countries, languages, currencyLookups }: { countries: Country[]; languages: Language[]; currencyLookups: Lookup[] }) {
   const [editingCountry, setEditingCountry] = useState<Country | null>(null)
   const [showCreate, setShowCreate] = useState(false)
 
@@ -111,6 +111,7 @@ export function CountriesTable({ countries, languages }: { countries: Country[];
         open={showCreate}
         onOpenChange={setShowCreate}
         languages={languages}
+        currencyLookups={currencyLookups}
       />
 
       <CountryForm
@@ -121,6 +122,7 @@ export function CountriesTable({ countries, languages }: { countries: Country[];
         }}
         country={editingCountry ?? undefined}
         languages={languages}
+        currencyLookups={currencyLookups}
       />
     </>
   )
