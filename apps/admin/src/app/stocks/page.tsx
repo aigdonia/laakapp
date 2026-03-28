@@ -1,12 +1,13 @@
 import { PageLayout } from "@/components/page-layout"
-import { listStocks } from "./actions"
+import { listStocks, listExchangeLookups } from "./actions"
 import { listLanguages } from "../languages/actions"
 import { StocksTable } from "./stocks-table"
 
 export default async function StocksPage() {
-  const [stocks, languages] = await Promise.all([
+  const [stocks, languages, exchangeLookups] = await Promise.all([
     listStocks(),
     listLanguages(),
+    listExchangeLookups(),
   ])
 
   return (
@@ -14,7 +15,7 @@ export default async function StocksPage() {
       title="Stocks"
       description="Manage stocks and their Sharia screening status."
     >
-      <StocksTable stocks={stocks} languages={languages} />
+      <StocksTable stocks={stocks} languages={languages} exchangeLookups={exchangeLookups} />
     </PageLayout>
   )
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import type { Stock, Language } from "@fin-ai/shared"
+import type { Stock, Language, Lookup } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -11,14 +11,16 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
-import { IconDots, IconPencil, IconPlus, IconTrash } from "@tabler/icons-react"
+import { IconDots, IconPencil, IconPlus, IconTrash, IconUpload } from "@tabler/icons-react"
 import { deleteStock } from "./actions"
 import { StockForm } from "./stock-form"
+import { CsvImport } from "./csv-import"
 import { toast } from "sonner"
 
-export function StocksTable({ stocks, languages }: { stocks: Stock[]; languages: Language[] }) {
+export function StocksTable({ stocks, languages, exchangeLookups }: { stocks: Stock[]; languages: Language[]; exchangeLookups: Lookup[] }) {
   const [editingStock, setEditingStock] = useState<Stock | null>(null)
   const [showCreate, setShowCreate] = useState(false)
+  const [showImport, setShowImport] = useState(false)
 
   async function handleDelete(stock: Stock) {
     try {
@@ -31,7 +33,11 @@ export function StocksTable({ stocks, languages }: { stocks: Stock[]; languages:
 
   return (
     <>
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
+        <Button size="sm" variant="outline" onClick={() => setShowImport(true)}>
+          <IconUpload data-icon="inline-start" />
+          Import CSV
+        </Button>
         <Button size="sm" onClick={() => setShowCreate(true)}>
           <IconPlus data-icon="inline-start" />
           Add Stock
@@ -47,6 +53,7 @@ export function StocksTable({ stocks, languages }: { stocks: Stock[]; languages:
               <th className="px-4 py-3 text-start font-medium">Country</th>
               <th className="px-4 py-3 text-start font-medium">Exchange</th>
               <th className="px-4 py-3 text-start font-medium">Sector</th>
+              <th className="px-4 py-3 text-end font-medium">Last Price</th>
               <th className="px-4 py-3 text-start font-medium">Status</th>
               <th className="px-4 py-3 text-end font-medium">Actions</th>
             </tr>
@@ -54,7 +61,7 @@ export function StocksTable({ stocks, languages }: { stocks: Stock[]; languages:
           <tbody>
             {stocks.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+                <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
                   No stocks yet. Add your first stock.
                 </td>
               </tr>
@@ -77,6 +84,9 @@ export function StocksTable({ stocks, languages }: { stocks: Stock[]; languages:
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
                   {stock.sector}
+                </td>
+                <td className="px-4 py-3 text-end text-muted-foreground tabular-nums">
+                  {stock.lastPrice != null ? stock.lastPrice.toFixed(2) : "—"}
                 </td>
                 <td className="px-4 py-3">
                   <Badge variant={stock.enabled ? "success" : "secondary"}>
@@ -118,6 +128,7 @@ export function StocksTable({ stocks, languages }: { stocks: Stock[]; languages:
         open={showCreate}
         onOpenChange={setShowCreate}
         languages={languages}
+        exchangeLookups={exchangeLookups}
       />
 
       <StockForm
@@ -128,7 +139,10 @@ export function StocksTable({ stocks, languages }: { stocks: Stock[]; languages:
         }}
         stock={editingStock ?? undefined}
         languages={languages}
+        exchangeLookups={exchangeLookups}
       />
+
+      <CsvImport open={showImport} onOpenChange={setShowImport} />
     </>
   )
 }

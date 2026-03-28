@@ -2,7 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { api } from "@/lib/api";
-import type { Stock } from "@fin-ai/shared";
+import type { Stock, Lookup } from "@fin-ai/shared";
+
+export async function listExchangeLookups() {
+  const lookups = await api<Lookup[]>("/lookups");
+  return lookups.filter((l) => l.category === "exchanges" && l.enabled);
+}
 
 export async function listStocks() {
   return api<Stock[]>("/stocks");
@@ -38,4 +43,27 @@ export async function updateStock(
 export async function deleteStock(id: string) {
   await api(`/stocks/${id}`, { method: "DELETE" });
   revalidatePath("/stocks");
+}
+
+export async function bulkUpsertStocks(
+  data: Array<{
+    symbol: string;
+    name: string;
+    countryCode: string;
+    exchange: string;
+    sector?: string;
+    lastPrice?: number | null;
+    enabled?: boolean;
+  }>
+) {
+  const result = await api<{
+    created: number;
+    updated: number;
+    errors: string[];
+  }>("/stocks/bulk", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+  revalidatePath("/stocks");
+  return result;
 }

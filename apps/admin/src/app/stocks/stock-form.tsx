@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import type { Stock, Language } from "@fin-ai/shared"
+import type { Stock, Language, Lookup } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -24,11 +24,13 @@ export function StockForm({
   onOpenChange,
   stock,
   languages,
+  exchangeLookups,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   stock?: Stock
   languages: Language[]
+  exchangeLookups: Lookup[]
 }) {
   const isEditing = !!stock
   const [loading, setLoading] = useState(false)
@@ -45,6 +47,8 @@ export function StockForm({
       exchange: form.get("exchange") as string,
       sector: form.get("sector") as string,
       enabled: form.get("enabled") === "on",
+      lastPrice: form.get("lastPrice") ? Number(form.get("lastPrice")) : null,
+      lastPriceUpdatedAt: form.get("lastPrice") ? new Date().toISOString() : null,
       translations: extractTranslations(form, ["name", "sector"]),
     }
 
@@ -112,13 +116,23 @@ export function StockForm({
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="exchange">Exchange</Label>
-            <Input
+            <select
               id="exchange"
               name="exchange"
-              placeholder="EGX"
               defaultValue={stock?.exchange}
               required
-            />
+              className="h-9 w-full rounded-md border border-input bg-transparent px-2.5 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+            >
+              <option value="">Select exchange</option>
+              {exchangeLookups.map((l) => {
+                const meta = (l.metadata ?? {}) as Record<string, string>
+                return (
+                  <option key={l.value} value={l.value}>
+                    {meta?.flag ?? ""} {l.value} — {l.label}
+                  </option>
+                )
+              })}
+            </select>
           </div>
 
           <LocaleInput
@@ -130,6 +144,18 @@ export function StockForm({
             required
             placeholder="Financial Services"
           />
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="lastPrice">Last Price</Label>
+            <Input
+              id="lastPrice"
+              name="lastPrice"
+              type="number"
+              step="any"
+              placeholder="52.30"
+              defaultValue={stock?.lastPrice ?? ""}
+            />
+          </div>
 
           <div className="flex items-center justify-between">
             <Label htmlFor="enabled">Enabled</Label>
