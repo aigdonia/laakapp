@@ -293,6 +293,9 @@ importers:
       '@fontsource/geist-sans':
         specifier: ^5.2.5
         version: 5.2.5
+      '@fontsource/ibm-plex-sans-arabic':
+        specifier: ^5.2.9
+        version: 5.2.9
       '@fontsource/lora':
         specifier: ^5.2.8
         version: 5.2.8
@@ -1897,6 +1900,9 @@ packages:
 
   '@fontsource/geist-sans@5.2.5':
     resolution: {integrity: sha512-anllOHyJbElRs9fV15TeDRqAeb1IKm4bSknPl6ZMoyPTx1BBy7logudcUwpNjmQLkzn4Q0JGQLRCUKJYoyST6A==}
+
+  '@fontsource/ibm-plex-sans-arabic@5.2.9':
+    resolution: {integrity: sha512-mAs+anYcmatmhTuYApDy/CEEu5iYcfalXp2DB1gBN/6o2ex24lcBs635bwtgV5BNbByCYslIGsQvD4X6s7eVgw==}
 
   '@fontsource/lora@5.2.8':
     resolution: {integrity: sha512-AQlfsHw4TP1x/eb2IZ6VjQ70ctKa39m9JN9A4zlvDOeKYLrCs+GaYIEQ86Y6YfSPGHn01bErXkRcyktOW0LOPQ==}
@@ -10613,6 +10619,8 @@ snapshots:
   '@fontsource/geist-mono@5.2.7': {}
 
   '@fontsource/geist-sans@5.2.5': {}
+
+  '@fontsource/ibm-plex-sans-arabic@5.2.9': {}
 
   '@fontsource/lora@5.2.8': {}
 
