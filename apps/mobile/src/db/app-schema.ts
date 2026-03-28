@@ -162,6 +162,18 @@ export const cachedCountries = sqliteTable('cached_countries', {
     .$defaultFn(() => new Date()),
 })
 
+export const cachedScreeningRules = sqliteTable('cached_screening_rules', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  slug: text('slug').notNull(),
+  methodology: text('methodology').notNull(),
+  description: text('description').notNull().default(''),
+  enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
+  thresholds: text('thresholds').notNull().default('{}'),
+  translations: text('translations').notNull().default('{}'),
+  fetchedAt: integer('fetched_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+})
+
 export const cachedPortfolioPresets = sqliteTable('cached_portfolio_presets', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),

@@ -60,7 +60,7 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
       amountsVisible: true,
 
       baseCurrency: 'EGP',
-      shariaAuthority: 'AAOIFI',
+      shariaAuthority: 'aaoifi-standard',
       language: 'en',
       countryCode: 'EG',
       appLockEnabled: false,
@@ -90,7 +90,7 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
     {
       name: 'preferences',
       storage: createJSONStorage(() => mmkvStorage),
-      version: 5,
+      version: 6,
       migrate: (persisted: unknown, version: number) => {
         const raw = persisted as Record<string, unknown>
         const state = raw as unknown as PreferencesState & PreferencesActions
@@ -108,6 +108,12 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
         }
         if (version < 5) {
           state.stocksSyncedAt = null
+        }
+        if (version < 6) {
+          // Migrate methodology name → slug for shariaAuthority
+          const slugMap: Record<string, string> = { AAOIFI: 'aaoifi-standard', DJIM: 'dow-jones-islamic-market' }
+          const old = raw.shariaAuthority as string | undefined
+          state.shariaAuthority = slugMap[old ?? 'AAOIFI'] ?? 'aaoifi-standard'
         }
         return state
       },

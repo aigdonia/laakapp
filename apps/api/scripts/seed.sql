@@ -72,15 +72,29 @@ UPDATE asset_classes SET aggregation_keys = '["name"]' WHERE id = 'ac-real-estat
 UPDATE asset_classes SET aggregation_keys = '["name"]' WHERE id IN ('ac-other') AND aggregation_keys = '[]';
 
 -- Seed: Screening Rules
-INSERT OR IGNORE INTO screening_rules (id, name, slug, methodology, description, thresholds, enabled)
+-- Unified threshold keys: debt, cash_and_interest_bearing, receivables, non_permissible_income, interest_bearing_deposits
+-- Denominator noted in description, not in key names
+INSERT OR REPLACE INTO screening_rules (id, name, slug, methodology, description, thresholds, enabled)
 VALUES
-  ('sr-aaoifi', 'AAOIFI Standard', 'aaoifi-standard', 'AAOIFI',
-   'Accounting and Auditing Organization for Islamic Financial Institutions screening standard',
-   '{"interest_income_ratio":5,"debt_to_market_cap":30,"cash_and_interest_bearing_to_market_cap":30,"illiquid_assets_to_total_assets":25}',
+  ('sr-aaoifi', 'AAOIFI (Standard 21)', 'aaoifi-standard', 'AAOIFI',
+   'Strictest major standard. Ratios measured against market capitalization.',
+   '{"debt":30,"interest_bearing_deposits":30,"non_permissible_income":5}',
    1),
   ('sr-djim', 'Dow Jones Islamic Market', 'dow-jones-islamic-market', 'DJIM',
-   'Dow Jones Islamic Market Index screening methodology',
-   '{"debt_to_trailing_market_cap":33,"cash_plus_interest_bearing_to_market_cap":33,"receivables_to_market_cap":33,"non_permissible_income_ratio":5}',
+   'Ratios measured against trailing 24-month average market capitalization.',
+   '{"debt":33,"cash_and_interest_bearing":33,"receivables":33,"non_permissible_income":5}',
+   1),
+  ('sr-sp', 'S&P Shariah', 'sp-shariah', 'S&P',
+   'Ratios measured against 36-month average market value of equity.',
+   '{"debt":33,"cash_and_interest_bearing":33,"receivables":49,"non_permissible_income":5}',
+   1),
+  ('sr-msci', 'MSCI Islamic', 'msci-islamic', 'MSCI',
+   'Ratios measured against total assets.',
+   '{"debt":33.33,"cash_and_interest_bearing":33.33,"receivables":33.33,"non_permissible_income":5}',
+   1),
+  ('sr-ftse', 'FTSE Shariah (Yasaar)', 'ftse-shariah', 'FTSE',
+   'Ratios measured against total assets.',
+   '{"debt":33.33,"cash_and_interest_bearing":33.33,"receivables":50,"non_permissible_income":5}',
    1);
 
 -- Seed: App Settings (singleton)

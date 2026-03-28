@@ -8,11 +8,9 @@ import {
 
   IconCurrencyDollar,
   IconShieldCheck,
-  IconBell,
   IconPalette,
   IconLanguage,
   IconDownload,
-  IconTrash,
   IconLock,
   IconHelp,
   IconStar,
@@ -40,11 +38,12 @@ import { LanguagePickerSheet } from '@/src/components/language-picker-sheet'
 import { CountryPickerSheet } from '@/src/components/country-picker-sheet'
 import { PresetPickerSheet } from '@/src/components/preset-picker-sheet'
 import { CurrencyPickerSheet } from '@/src/components/currency-picker-sheet'
+import { ScreeningRulePickerSheet } from '@/src/components/screening-rule-picker-sheet'
 import { PinSetupSheet } from '@/src/components/app-lock/pin-setup-sheet'
 import { ChangePinSheet } from '@/src/components/app-lock/change-pin-sheet'
 import { LockMethodSheet } from '@/src/components/app-lock/lock-method-sheet'
 import { LockTimeoutSheet } from '@/src/components/app-lock/lock-timeout-sheet'
-import { resetUserDb } from '@/src/db'
+import { resetUserDb, clearAppCache } from '@/src/db'
 import { useThemeColors } from '@/src/theme/colors'
 import { usePreferences } from '@/src/store/preferences'
 import { useCredits } from '@/src/store/credits'
@@ -53,6 +52,7 @@ import { verifyPin, clearPin } from '@/src/lib/pin'
 import { useDisplayLanguages } from '@/src/hooks/use-languages'
 import { useCountries } from '@/src/hooks/use-countries'
 import { usePortfolioPresets } from '@/src/hooks/use-portfolio-presets'
+import { useScreeningRules } from '@/src/hooks/use-screening-rules'
 
 export default function SettingsScreen() {
   const colors = useThemeColors()
@@ -70,15 +70,19 @@ export default function SettingsScreen() {
   const router = useRouter()
 
   const baseCurrency = usePreferences((s) => s.baseCurrency)
+  const shariaAuthority = usePreferences((s) => s.shariaAuthority)
   const presetSlug = usePreferences((s) => s.portfolioPresetSlug)
   const { data: presets } = usePortfolioPresets()
   const selectedPreset = presets?.find((p) => p.slug === presetSlug)
+  const { data: screeningRules } = useScreeningRules()
+  const selectedRule = screeningRules?.find((r) => r.slug === shariaAuthority)
 
   const themeSheetRef = useRef<BottomSheetModal>(null)
   const languageSheetRef = useRef<BottomSheetModal>(null)
   const countrySheetRef = useRef<BottomSheetModal>(null)
   const presetSheetRef = useRef<BottomSheetModal>(null)
   const currencySheetRef = useRef<BottomSheetModal>(null)
+  const screeningRuleSheetRef = useRef<BottomSheetModal>(null)
   const pinSetupSheetRef = useRef<BottomSheetModal>(null)
   const changePinSheetRef = useRef<BottomSheetModal>(null)
   const lockMethodSheetRef = useRef<BottomSheetModal>(null)
@@ -154,6 +158,24 @@ export default function SettingsScreen() {
     }
   }, [setBalance, t])
 
+  const handleRefreshAppData = useCallback(() => {
+    Alert.alert(
+      t('refresh_app_data'),
+      t('refresh_app_data_message'),
+      [
+        { text: t('common:cancel'), style: 'cancel' },
+        {
+          text: t('refresh_app_data_confirm'),
+          onPress: () => {
+            clearAppCache()
+            queryClient.invalidateQueries()
+            Alert.alert(t('refresh_app_data_done'))
+          },
+        },
+      ],
+    )
+  }, [queryClient, t])
+
   const comingSoon = () => Alert.alert(t('common:coming_soon'))
 
   return (
@@ -190,15 +212,8 @@ export default function SettingsScreen() {
           <SettingsMenuCard
             icon={<IconShieldCheck size={22} color={colors.muted} />}
             label={t('sharia_authority')}
-            subtitle="AAOIFI"
-            onPress={comingSoon}
-            dimmed
-          />
-          <SettingsMenuCard
-            icon={<IconBell size={22} color={colors.muted} />}
-            label={t('compliance_alerts')}
-            onPress={comingSoon}
-            dimmed
+            subtitle={selectedRule?.name ?? shariaAuthority}
+            onPress={() => screeningRuleSheetRef.current?.present()}
           />
         </SettingsSection>
 
@@ -276,10 +291,9 @@ export default function SettingsScreen() {
             dimmed
           />
           <SettingsMenuCard
-            icon={<IconTrash size={22} color={colors.muted} />}
-            label={t('clear_cache')}
-            onPress={comingSoon}
-            dimmed
+            icon={<IconRefresh size={22} color={colors.muted} />}
+            label={t('refresh_app_data')}
+            onPress={handleRefreshAppData}
           />
           <SettingsMenuCard
             icon={<IconLock size={22} color={colors.muted} />}
@@ -321,6 +335,7 @@ export default function SettingsScreen() {
         </SettingsSection>
       </ScrollView>
 
+      <ScreeningRulePickerSheet ref={screeningRuleSheetRef} />
       <ThemePickerSheet ref={themeSheetRef} />
       <LanguagePickerSheet ref={languageSheetRef} />
       <CountryPickerSheet ref={countrySheetRef} />

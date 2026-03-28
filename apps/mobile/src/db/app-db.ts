@@ -142,6 +142,18 @@ export function initAppDb() {
       fetched_at INTEGER NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS cached_screening_rules (
+      id TEXT PRIMARY KEY NOT NULL,
+      name TEXT NOT NULL,
+      slug TEXT NOT NULL,
+      methodology TEXT NOT NULL,
+      description TEXT NOT NULL DEFAULT '',
+      enabled INTEGER NOT NULL DEFAULT 1,
+      thresholds TEXT NOT NULL DEFAULT '{}',
+      translations TEXT NOT NULL DEFAULT '{}',
+      fetched_at INTEGER NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS cached_portfolio_presets (
       id TEXT PRIMARY KEY NOT NULL,
       name TEXT NOT NULL,
@@ -204,4 +216,25 @@ export function initAppDb() {
       `ALTER TABLE cached_stocks ADD COLUMN last_price_updated_at TEXT`
     )
   }
+}
+
+/** Wipe all cached app data (stocks, articles, rates, etc). Does NOT touch user data. */
+export function clearAppCache() {
+  expoDb.execSync(`
+    DELETE FROM cached_prices;
+    DELETE FROM cached_stocks;
+    DELETE FROM cached_micro_lessons;
+    DELETE FROM cached_article_categories;
+    DELETE FROM cached_articles;
+    DELETE FROM cached_asset_classes;
+    DELETE FROM cached_lookups;
+    DELETE FROM cached_languages;
+    DELETE FROM cached_translation_bundles;
+    DELETE FROM cached_onboarding_screens;
+    DELETE FROM cached_learning_cards;
+    DELETE FROM cached_countries;
+    DELETE FROM cached_exchange_rates;
+    DELETE FROM cached_screening_rules;
+    DELETE FROM cached_portfolio_presets;
+  `)
 }
