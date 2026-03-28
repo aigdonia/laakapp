@@ -1,11 +1,14 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono, Lora, Nunito_Sans } from "next/font/google"
+import { cookies } from "next/headers"
 import "./globals.css"
 import { cn } from "@/lib/utils"
+import type { ApiEnv } from "@/lib/api"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/dashboard/app-sidebar"
 import { Toaster } from "@/components/ui/sonner"
+import { EnvSwitcher } from "@/components/dashboard/env-switcher"
 
 const nunitoSansHeading = Nunito_Sans({
   subsets: ["latin"],
@@ -29,11 +32,14 @@ export const metadata: Metadata = {
   description: "Admin dashboard for fin-ai",
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const cookieStore = await cookies()
+  const apiEnv = (cookieStore.get("api_env")?.value ?? "local") as ApiEnv
+
   return (
     <html
       lang="en"
@@ -66,6 +72,7 @@ export default function RootLayout({
               </div>
             </SidebarInset>
           </SidebarProvider>
+          <EnvSwitcher currentEnv={apiEnv} />
           <Toaster />
         </TooltipProvider>
       </body>

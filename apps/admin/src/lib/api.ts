@@ -1,4 +1,13 @@
-const API_URL = process.env.API_URL || "http://localhost:12003";
+const API_URLS = {
+  local: "http://localhost:12003",
+  production: "https://laak-api.ahmedgaber-1988-masterai.workers.dev",
+} as const;
+
+export type ApiEnv = keyof typeof API_URLS;
+
+export function getApiUrl(env: ApiEnv): string {
+  return API_URLS[env];
+}
 
 export class ApiError extends Error {
   constructor(
@@ -14,7 +23,12 @@ export async function api<T>(
   path: string,
   options?: RequestInit
 ): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`, {
+  const { cookies } = await import("next/headers");
+  const cookieStore = await cookies();
+  const env = (cookieStore.get("api_env")?.value ?? "local") as ApiEnv;
+  const baseUrl = API_URLS[env];
+
+  const res = await fetch(`${baseUrl}${path}`, {
     headers: { "Content-Type": "application/json", ...options?.headers },
     ...options,
   });
