@@ -37,6 +37,8 @@ export const stocks = sqliteTable("stocks", {
   exchange: text("exchange").notNull(),
   sector: text("sector").notNull().default(""),
   enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+  lastPrice: real("last_price"),
+  lastPriceUpdatedAt: text("last_price_updated_at"),
   translations: text("translations", { mode: "json" })
     .notNull()
     .$type<Record<string, Record<string, string>>>()

@@ -120,6 +120,13 @@
       "when": 1774711156946,
       "tag": "0016_burly_firebird",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "6",
+      "when": 1774713677589,
+      "tag": "0017_yielding_paper_doll",
+      "breakpoints": true
     }
   ]
 }
