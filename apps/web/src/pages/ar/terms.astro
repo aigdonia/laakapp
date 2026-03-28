@@ -1,8 +1,8 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Nav from '../components/Nav.astro';
-import PrivacyEN from '../content/privacy-en.astro';
-import { t, localePath } from '../i18n/utils';
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import TermsAR from '../../content/terms-ar.astro';
+import { t, localePath } from '../../i18n/utils';
 
 import '@fontsource-variable/nunito-sans';
 import '@fontsource/geist-sans/400.css';
@@ -10,15 +10,19 @@ import '@fontsource/geist-sans/500.css';
 import '@fontsource/geist-sans/600.css';
 import '@fontsource/geist-sans/700.css';
 import '@fontsource/lora/400.css';
-import '../styles/global.css';
+import '@fontsource/ibm-plex-sans-arabic/400.css';
+import '@fontsource/ibm-plex-sans-arabic/500.css';
+import '@fontsource/ibm-plex-sans-arabic/600.css';
+import '@fontsource/ibm-plex-sans-arabic/700.css';
+import '../../styles/global.css';
 
-const locale = 'en' as const;
+const locale = 'ar' as const;
 ---
 
 <Layout
   locale={locale}
-  title={t(locale, 'privacy.page.title')}
-  description={t(locale, 'privacy.page.description')}
+  title={t(locale, 'terms.page.title')}
+  description={t(locale, 'terms.page.description')}
 >
   <Nav locale={locale} />
 
@@ -28,17 +32,17 @@ const locale = 'en' as const;
       <div class="mb-12 animate-on-scroll">
         <p class="text-accent font-semibold text-sm uppercase tracking-widest mb-3">{t(locale, 'legal.label')}</p>
         <h1 class="font-heading font-black text-[clamp(2rem,5vw,3.5rem)] leading-[1.1] tracking-tight">
-          {t(locale, 'privacy.page.heading')}
+          {t(locale, 'terms.page.heading')}
         </h1>
         <p class="mt-4 text-text-secondary text-lg leading-relaxed">
-          {t(locale, 'privacy.page.subtitle')}
+          {t(locale, 'terms.page.subtitle')}
         </p>
-        <p class="mt-2 text-text-muted text-sm">{t(locale, 'privacy.page.lastUpdated')}</p>
+        <p class="mt-2 text-text-muted text-sm">{t(locale, 'terms.page.lastUpdated')}</p>
       </div>
 
-      <!-- Privacy Content -->
+      <!-- Terms Content -->
       <div class="prose">
-        <PrivacyEN />
+        <TermsAR />
       </div>
     </article>
   </main>
@@ -52,8 +56,8 @@ const locale = 'en' as const;
       </div>
       <div class="flex items-center gap-6">
         <a href={localePath(locale, '/')} class="text-text-muted hover:text-text-secondary text-sm transition-colors">{t(locale, 'legal.home')}</a>
-        <a href={localePath(locale, '/privacy')} class="text-text-secondary text-sm transition-colors">{t(locale, 'legal.privacy')}</a>
-        <a href={localePath(locale, '/terms')} class="text-text-muted hover:text-text-secondary text-sm transition-colors">{t(locale, 'legal.terms')}</a>
+        <a href={localePath(locale, '/privacy')} class="text-text-muted hover:text-text-secondary text-sm transition-colors">{t(locale, 'legal.privacy')}</a>
+        <a href={localePath(locale, '/terms')} class="text-text-secondary text-sm transition-colors">{t(locale, 'legal.terms')}</a>
       </div>
     </div>
   </footer>

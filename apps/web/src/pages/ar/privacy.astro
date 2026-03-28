@@ -1,8 +1,8 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Nav from '../components/Nav.astro';
-import PrivacyEN from '../content/privacy-en.astro';
-import { t, localePath } from '../i18n/utils';
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import PrivacyAR from '../../content/privacy-ar.astro';
+import { t, localePath } from '../../i18n/utils';
 
 import '@fontsource-variable/nunito-sans';
 import '@fontsource/geist-sans/400.css';
@@ -10,9 +10,13 @@ import '@fontsource/geist-sans/500.css';
 import '@fontsource/geist-sans/600.css';
 import '@fontsource/geist-sans/700.css';
 import '@fontsource/lora/400.css';
-import '../styles/global.css';
+import '@fontsource/ibm-plex-sans-arabic/400.css';
+import '@fontsource/ibm-plex-sans-arabic/500.css';
+import '@fontsource/ibm-plex-sans-arabic/600.css';
+import '@fontsource/ibm-plex-sans-arabic/700.css';
+import '../../styles/global.css';
 
-const locale = 'en' as const;
+const locale = 'ar' as const;
 ---
 
 <Layout
@@ -38,7 +42,7 @@ const locale = 'en' as const;
 
       <!-- Privacy Content -->
       <div class="prose">
-        <PrivacyEN />
+        <PrivacyAR />
       </div>
     </article>
   </main>

@@ -1,6 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Nav from '../components/Nav.astro';
+import TermsEN from '../content/terms-en.astro';
+import { t, localePath } from '../i18n/utils';
+
 import '@fontsource-variable/nunito-sans';
 import '@fontsource/geist-sans/400.css';
 import '@fontsource/geist-sans/500.css';
@@ -8,358 +11,34 @@ import '@fontsource/geist-sans/600.css';
 import '@fontsource/geist-sans/700.css';
 import '@fontsource/lora/400.css';
 import '../styles/global.css';
+
+const locale = 'en' as const;
 ---
 
 <Layout
-  title="Terms of Service — Laak"
-  description="Terms of Service for Laak, the private investment portfolio tracker. Read our terms covering data privacy, AI features, compliance screening, credits, and more."
+  locale={locale}
+  title={t(locale, 'terms.page.title')}
+  description={t(locale, 'terms.page.description')}
 >
-  <Nav />
+  <Nav locale={locale} />
 
   <main class="pt-28 sm:pt-36 pb-20 sm:pb-28">
     <article class="max-w-3xl mx-auto px-6">
       <!-- Header -->
       <div class="mb-12 animate-on-scroll">
-        <p class="text-accent font-semibold text-sm uppercase tracking-widest mb-3">Legal</p>
+        <p class="text-accent font-semibold text-sm uppercase tracking-widest mb-3">{t(locale, 'legal.label')}</p>
         <h1 class="font-heading font-black text-[clamp(2rem,5vw,3.5rem)] leading-[1.1] tracking-tight">
-          Terms of Service
+          {t(locale, 'terms.page.heading')}
         </h1>
         <p class="mt-4 text-text-secondary text-lg leading-relaxed">
-          Please read these terms carefully before using the Laak application.
+          {t(locale, 'terms.page.subtitle')}
         </p>
-        <p class="mt-2 text-text-muted text-sm">Last updated: March 26, 2026</p>
+        <p class="mt-2 text-text-muted text-sm">{t(locale, 'terms.page.lastUpdated')}</p>
       </div>
 
       <!-- Terms Content -->
       <div class="prose">
-        <p>
-          By downloading, installing, or using Laak ("the App"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree, do not use the App.
-        </p>
-
-        <!-- 1. About Laak -->
-        <h2>1. About Laak</h2>
-        <p>
-          Laak is a personal portfolio visualization and tracking tool. The App allows you to manually record your investments, view portfolio analytics, access educational content, and receive AI-generated narrative summaries of your holdings.
-        </p>
-        <div class="callout">
-          <p><strong>Laak is a calculator, translator, and reporter — not a financial advisor, regulatory authority, or trading platform.</strong></p>
-        </div>
-
-        <!-- 2. Eligibility -->
-        <h2>2. Eligibility</h2>
-        <p>
-          You must be at least 18 years old (or the age of majority in your jurisdiction) to use the App. By using Laak, you represent that you meet this requirement.
-        </p>
-
-        <!-- 3. Account & Identity -->
-        <h2>3. Account & Identity</h2>
-        <ul>
-          <li><strong>Anonymous by default.</strong> When you first open Laak, a random identifier (UUID) is created on your device. No name, email, phone number, or personal information is required.</li>
-          <li><strong>Optional sign-in.</strong> You may choose to sign in with Apple or Google to enable cloud backup. If you do, your authentication provider shares only the minimum information needed (typically an email address or opaque identifier).</li>
-          <li><strong>You are responsible</strong> for maintaining the security of your device and any sign-in credentials associated with your account.</li>
-        </ul>
-
-        <!-- 4. Your Data & Privacy -->
-        <h2>4. Your Data & Privacy</h2>
-
-        <h3>4.1 On-Device Storage</h3>
-        <p>
-          All portfolio data — your holdings, transactions, preferences, and notes — is stored locally on your device in an encrypted database. Laak does not transmit this data to any server unless you explicitly enable cloud backup.
-        </p>
-
-        <h3>4.2 What We Do Not Collect</h3>
-        <ul>
-          <li>We do not collect your name, phone number, or physical address</li>
-          <li>We do not use analytics SDKs, crash reporting tools, or tracking pixels</li>
-          <li>We do not sell, rent, or share your data with third parties for advertising</li>
-          <li>We do not access your brokerage accounts, bank accounts, or financial institutions</li>
-        </ul>
-
-        <h3>4.3 Cloud Backup (Optional)</h3>
-        <p>
-          If you enable cloud backup, your portfolio database is encrypted and stored on secure cloud infrastructure (Cloudflare R2). Only you can access your backup through your signed-in account. You can delete your backup at any time.
-        </p>
-
-        <h3>4.4 Cached Content</h3>
-        <p>
-          The App downloads and caches educational articles, market metadata (stock names, exchange codes, sector classifications), screening rules, and translation bundles from our servers. This cached content contains no personal data and can be cleared at any time from Settings.
-        </p>
-
-        <h3>4.5 Data Deletion</h3>
-        <p>
-          You can delete all your data at any time using the "Reset All Data" option in Settings. This permanently removes your local portfolio database. If you have cloud backup enabled, you may also request deletion of your cloud backup.
-        </p>
-
-        <!-- 5. AI-Powered Features -->
-        <h2>5. AI-Powered Features</h2>
-
-        <h3>5.1 How AI Works in Laak</h3>
-        <p>
-          Laak offers optional AI-generated portfolio narratives. When you request an AI summary, a snapshot of your portfolio composition (asset types, allocation percentages, and values) is sent to our AI provider (Anthropic Claude) for processing.
-        </p>
-
-        <h3>5.2 What Is Sent</h3>
-        <ul>
-          <li>Asset breakdown by type and approximate value</li>
-          <li>No personally identifying information (no name, email, or account numbers)</li>
-          <li>A unique request hash to detect duplicate requests</li>
-        </ul>
-
-        <h3>5.3 What Is Not Sent</h3>
-        <ul>
-          <li>Your full transaction history</li>
-          <li>Your device information or location</li>
-          <li>Any data from other apps on your device</li>
-        </ul>
-
-        <h3>5.4 AI Limitations</h3>
-        <ul>
-          <li>AI-generated content is <strong>informational only</strong> and does not constitute financial advice, investment recommendation, or compliance ruling</li>
-          <li>AI outputs may contain inaccuracies, outdated information, or incomplete analysis</li>
-          <li>You should independently verify any information provided by AI features</li>
-          <li>AI features require credits (see Section 7)</li>
-        </ul>
-
-        <!-- 6. Compliance Screening -->
-        <h2>6. Compliance Screening Information</h2>
-
-        <h3>6.1 Informational Purpose Only</h3>
-        <p>
-          Laak offers optional compliance screening based on published methodologies (such as AAOIFI standards for Sharia compliance). These results are <strong>informational tools</strong> — they are not rulings, certifications, or endorsements.
-        </p>
-
-        <h3>6.2 No Guarantee of Accuracy</h3>
-        <ul>
-          <li>Screening data is based on publicly available financial reports and may be delayed, incomplete, or outdated</li>
-          <li>Financial ratios change quarterly; a stock that passes screening today may fail tomorrow</li>
-          <li>Different screening bodies and methodologies may reach different conclusions about the same security</li>
-        </ul>
-
-        <h3>6.3 Consult Qualified Professionals</h3>
-        <p>
-          For definitive guidance on investment compliance, consult a qualified professional or your relevant advisory board. Laak provides data to inform your decisions — it does not make decisions for you.
-        </p>
-
-        <!-- 7. Credits & In-App Purchases -->
-        <h2>7. Credits & In-App Purchases</h2>
-
-        <h3>7.1 Credit System</h3>
-        <p>
-          Certain premium features (such as AI narrative generation) require credits. Credits are purchased through Apple App Store or Google Play Store in-app purchases.
-        </p>
-
-        <h3>7.2 Pricing</h3>
-        <ul>
-          <li>Credit packages are priced in your local currency as determined by the App Store</li>
-          <li>Prices may vary by region and are subject to change</li>
-          <li>All prices include applicable taxes as determined by your App Store</li>
-        </ul>
-
-        <h3>7.3 Credits Do Not Expire</h3>
-        <p>Once purchased, your credits remain available indefinitely and do not expire.</p>
-
-        <h3>7.4 Refunds</h3>
-        <p>
-          All purchases are processed through Apple or Google. Refund requests must be submitted directly to Apple App Store or Google Play Store in accordance with their respective refund policies. Laak does not process payments or refunds directly.
-        </p>
-
-        <h3>7.5 No Subscription</h3>
-        <p>
-          Laak does not use a subscription model. You pay only for credits when you choose to, with no recurring charges.
-        </p>
-
-        <!-- 8. Affiliate Links -->
-        <h2>8. Affiliate Links & Third-Party Services</h2>
-
-        <h3>8.1 Contextual Recommendations</h3>
-        <p>
-          Laak may display links to third-party investment platforms, brokerages, gold dealers, or financial services. These links are contextual — shown when relevant to your portfolio composition.
-        </p>
-
-        <h3>8.2 Affiliate Compensation</h3>
-        <p>
-          Laak may earn a commission if you sign up for a third-party service through these links. This does not affect the price you pay and does not influence the content or screening results shown in the App.
-        </p>
-
-        <h3>8.3 Third-Party Terms</h3>
-        <p>
-          When you follow an affiliate link and use a third-party service, you are subject to that service's own terms, privacy policy, and regulatory framework. Laak is not responsible for the products, services, or actions of third-party platforms.
-        </p>
-
-        <h3>8.4 Not Endorsements</h3>
-        <p>
-          The inclusion of any third-party link does not constitute an endorsement, recommendation, or guarantee by Laak. You should conduct your own due diligence before using any third-party financial service.
-        </p>
-
-        <!-- 9. Educational Content -->
-        <h2>9. Educational Content</h2>
-
-        <h3>9.1 For Informational Purposes</h3>
-        <p>
-          All articles, guides, lessons, and educational materials in Laak are provided for general informational and educational purposes only. They do not constitute financial advice, investment recommendations, tax advice, or compliance rulings.
-        </p>
-
-        <h3>9.2 No Professional Relationship</h3>
-        <p>
-          Reading educational content in Laak does not create a fiduciary, advisory, or professional relationship between you and Laak or its content creators.
-        </p>
-
-        <h3>9.3 Content Accuracy</h3>
-        <p>
-          While we strive for accuracy, educational content may contain errors, become outdated, or not apply to your specific situation. Always verify information independently and consult qualified professionals for advice specific to your circumstances.
-        </p>
-
-        <!-- 10. Market Data -->
-        <h2>10. Market Data</h2>
-
-        <h3>10.1 Data Sources</h3>
-        <p>
-          Laak displays market data including stock prices, exchange rates, and asset valuations. This data is sourced from third-party providers and may be delayed.
-        </p>
-
-        <h3>10.2 No Real-Time Guarantee</h3>
-        <ul>
-          <li>Market data may be delayed by minutes, hours, or days depending on your connectivity and cache state</li>
-          <li>Laak is designed to work offline; cached prices may not reflect current market conditions</li>
-          <li>The App displays a data freshness indicator to help you understand when data was last updated</li>
-        </ul>
-
-        <h3>10.3 Not for Trading Decisions</h3>
-        <p>
-          Market data in Laak is for portfolio tracking and visualization. It should not be used as the sole basis for trading or investment decisions. Always verify current prices through your brokerage before executing trades.
-        </p>
-
-        <!-- 11. Offline-First Design -->
-        <h2>11. Offline-First Design</h2>
-
-        <h3>11.1 How It Works</h3>
-        <p>
-          Laak is designed to function without an internet connection. Your portfolio data is always accessible regardless of connectivity. Market data, articles, and other content are cached locally for offline access.
-        </p>
-
-        <h3>11.2 Data Freshness</h3>
-        <p>
-          When offline, the App uses the most recently cached data. Prices, screening results, and content may be outdated. The App will update automatically when connectivity is restored.
-        </p>
-
-        <!-- 12. Intellectual Property -->
-        <h2>12. Intellectual Property</h2>
-
-        <h3>12.1 App Ownership</h3>
-        <p>
-          Laak, including its design, code, content, branding, and visual identity, is the intellectual property of Olan ("the Company"). All rights are reserved.
-        </p>
-
-        <h3>12.2 Your Content</h3>
-        <p>
-          You retain ownership of all data you enter into Laak (your holdings, transactions, notes). We claim no ownership over your portfolio data.
-        </p>
-
-        <h3>12.3 License to Use</h3>
-        <p>
-          We grant you a limited, non-exclusive, non-transferable, revocable license to use the App for personal, non-commercial purposes in accordance with these Terms.
-        </p>
-
-        <!-- 13. Prohibited Uses -->
-        <h2>13. Prohibited Uses</h2>
-        <p>You agree not to:</p>
-        <ul>
-          <li>Use the App for commercial financial advisory services</li>
-          <li>Reverse-engineer, decompile, or disassemble the App</li>
-          <li>Attempt to access other users' data or our server infrastructure</li>
-          <li>Use the App to facilitate money laundering, fraud, or any illegal activity</li>
-          <li>Redistribute, resell, or sublicense the App or its content</li>
-          <li>Use automated systems (bots, scrapers) to access the App or its API</li>
-          <li>Misrepresent AI-generated content as professional financial advice</li>
-        </ul>
-
-        <!-- 14. Disclaimers -->
-        <h2>14. Disclaimers</h2>
-
-        <h3>14.1 No Financial Advice</h3>
-        <div class="callout">
-          <p><strong>Laak does not provide financial advice, investment recommendations, or compliance rulings.</strong> The App is a visualization and tracking tool. All investment decisions are yours alone.</p>
-        </div>
-
-        <h3>14.2 No Warranty</h3>
-        <p>
-          The App is provided "as is" and "as available" without warranties of any kind, whether express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, accuracy, or non-infringement.
-        </p>
-
-        <h3>14.3 Accuracy of Calculations</h3>
-        <p>
-          While we strive for accuracy in portfolio calculations, Zakat estimates, and screening results, we do not guarantee that all calculations are error-free. You should verify important calculations independently.
-        </p>
-
-        <h3>14.4 Investment Risk</h3>
-        <p>
-          All investments carry risk, including the potential loss of principal. Past performance does not guarantee future results. Laak displays your portfolio data — it does not predict or guarantee investment outcomes.
-        </p>
-
-        <!-- 15. Limitation of Liability -->
-        <h2>15. Limitation of Liability</h2>
-        <p>To the maximum extent permitted by applicable law:</p>
-        <ul>
-          <li>Laak and its operators shall not be liable for any indirect, incidental, special, consequential, or punitive damages</li>
-          <li>Our total liability for any claim arising from your use of the App shall not exceed the amount you paid for credits in the 12 months preceding the claim</li>
-          <li>We are not liable for investment losses, missed opportunities, or financial decisions made using information displayed in the App</li>
-        </ul>
-
-        <!-- 16. Indemnification -->
-        <h2>16. Indemnification</h2>
-        <p>
-          You agree to indemnify and hold harmless Laak, its operators, affiliates, and employees from any claims, damages, or expenses arising from your use of the App, your violation of these Terms, or your violation of any applicable law.
-        </p>
-
-        <!-- 17. Modifications -->
-        <h2>17. Modifications to the App & Terms</h2>
-
-        <h3>17.1 App Changes</h3>
-        <p>
-          We may update, modify, or discontinue features of the App at any time. We will make reasonable efforts to preserve your data through updates.
-        </p>
-
-        <h3>17.2 Terms Changes</h3>
-        <p>
-          We may update these Terms from time to time. Material changes will be communicated through the App. Your continued use of the App after changes constitutes acceptance of the updated Terms.
-        </p>
-
-        <!-- 18. Termination -->
-        <h2>18. Termination</h2>
-
-        <h3>18.1 By You</h3>
-        <p>
-          You may stop using the App at any time. You can delete your data using "Reset All Data" in Settings and uninstall the App.
-        </p>
-
-        <h3>18.2 By Us</h3>
-        <p>
-          We reserve the right to suspend or terminate your access to the App if you violate these Terms or engage in conduct that we determine to be harmful to the App or its users.
-        </p>
-
-        <h3>18.3 Effect of Termination</h3>
-        <p>
-          Upon termination, your license to use the App ends. Your locally stored data remains on your device until you delete it. Unused credits are non-refundable upon termination for Terms violation.
-        </p>
-
-        <!-- 19. Governing Law -->
-        <h2>19. Governing Law & Disputes</h2>
-        <p>
-          These Terms shall be governed by and construed in accordance with the laws of the Arab Republic of Egypt. Any disputes arising from these Terms or your use of the App shall be resolved through the competent courts of Cairo, Egypt.
-        </p>
-
-        <!-- 20. Severability -->
-        <h2>20. Severability</h2>
-        <p>
-          If any provision of these Terms is found to be unenforceable, the remaining provisions shall continue in full force and effect.
-        </p>
-
-        <!-- 21. Contact -->
-        <h2>21. Contact</h2>
-        <p>
-          If you have questions about these Terms, contact us at:<br />
-          <a href="mailto:laak@olanai.tech" class="text-accent hover:text-accent/80 transition-colors">laak@olanai.tech</a>
-        </p>
+        <TermsEN />
       </div>
     </article>
   </main>
@@ -369,12 +48,12 @@ import '../styles/global.css';
     <div class="max-w-[90rem] mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-2.5">
         <img src="/images/laak-logo.svg" alt="Laak" class="h-6 w-auto invert opacity-60" />
-        <span class="text-text-muted text-sm">&copy; {new Date().getFullYear()} Laak. All rights reserved.</span>
+        <span class="text-text-muted text-sm">&copy; {new Date().getFullYear()} {t(locale, 'footer.copyright')}</span>
       </div>
       <div class="flex items-center gap-6">
-        <a href="/" class="text-text-muted hover:text-text-secondary text-sm transition-colors">Home</a>
-        <a href="/privacy" class="text-text-muted hover:text-text-secondary text-sm transition-colors">Privacy</a>
-        <a href="/terms" class="text-text-secondary text-sm transition-colors">Terms</a>
+        <a href={localePath(locale, '/')} class="text-text-muted hover:text-text-secondary text-sm transition-colors">{t(locale, 'legal.home')}</a>
+        <a href={localePath(locale, '/privacy')} class="text-text-muted hover:text-text-secondary text-sm transition-colors">{t(locale, 'legal.privacy')}</a>
+        <a href={localePath(locale, '/terms')} class="text-text-secondary text-sm transition-colors">{t(locale, 'legal.terms')}</a>
       </div>
     </div>
   </footer>
@@ -382,7 +61,7 @@ import '../styles/global.css';
 
 <style>
   /* Prose styling for legal content */
-  .prose h2 {
+  .prose :global(h2) {
     font-family: var(--font-heading);
     font-weight: 800;
     font-size: 1.375rem;
@@ -393,7 +72,7 @@ import '../styles/global.css';
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   }
 
-  .prose h3 {
+  .prose :global(h3) {
     font-weight: 600;
     font-size: 1.05rem;
     color: var(--color-text-primary);
@@ -401,30 +80,30 @@ import '../styles/global.css';
     margin-bottom: 0.5rem;
   }
 
-  .prose p {
+  .prose :global(p) {
     color: var(--color-text-secondary);
     line-height: 1.75;
     margin-bottom: 1rem;
   }
 
-  .prose ul {
+  .prose :global(ul) {
     list-style: none;
-    padding-left: 0;
+    padding-inline-start: 0;
     margin-bottom: 1rem;
   }
 
-  .prose ul li {
+  .prose :global(ul li) {
     color: var(--color-text-secondary);
     line-height: 1.75;
-    padding-left: 1.5rem;
+    padding-inline-start: 1.5rem;
     position: relative;
     margin-bottom: 0.375rem;
   }
 
-  .prose ul li::before {
+  .prose :global(ul li::before) {
     content: '';
     position: absolute;
-    left: 0;
+    inset-inline-start: 0;
     top: 0.7rem;
     width: 6px;
     height: 6px;
@@ -433,30 +112,30 @@ import '../styles/global.css';
     opacity: 0.6;
   }
 
-  .prose strong {
+  .prose :global(strong) {
     color: var(--color-text-primary);
     font-weight: 600;
   }
 
-  .prose a {
+  .prose :global(a) {
     color: var(--color-accent);
     text-decoration: none;
     transition: opacity 0.2s;
   }
 
-  .prose a:hover {
+  .prose :global(a:hover) {
     opacity: 0.8;
   }
 
-  .callout {
+  .prose :global(.callout) {
     background: rgba(255, 214, 10, 0.06);
-    border-left: 3px solid var(--color-accent);
+    border-inline-start: 3px solid var(--color-accent);
     border-radius: 0 0.5rem 0.5rem 0;
     padding: 1rem 1.25rem;
     margin: 1.25rem 0;
   }
 
-  .callout p {
+  .prose :global(.callout p) {
     margin-bottom: 0;
     color: var(--color-text-primary);
   }

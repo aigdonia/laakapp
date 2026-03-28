@@ -18,16 +18,18 @@ import '@fontsource/lora/400.css';
 import '@fontsource/lora/500.css';
 import '@fontsource/lora/600.css';
 import '../styles/global.css';
+
+const locale = 'en' as const;
 ---
 
-<Layout>
-  <Nav />
+<Layout locale={locale}>
+  <Nav locale={locale} />
   <main>
-    <Hero />
-    <Features />
-    <Privacy />
-    <HowItWorks />
-    <FAQ />
+    <Hero locale={locale} />
+    <Features locale={locale} />
+    <Privacy locale={locale} />
+    <HowItWorks locale={locale} />
+    <FAQ locale={locale} />
   </main>
-  <Footer />
+  <Footer locale={locale} />
 </Layout>
