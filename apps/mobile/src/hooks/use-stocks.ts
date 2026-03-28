@@ -4,6 +4,7 @@ import type { Stock } from '@fin-ai/shared'
 
 import { api } from '@/src/lib/api'
 import { appDb, cachedStocks } from '@/src/db'
+import { usePreferences } from '@/src/store/preferences'
 
 const STALE_24H = 1000 * 60 * 60 * 24
 
@@ -46,17 +47,25 @@ export function useStocks() {
 
 export function useStockSearch(query: string) {
   const { data: stocks, ...rest } = useStocks()
+  const countryCode = usePreferences((s) => s.countryCode)
 
   const results = useMemo(() => {
     if (!query.trim() || !stocks) return []
     const q = query.toLowerCase()
-    return stocks
-      .filter(
-        (s) =>
-          s.symbol.toLowerCase().includes(q) || s.name.toLowerCase().includes(q),
-      )
-      .slice(0, 10)
-  }, [query, stocks])
+    const matched = stocks.filter(
+      (s) =>
+        s.symbol.toLowerCase().includes(q) || s.name.toLowerCase().includes(q),
+    )
+
+    // Priority: user's country first, then US, then rest
+    matched.sort((a, b) => {
+      const pa = a.countryCode === countryCode ? 0 : a.countryCode === 'US' ? 1 : 2
+      const pb = b.countryCode === countryCode ? 0 : b.countryCode === 'US' ? 1 : 2
+      return pa - pb
+    })
+
+    return matched.slice(0, 10)
+  }, [query, stocks, countryCode])
 
   return { results, ...rest }
 }
