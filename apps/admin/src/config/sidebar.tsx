@@ -13,7 +13,6 @@ import {
   IconFilter,
   IconLanguage,
   IconFlag,
-  IconMapPin,
   IconPalette,
   IconPlayerPlay,
   IconQuestionMark,
@@ -24,6 +23,7 @@ import {
   IconTags,
   IconUsers,
   IconWorldWww,
+  IconCurrencyDollar,
 } from "@tabler/icons-react"
 
 export type NavItem = {
@@ -82,6 +82,11 @@ export const sidebarConfig = {
           icon: <IconTags />,
         },
         {
+          title: "Currencies",
+          url: "/exchange-rates",
+          icon: <IconCurrencyDollar />,
+        },
+        {
           title: "Portfolio Presets",
           url: "/portfolio-presets",
           icon: <IconChartPie />,
@@ -100,11 +105,6 @@ export const sidebarConfig = {
           title: "Screening Rules",
           url: "/screening-rules",
           icon: <IconShieldCheck />,
-        },
-        {
-          title: "Markets",
-          url: "#",
-          icon: <IconMapPin />,
         },
       ],
     },
