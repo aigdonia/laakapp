@@ -20,6 +20,7 @@ import credits from "./routes/credits";
 import onboardingScreens from "./routes/onboarding-screens";
 import portfolioPresets from "./routes/portfolio-presets";
 import pushTokensRoute from "./routes/push-tokens";
+import exchangeRatesRoute from "./routes/exchange-rates";
 import notificationsRoute, {
   processScheduledNotifications,
 } from "./routes/notifications";
@@ -64,6 +65,7 @@ app.route("/onboarding-screens", onboardingScreens);
 app.route("/portfolio-presets", portfolioPresets);
 app.route("/push-tokens", pushTokensRoute);
 app.route("/notifications", notificationsRoute);
+app.route("/exchange-rates", exchangeRatesRoute);
 
 export default {
   fetch: app.fetch,

@@ -327,6 +327,14 @@ export const notificationLogs = sqliteTable("notification_logs", {
   errorMessage: text("error_message"),
 });
 
+// ─── Exchange Rates ─────────────────────────────────────────
+export const exchangeRates = sqliteTable("exchange_rates", {
+  ...timestamps,
+  currency: text("currency").notNull().unique(),
+  ratePerUsd: real("rate_per_usd").notNull(),
+  enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+});
+
 // ─── App Settings (singleton) ────────────────────────────────
 export const appSettings = sqliteTable("app_settings", {
   ...timestamps,
@@ -337,4 +345,5 @@ export const appSettings = sqliteTable("app_settings", {
   onboardingEnabled: integer("onboarding_enabled", { mode: "boolean" })
     .notNull()
     .default(true),
+  baseCurrency: text("base_currency").notNull().default("USD"),
 });
