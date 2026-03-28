@@ -64,7 +64,9 @@ async function sendTokenToServer(userId: string, expoToken: string) {
 export async function unregisterPushToken(expoToken: string) {
   try {
     // api.delete doesn't support body, so use fetch directly
-    const baseUrl = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:12003'
+    const baseUrl = __DEV__
+      ? 'http://localhost:12003'
+      : 'https://laak-api.ahmedgaber-1988-masterai.workers.dev'
     await fetch(`${baseUrl}/push-tokens`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },

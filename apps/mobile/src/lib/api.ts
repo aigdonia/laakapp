@@ -1,4 +1,6 @@
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:12003'
+const API_BASE_URL = __DEV__
+  ? 'http://localhost:12003'
+  : 'https://laak-api.ahmedgaber-1988-masterai.workers.dev'
 
 type RequestOptions = {
   method?: string
