@@ -58,6 +58,8 @@ export const cachedStocks = sqliteTable('cached_stocks', {
   exchange: text('exchange').notNull(),
   countryCode: text('country_code').notNull(),
   sector: text('sector').notNull(),
+  lastPrice: real('last_price'),
+  lastPriceUpdatedAt: text('last_price_updated_at'),
   fetchedAt: integer('fetched_at', { mode: 'timestamp' })
     .notNull()
     .$defaultFn(() => new Date()),

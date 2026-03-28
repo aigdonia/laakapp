@@ -21,6 +21,8 @@ export function initAppDb() {
       exchange TEXT NOT NULL,
       country_code TEXT NOT NULL,
       sector TEXT NOT NULL,
+      last_price REAL,
+      last_price_updated_at TEXT,
       fetched_at INTEGER NOT NULL
     );
 
@@ -185,6 +187,21 @@ export function initAppDb() {
   if (!catCols.some((c) => c.name === 'translations')) {
     expoDb.execSync(
       `ALTER TABLE cached_article_categories ADD COLUMN translations TEXT NOT NULL DEFAULT '{}'`
+    )
+  }
+
+  // Add lastPrice columns to existing cached_stocks tables
+  const stockCols = expoDb.getAllSync<{ name: string }>(
+    `PRAGMA table_info(cached_stocks)`
+  )
+  if (!stockCols.some((c) => c.name === 'last_price')) {
+    expoDb.execSync(
+      `ALTER TABLE cached_stocks ADD COLUMN last_price REAL`
+    )
+  }
+  if (!stockCols.some((c) => c.name === 'last_price_updated_at')) {
+    expoDb.execSync(
+      `ALTER TABLE cached_stocks ADD COLUMN last_price_updated_at TEXT`
     )
   }
 }

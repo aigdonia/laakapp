@@ -45,8 +45,8 @@ export async function prefetchAppData(
       staleTime: STALE_24H,
     }),
     queryClient.prefetchQuery({
-      queryKey: ['stocks'],
-      queryFn: fetchOrCacheStocks,
+      queryKey: ['stocks', countryCode],
+      queryFn: () => fetchOrCacheStocks(countryCode || 'EG'),
       staleTime: STALE_24H,
     }),
     queryClient.prefetchQuery({

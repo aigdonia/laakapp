@@ -22,6 +22,7 @@ interface PreferencesState {
   lockMethod: LockMethod
   lockTimeout: LockTimeout
   portfolioPresetSlug: string | null
+  stocksSyncedAt: string | null
 }
 
 interface PreferencesActions {
@@ -36,6 +37,7 @@ interface PreferencesActions {
   setLockMethod: (value: LockMethod) => void
   setLockTimeout: (value: LockTimeout) => void
   setPortfolioPresetSlug: (value: string | null) => void
+  setStocksSyncedAt: (value: string | null) => void
 }
 
 // --- MMKV instance ---
@@ -65,6 +67,7 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
       lockMethod: 'biometric',
       lockTimeout: 0,
       portfolioPresetSlug: null,
+      stocksSyncedAt: null,
 
       // Actions
       setTheme: (value) => {
@@ -77,16 +80,17 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
       setBaseCurrency: (value) => set({ baseCurrency: value }),
       setShariaAuthority: (value) => set({ shariaAuthority: value }),
       setLanguage: (value) => set({ language: value }),
-      setCountryCode: (value) => set({ countryCode: value }),
+      setCountryCode: (value) => set({ countryCode: value, stocksSyncedAt: null }),
       setAppLockEnabled: (value) => set({ appLockEnabled: value }),
       setLockMethod: (value) => set({ lockMethod: value }),
       setLockTimeout: (value) => set({ lockTimeout: value }),
       setPortfolioPresetSlug: (value) => set({ portfolioPresetSlug: value }),
+      setStocksSyncedAt: (value) => set({ stocksSyncedAt: value }),
     }),
     {
       name: 'preferences',
       storage: createJSONStorage(() => mmkvStorage),
-      version: 4,
+      version: 5,
       migrate: (persisted: unknown, version: number) => {
         const raw = persisted as Record<string, unknown>
         const state = raw as unknown as PreferencesState & PreferencesActions
@@ -102,9 +106,12 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
         if (version < 4) {
           delete raw.defaultMarket
         }
+        if (version < 5) {
+          state.stocksSyncedAt = null
+        }
         return state
       },
-      partialize: ({ theme, amountsVisible, baseCurrency, shariaAuthority, language, countryCode, appLockEnabled, lockMethod, lockTimeout, portfolioPresetSlug }) => ({
+      partialize: ({ theme, amountsVisible, baseCurrency, shariaAuthority, language, countryCode, appLockEnabled, lockMethod, lockTimeout, portfolioPresetSlug, stocksSyncedAt }) => ({
         theme,
         amountsVisible,
         baseCurrency,
@@ -115,6 +122,7 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
         lockMethod,
         lockTimeout,
         portfolioPresetSlug,
+        stocksSyncedAt,
       }),
     },
   ),
