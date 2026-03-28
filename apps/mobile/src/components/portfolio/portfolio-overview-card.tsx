@@ -10,14 +10,12 @@ type Props = {
   groups: HoldingGroup[]
   amountsVisible: boolean
   baseCurrency: string
+  totalInBase: number
 }
 
-export function PortfolioOverviewCard({ costByCurrency, groups, amountsVisible, baseCurrency }: Props) {
+export function PortfolioOverviewCard({ costByCurrency, groups, amountsVisible, baseCurrency, totalInBase }: Props) {
   const colors = useThemeColors()
   const { t } = useTranslation('portfolio')
-
-  const totalValue = Object.values(costByCurrency).reduce((sum, v) => sum + v, 0)
-  const costBasisInBase = costByCurrency[baseCurrency] ?? totalValue
 
   const chartData = groups
     .filter((g) => g.totalValue > 0)
@@ -40,7 +38,7 @@ export function PortfolioOverviewCard({ costByCurrency, groups, amountsVisible, 
               className="text-3xl font-bold text-text mt-1"
               style={{ fontVariant: ['tabular-nums'] }}
             >
-              {baseCurrency} {costBasisInBase.toLocaleString(undefined, {
+              {baseCurrency} {totalInBase.toLocaleString(undefined, {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
               })}
@@ -49,7 +47,7 @@ export function PortfolioOverviewCard({ costByCurrency, groups, amountsVisible, 
 
           <Redacted visible={amountsVisible}>
             <Text className="text-xs text-muted mt-1" style={{ fontVariant: ['tabular-nums'] }}>
-              {t('cost_basis')}: {baseCurrency} {costBasisInBase.toLocaleString(undefined, {
+              {t('cost_basis')}: {baseCurrency} {totalInBase.toLocaleString(undefined, {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
               })}

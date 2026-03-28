@@ -5,7 +5,7 @@ import Constants from 'expo-constants'
 import {
   IconCoins,
   IconLogin,
-  IconBuildingBank,
+
   IconCurrencyDollar,
   IconShieldCheck,
   IconBell,
@@ -39,6 +39,7 @@ import { ThemePickerSheet } from '@/src/components/theme-picker-sheet'
 import { LanguagePickerSheet } from '@/src/components/language-picker-sheet'
 import { CountryPickerSheet } from '@/src/components/country-picker-sheet'
 import { PresetPickerSheet } from '@/src/components/preset-picker-sheet'
+import { CurrencyPickerSheet } from '@/src/components/currency-picker-sheet'
 import { PinSetupSheet } from '@/src/components/app-lock/pin-setup-sheet'
 import { ChangePinSheet } from '@/src/components/app-lock/change-pin-sheet'
 import { LockMethodSheet } from '@/src/components/app-lock/lock-method-sheet'
@@ -68,6 +69,7 @@ export default function SettingsScreen() {
   const { t } = useTranslation('settings')
   const router = useRouter()
 
+  const baseCurrency = usePreferences((s) => s.baseCurrency)
   const presetSlug = usePreferences((s) => s.portfolioPresetSlug)
   const { data: presets } = usePortfolioPresets()
   const selectedPreset = presets?.find((p) => p.slug === presetSlug)
@@ -76,6 +78,7 @@ export default function SettingsScreen() {
   const languageSheetRef = useRef<BottomSheetModal>(null)
   const countrySheetRef = useRef<BottomSheetModal>(null)
   const presetSheetRef = useRef<BottomSheetModal>(null)
+  const currencySheetRef = useRef<BottomSheetModal>(null)
   const pinSetupSheetRef = useRef<BottomSheetModal>(null)
   const changePinSheetRef = useRef<BottomSheetModal>(null)
   const lockMethodSheetRef = useRef<BottomSheetModal>(null)
@@ -201,24 +204,16 @@ export default function SettingsScreen() {
 
         <SettingsSection title={t('market')}>
           <SettingsMenuCard
-            icon={<IconBuildingBank size={22} color={colors.muted} />}
-            label={t('default_market')}
-            subtitle="Egypt / EGX"
-            onPress={comingSoon}
-            dimmed
-          />
-          <SettingsMenuCard
-            icon={<IconCurrencyDollar size={22} color={colors.muted} />}
-            label={t('base_currency')}
-            subtitle="EGP"
-            onPress={comingSoon}
-            dimmed
-          />
-          <SettingsMenuCard
             icon={<IconWorld size={22} color={colors.muted} />}
             label={t('country')}
             subtitle={currentCountry ? `${currentCountry.flagEmoji} ${currentCountry.name}` : countryCode}
             onPress={() => countrySheetRef.current?.present()}
+          />
+          <SettingsMenuCard
+            icon={<IconCurrencyDollar size={22} color={colors.muted} />}
+            label={t('base_currency')}
+            subtitle={baseCurrency}
+            onPress={() => currencySheetRef.current?.present()}
           />
           <SettingsMenuCard
             icon={<IconChartPie size={22} color={colors.muted} />}
@@ -330,6 +325,7 @@ export default function SettingsScreen() {
       <LanguagePickerSheet ref={languageSheetRef} />
       <CountryPickerSheet ref={countrySheetRef} />
       <PresetPickerSheet ref={presetSheetRef} />
+      <CurrencyPickerSheet ref={currencySheetRef} />
       <PinSetupSheet ref={pinSetupSheetRef} />
       <ChangePinSheet ref={changePinSheetRef} />
       <LockMethodSheet ref={lockMethodSheetRef} />

@@ -20,6 +20,7 @@ export default function PortfolioScreen() {
   const toggleAmountsVisible = usePreferences((s) => s.toggleAmountsVisible)
   const groups = data?.groups ?? []
   const costByCurrency = data?.costByCurrency ?? {}
+  const totalInBase = data?.totalInBase ?? 0
   const isEmpty = groups.length === 0
   const { t } = useTranslation('portfolio')
 
@@ -72,6 +73,7 @@ export default function PortfolioScreen() {
           costByCurrency={costByCurrency}
           groups={groups}
           amountsVisible={amountsVisible}
+          totalInBase={totalInBase}
           onToggleVisibility={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
             toggleAmountsVisible()

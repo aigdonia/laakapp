@@ -16,12 +16,13 @@ type Props = {
   groups: HoldingGroup[]
   amountsVisible: boolean
   onToggleVisibility: () => void
+  totalInBase: number
 }
 
 const PAGE_COUNT = 2
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 
-export function PortfolioSummary({ costByCurrency, groups, amountsVisible, onToggleVisibility }: Props) {
+export function PortfolioSummary({ costByCurrency, groups, amountsVisible, onToggleVisibility, totalInBase }: Props) {
   const colors = useThemeColors()
   const { t } = useTranslation('portfolio')
   const baseCurrency = usePreferences((s) => s.baseCurrency)
@@ -139,6 +140,7 @@ export function PortfolioSummary({ costByCurrency, groups, amountsVisible, onTog
             groups={groups}
             amountsVisible={amountsVisible}
             baseCurrency={baseCurrency}
+            totalInBase={totalInBase}
           />
         </View>
       </ScrollView>

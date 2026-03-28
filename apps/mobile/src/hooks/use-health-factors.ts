@@ -1,12 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
 import { query } from '@/src/db/duckdb'
+import { useExchangeRates } from './use-exchange-rates'
+import { usePreferences } from '@/src/store/preferences'
+import { buildRateMap, convertCurrency } from '@/src/lib/currency'
 import type { HealthFactor } from '@/src/types/insights'
 
-type StatsRow = {
-  distinct_types: number
-  total_value: number
-  max_holding_pct: number
-  last_transaction_ts: number | null
+type HoldingRow = {
+  asset_type: string
+  currency: string
+  cost: number
 }
 
 type TypeWeight = {
@@ -17,64 +19,65 @@ type TypeWeight = {
  * Computes portfolio health factors via DuckDB SQL.
  * Returns 4 informational factors: Diversification, Concentration,
  * Asset Coverage, and Activity — all derived from SQL aggregation.
+ * All monetary values are converted to baseCurrency before scoring.
  */
 export function useHealthFactors() {
+  const { data: exchangeRates } = useExchangeRates()
+  const baseCurrency = usePreferences((s) => s.baseCurrency)
+
   return useQuery({
-    queryKey: ['health-factors'],
+    queryKey: ['health-factors', baseCurrency],
     queryFn: (): HealthFactor[] | null => {
-      // Single CTE-based query for portfolio-wide stats
-      const stats = query<StatsRow>(`
-        WITH holdings AS (
-          SELECT
-            asset_type,
-            symbol,
-            exchange,
-            currency,
-            SUM(CASE WHEN type = 'buy' THEN quantity * price_per_unit ELSE 0 END) AS cost
-          FROM transactions
-          GROUP BY asset_type, symbol, exchange, currency
-          HAVING SUM(CASE WHEN type = 'buy' THEN quantity ELSE -quantity END) > 0
-        ),
-        portfolio AS (
-          SELECT COALESCE(SUM(cost), 0) AS total_value FROM holdings
-        )
+      const rates = buildRateMap(exchangeRates ?? [])
+
+      // Fetch per-holding rows with currency for conversion
+      const holdingRows = query<HoldingRow>(`
         SELECT
-          (SELECT COUNT(DISTINCT asset_type) FROM holdings) AS distinct_types,
-          (SELECT total_value FROM portfolio) AS total_value,
-          (SELECT MAX(cost * 1.0 / p.total_value) FROM holdings, portfolio p WHERE p.total_value > 0) AS max_holding_pct,
-          (SELECT MAX(date) FROM transactions) AS last_transaction_ts
+          asset_type,
+          currency,
+          SUM(CASE WHEN type = 'buy' THEN quantity * price_per_unit ELSE 0 END) AS cost
+        FROM transactions
+        GROUP BY asset_type, symbol, exchange, currency
+        HAVING SUM(CASE WHEN type = 'buy' THEN quantity ELSE -quantity END) > 0
       `)
 
-      if (stats.length === 0 || !stats[0].total_value || stats[0].total_value === 0) {
-        return null
+      if (holdingRows.length === 0) return null
+
+      // Convert each holding's cost to baseCurrency
+      const convertedHoldings = holdingRows.map((r) => ({
+        ...r,
+        cost: convertCurrency(r.cost, r.currency, baseCurrency, rates),
+      }))
+
+      const totalValue = convertedHoldings.reduce((sum, r) => sum + r.cost, 0)
+      if (totalValue === 0) return null
+
+      // Group by asset_type for diversification
+      const typeMap = new Map<string, number>()
+      for (const h of convertedHoldings) {
+        typeMap.set(h.asset_type, (typeMap.get(h.asset_type) ?? 0) + h.cost)
       }
+      const typeCosts = Array.from(typeMap.values())
+      const distinctTypes = typeCosts.length
 
-      const { distinct_types, total_value, max_holding_pct, last_transaction_ts } = stats[0]
+      // Max single holding percentage
+      const maxHoldingPct = Math.max(...convertedHoldings.map((h) => h.cost / totalValue))
 
-      // Per-type costs for diversification weight deviation
-      const typeWeights = query<TypeWeight>(`
-        WITH holdings AS (
-          SELECT
-            asset_type,
-            SUM(CASE WHEN type = 'buy' THEN quantity * price_per_unit ELSE 0 END) AS cost
-          FROM transactions
-          GROUP BY asset_type, symbol, exchange, currency
-          HAVING SUM(CASE WHEN type = 'buy' THEN quantity ELSE -quantity END) > 0
-        )
-        SELECT SUM(cost) AS type_cost
-        FROM holdings
-        GROUP BY asset_type
+      // Last transaction timestamp
+      const lastTxRow = query<{ last_ts: number | null }>(`
+        SELECT MAX(date) AS last_ts FROM transactions
       `)
+      const lastTransactionTs = lastTxRow[0]?.last_ts ?? null
 
       // --- Diversification (0-100) ---
-      const groupCount = typeWeights.length
+      const groupCount = typeCosts.length
       let diversificationScore: number
       if (groupCount <= 1) {
         diversificationScore = 50
       } else {
         const idealWeight = 1 / groupCount
-        const weightDeviation = typeWeights.reduce((sum, r) => {
-          const weight = r.type_cost / total_value
+        const weightDeviation = typeCosts.reduce((sum, tc) => {
+          const weight = tc / totalValue
           return sum + Math.abs(weight - idealWeight)
         }, 0)
         const maxDeviation = 2 * (1 - idealWeight)
@@ -82,7 +85,7 @@ export function useHealthFactors() {
       }
 
       // --- Concentration (0-100) ---
-      const maxWeight = max_holding_pct ?? 0
+      const maxWeight = maxHoldingPct
       const concentrationScore = maxWeight <= 0.3
         ? 100
         : maxWeight >= 0.8
@@ -90,17 +93,16 @@ export function useHealthFactors() {
           : Math.round(100 - ((maxWeight - 0.3) / 0.5) * 90)
 
       // --- Asset Coverage (0-100) ---
-      const coverageScore = distinct_types >= 5 ? 100
-        : distinct_types >= 4 ? 85
-        : distinct_types >= 3 ? 70
-        : distinct_types >= 2 ? 50
+      const coverageScore = distinctTypes >= 5 ? 100
+        : distinctTypes >= 4 ? 85
+        : distinctTypes >= 3 ? 70
+        : distinctTypes >= 2 ? 50
         : 25
 
       // --- Activity (0-100) ---
-      // date column uses integer('date', { mode: 'timestamp' }) → stored as epoch seconds
       const now = Date.now()
-      const daysSinceLast = last_transaction_ts
-        ? (now - last_transaction_ts * 1000) / (1000 * 60 * 60 * 24)
+      const daysSinceLast = lastTransactionTs
+        ? (now - lastTransactionTs * 1000) / (1000 * 60 * 60 * 24)
         : 365
       const activityScore = daysSinceLast <= 30 ? 100
         : daysSinceLast <= 60 ? 75
@@ -126,7 +128,7 @@ export function useHealthFactors() {
         {
           name: 'Asset Coverage',
           score: coverageScore,
-          description: `${distinct_types} asset type${distinct_types !== 1 ? 's' : ''} in portfolio`,
+          description: `${distinctTypes} asset type${distinctTypes !== 1 ? 's' : ''} in portfolio`,
         },
         {
           name: 'Activity',

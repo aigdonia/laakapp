@@ -11,17 +11,9 @@ export type ThemePreference = 'light' | 'dark' | 'system'
 export type LockMethod = 'biometric' | 'pin'
 export type LockTimeout = 0 | 30 | 60 | 300
 
-/** Maps default market exchange to country code */
-export const MARKET_COUNTRY: Record<string, string> = {
-  EGX: 'EG',
-  TADAWUL: 'SA',
-  BURSA: 'MY',
-}
-
 interface PreferencesState {
   theme: ThemePreference
   amountsVisible: boolean
-  defaultMarket: string
   baseCurrency: string
   shariaAuthority: string
   language: string
@@ -35,7 +27,7 @@ interface PreferencesState {
 interface PreferencesActions {
   setTheme: (value: ThemePreference) => void
   toggleAmountsVisible: () => void
-  setDefaultMarket: (value: string) => void
+
   setBaseCurrency: (value: string) => void
   setShariaAuthority: (value: string) => void
   setLanguage: (value: string) => void
@@ -64,7 +56,7 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
       // State
       theme: 'system',
       amountsVisible: true,
-      defaultMarket: 'EGX',
+
       baseCurrency: 'EGP',
       shariaAuthority: 'AAOIFI',
       language: 'en',
@@ -81,7 +73,7 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
       },
       toggleAmountsVisible: () =>
         set((s) => ({ amountsVisible: !s.amountsVisible })),
-      setDefaultMarket: (value) => set({ defaultMarket: value }),
+
       setBaseCurrency: (value) => set({ baseCurrency: value }),
       setShariaAuthority: (value) => set({ shariaAuthority: value }),
       setLanguage: (value) => set({ language: value }),
@@ -94,21 +86,27 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
     {
       name: 'preferences',
       storage: createJSONStorage(() => mmkvStorage),
-      version: 3,
+      version: 4,
       migrate: (persisted: unknown, version: number) => {
-        const state = persisted as PreferencesState & PreferencesActions
+        const raw = persisted as Record<string, unknown>
+        const state = raw as unknown as PreferencesState & PreferencesActions
         if (version < 2) {
-          state.countryCode = MARKET_COUNTRY[state.defaultMarket] ?? 'EG'
+          // Legacy: defaultMarket → countryCode (removed in v4)
+          const marketCountry: Record<string, string> = { EGX: 'EG', TADAWUL: 'SA', BURSA: 'MY' }
+          const legacy = raw.defaultMarket as string | undefined
+          state.countryCode = marketCountry[legacy ?? 'EGX'] ?? 'EG'
         }
         if (version < 3) {
           state.portfolioPresetSlug = null
         }
+        if (version < 4) {
+          delete raw.defaultMarket
+        }
         return state
       },
-      partialize: ({ theme, amountsVisible, defaultMarket, baseCurrency, shariaAuthority, language, countryCode, appLockEnabled, lockMethod, lockTimeout, portfolioPresetSlug }) => ({
+      partialize: ({ theme, amountsVisible, baseCurrency, shariaAuthority, language, countryCode, appLockEnabled, lockMethod, lockTimeout, portfolioPresetSlug }) => ({
         theme,
         amountsVisible,
-        defaultMarket,
         baseCurrency,
         shariaAuthority,
         language,

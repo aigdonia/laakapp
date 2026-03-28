@@ -22,15 +22,30 @@ export const CountryPickerSheet = forwardRef<BottomSheetModal>(function CountryP
   const colors = useThemeColors()
   const language = usePreferences((s) => s.language)
   const countryCode = usePreferences((s) => s.countryCode)
+  const baseCurrency = usePreferences((s) => s.baseCurrency)
+  const setBaseCurrency = usePreferences((s) => s.setBaseCurrency)
   const { t } = useTranslation('settings')
   const { data: countries = [] } = useCountries()
+
+  const currentCountry = countries.find((c) => c.code === countryCode)
 
   const handleSelect = useCallback(
     (code: string) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+
+      // Auto-update baseCurrency if user hasn't manually changed it
+      // (i.e. current baseCurrency still matches current country's currency)
+      const newCountry = countries.find((c) => c.code === code)
+      if (
+        newCountry?.currency &&
+        (!currentCountry?.currency || baseCurrency === currentCountry.currency)
+      ) {
+        setBaseCurrency(newCountry.currency)
+      }
+
       changeLanguage(language, code)
     },
-    [language],
+    [language, countries, currentCountry, baseCurrency, setBaseCurrency],
   )
 
   return (

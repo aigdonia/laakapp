@@ -133,7 +133,7 @@ export const defaults = {
     // Menu labels
     profile: 'Profile',
     sign_in: 'Sign In',
-    default_market: 'Default Market',
+
     base_currency: 'Base Currency',
     sharia_authority: 'Sharia Authority',
     compliance_alerts: 'Compliance Alerts',

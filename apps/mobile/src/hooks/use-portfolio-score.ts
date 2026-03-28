@@ -11,7 +11,7 @@ import { getScoreZone } from '@/src/types/insights'
  * Each class contributes min(actualPct, idealPct) to the total score.
  * A perfectly diversified portfolio across all classes = 100.
  *
- * Currency conversion is ignored — all values treated as-is.
+ * Currency conversion is handled upstream — HoldingGroup.totalValue is already converted to baseCurrency.
  */
 export function usePortfolioScore(
   groups: HoldingGroup[],

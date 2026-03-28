@@ -4,6 +4,9 @@ import type { AssetClass } from '@fin-ai/shared'
 import { query } from '@/src/db/duckdb'
 import { buildHoldingsQuery } from '@/src/db/aggregation-queries'
 import { useAssetClasses } from './use-asset-classes'
+import { useExchangeRates } from './use-exchange-rates'
+import { usePreferences } from '@/src/store/preferences'
+import { buildRateMap, convertCurrency, convertTotalToBase } from '@/src/lib/currency'
 import type { AggregatedHolding, AssetType } from '@/src/types/holdings'
 
 export type HoldingGroup = {
@@ -48,6 +51,8 @@ function rowToHolding(row: AggRow): AggregatedHolding {
 
 export function useHoldings() {
   const { data: assetClasses } = useAssetClasses()
+  const { data: exchangeRates } = useExchangeRates()
+  const baseCurrency = usePreferences((s) => s.baseCurrency)
 
   return useQuery({
     queryKey: ['holdings'],
@@ -58,6 +63,7 @@ export function useHoldings() {
       return rows.map(rowToHolding)
     },
     select: (holdings) => {
+      const rates = buildRateMap(exchangeRates ?? [])
       const byType = new Map<string, AggregatedHolding[]>()
 
       for (const h of holdings) {
@@ -68,7 +74,10 @@ export function useHoldings() {
 
       const groups: HoldingGroup[] = Array.from(byType.entries()).map(
         ([type, items]) => {
-          const totalValue = items.reduce((sum, h) => sum + h.totalCost, 0)
+          const totalValue = items.reduce(
+            (sum, h) => sum + convertCurrency(h.totalCost, h.currency, baseCurrency, rates),
+            0,
+          )
           const assetClass = assetClasses?.find((ac) => ac.slug === type)
           items.sort((a, b) => b.totalCost - a.totalCost)
           return { type, assetClass, totalValue, holdings: items }
@@ -83,7 +92,9 @@ export function useHoldings() {
           (costByCurrency[h.currency] ?? 0) + h.totalCost
       }
 
-      return { groups, costByCurrency }
+      const totalInBase = convertTotalToBase(costByCurrency, baseCurrency, rates)
+
+      return { groups, costByCurrency, totalInBase }
     },
     enabled: !!assetClasses,
   })
