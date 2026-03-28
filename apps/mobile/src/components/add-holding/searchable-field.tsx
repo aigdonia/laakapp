@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import * as Haptics from 'expo-haptics'
 import { IconSearch } from '@tabler/icons-react-native'
 import { useTranslation } from 'react-i18next'
@@ -83,32 +83,28 @@ export function SearchableField({
 
       {showResults && (
         <View className="rounded-xl border border-border max-h-48 overflow-hidden mt-1.5 bg-card">
-          <FlatList
-            data={results}
-            keyExtractor={(item) => item.id}
-            keyboardShouldPersistTaps="handled"
-            renderItem={({ item }) => (
-              <Pressable
-                className="flex-row items-center px-3.5 py-2.5 gap-3 border-b border-border active:opacity-70"
-                style={{ borderBottomWidth: StyleSheet.hairlineWidth }}
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-                  onChange(item.symbol)
-                  onStockSelect?.(item)
-                  setQuery('')
-                  setFocused(false)
-                }}
-              >
-                <Text className="text-sm font-bold w-[60px] text-accent">{item.symbol}</Text>
-                <View className="flex-1">
-                  <Text className="text-sm font-medium text-text" numberOfLines={1}>
-                    {item.name}
-                  </Text>
-                  <Text className="text-xs mt-0.5 text-muted">{item.exchange}</Text>
-                </View>
-              </Pressable>
-            )}
-          />
+          {results.map((item) => (
+            <Pressable
+              key={item.id}
+              className="flex-row items-center px-3.5 py-2.5 gap-3 border-b border-border active:opacity-70"
+              style={{ borderBottomWidth: StyleSheet.hairlineWidth }}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+                onChange(item.symbol)
+                onStockSelect?.(item)
+                setQuery('')
+                setFocused(false)
+              }}
+            >
+              <Text className="text-sm font-bold w-[60px] text-accent">{item.symbol}</Text>
+              <View className="flex-1">
+                <Text className="text-sm font-medium text-text" numberOfLines={1}>
+                  {item.name}
+                </Text>
+                <Text className="text-xs mt-0.5 text-muted">{item.exchange}</Text>
+              </View>
+            </Pressable>
+          ))}
         </View>
       )}
     </View>
