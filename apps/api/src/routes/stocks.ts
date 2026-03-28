@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { eq } from "drizzle-orm";
+import { eq, inArray, gt, and } from "drizzle-orm";
 import type { Env } from "../index";
 import type { Database } from "../db";
 import { stocks } from "../db/schema";
@@ -11,7 +11,45 @@ function db(c: { get: (key: string) => unknown }): Database {
 
 const app = new Hono<Env>();
 
-// Mount standard CRUD
+// Filtered GET with countries + updatedSince (must be before CRUD mount)
+app.get("/", async (c) => {
+  const countriesParam = c.req.query("countries");
+  const updatedSince = c.req.query("updatedSince");
+
+  // No params = backward-compatible plain array
+  if (!countriesParam && !updatedSince) {
+    const rows = await db(c).select().from(stocks).all();
+    return c.json(rows);
+  }
+
+  const conditions = [];
+  if (countriesParam) {
+    const codes = countriesParam
+      .split(",")
+      .map((s) => s.trim().toUpperCase())
+      .filter(Boolean);
+    if (codes.length > 0) {
+      conditions.push(inArray(stocks.countryCode, codes));
+    }
+  }
+  if (updatedSince) {
+    conditions.push(gt(stocks.updatedAt, updatedSince));
+  }
+
+  const where = conditions.length > 1 ? and(...conditions) : conditions[0];
+  const rows = await db(c)
+    .select()
+    .from(stocks)
+    .where(where)
+    .all();
+
+  return c.json({
+    data: rows,
+    syncedAt: new Date().toISOString(),
+  });
+});
+
+// Mount standard CRUD (GET "/" already handled above, CRUD adds /:id, POST, PUT, DELETE)
 app.route("/", crudRoutes(stocks));
 
 // Bulk upsert by symbol
