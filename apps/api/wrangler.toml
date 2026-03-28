@@ -2,11 +2,22 @@ name = "fin-ai-api"
 main = "src/index.ts"
 compatibility_date = "2024-12-01"
 
-[triggers]
-crons = ["*/5 * * * *"]  # Every 5 minutes — process scheduled notifications
-
+# --- Local / Dev (default) ---
 [[d1_databases]]
 binding = "DB"
 database_name = "fin-ai-db"
 database_id = "local"
+migrations_dir = "drizzle"
+
+# --- Production ---
+[env.production]
+name = "laak-api"
+
+[env.production.triggers]
+crons = ["*/5 * * * *"]
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "laak-db"
+database_id = "0b317a07-ab6e-41bd-8c2b-7c90e7faec0c"
 migrations_dir = "drizzle"

@@ -9,7 +9,12 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate:local": "wrangler d1 migrations apply fin-ai-db --local",
     "db:seed": "wrangler d1 execute fin-ai-db --local --file=scripts/seed.sql",
-    "db:seed-lookups": "wrangler d1 execute fin-ai-db --local --file=scripts/seed-lookups.sql"
+    "db:seed-lookups": "wrangler d1 execute fin-ai-db --local --file=scripts/seed-lookups.sql",
+    "db:migrate:prod": "wrangler d1 migrations apply laak-db --remote --env production",
+    "db:seed:prod": "wrangler d1 execute laak-db --remote --env production --file=scripts/seed.sql",
+    "db:seed-lookups:prod": "wrangler d1 execute laak-db --remote --env production --file=scripts/seed-lookups.sql",
+    "deploy": "wrangler deploy --env production",
+    "db:push": "wrangler d1 export fin-ai-db --local --no-schema --output=.tmp-data.sql && sed -i '' 's/^INSERT INTO \"d1_migrations\"/-- &/' .tmp-data.sql && sed -i '' 's/^INSERT INTO/INSERT OR REPLACE INTO/' .tmp-data.sql && wrangler d1 execute laak-db --remote --env production --file=.tmp-data.sql && rm .tmp-data.sql"
   },
   "dependencies": {
     "@fin-ai/shared": "workspace:*",
