@@ -18,6 +18,12 @@
   --color-text-muted: #71717a;
 }
 
+/* Arabic font overrides */
+[lang="ar"] {
+  --font-sans: 'IBM Plex Sans Arabic', 'Geist Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'IBM Plex Sans Arabic', 'Nunito Sans Variable', ui-sans-serif, system-ui, sans-serif;
+}
+
 /* Scroll-triggered animation base */
 @keyframes fade-in-up {
   from {

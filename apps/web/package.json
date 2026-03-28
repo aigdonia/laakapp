@@ -13,6 +13,7 @@
     "@fontsource-variable/nunito-sans": "^5.2.7",
     "@fontsource/geist-mono": "^5.2.7",
     "@fontsource/geist-sans": "^5.2.5",
+    "@fontsource/ibm-plex-sans-arabic": "^5.2.9",
     "@fontsource/lora": "^5.2.8",
     "@tailwindcss/vite": "^4.2.2",
     "astro": "^5.18.1",

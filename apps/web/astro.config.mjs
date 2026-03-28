@@ -5,6 +5,13 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://laakapp.olanai.tech',
   output: 'static',
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'ar'],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
   integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],
