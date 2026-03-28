@@ -1,0 +1,143 @@
+{
+  "meta.title": "Laak — Your Money. Your Rules. Your Device.",
+  "meta.description": "The investment portfolio tracker that keeps your financial data exactly where it belongs — with you. Private, offline-first, with built-in compliance screening.",
+
+  "nav.features": "Features",
+  "nav.privacy": "Privacy",
+  "nav.howItWorks": "How it works",
+  "nav.faq": "FAQ",
+  "nav.download": "Download",
+
+  "hero.headline1": "YOUR WEALTH.",
+  "hero.headline2.before": "ONE ",
+  "hero.headline2.accent": "CLEAR",
+  "hero.headline2.after": " PICTURE.",
+  "hero.subtitle": "Investment portfolio tracker. Private. Offline. On your phone.",
+  "hero.cta": "Download for free",
+  "hero.stats.stocks": "620+",
+  "hero.stats.stocksLabel": "stocks covered",
+  "hero.stats.onDevice": "100%",
+  "hero.stats.onDeviceLabel": "on-device",
+  "hero.stats.markets": "3",
+  "hero.stats.marketsLabel": "markets",
+
+  "features.heading": "EVERYTHING YOU NEED.",
+  "features.items": [
+    {
+      "title": "Portfolio at a Glance",
+      "description": "What you own, how it's performing, where it's allocated. Clear layout, not a spreadsheet."
+    },
+    {
+      "title": "Offline-First",
+      "description": "Works without internet. Designed for the real world, not just fast Wi-Fi."
+    },
+    {
+      "title": "Halal Screening",
+      "description": "Know where every stock stands. Screening data from trusted sources, explained in plain language."
+    },
+    {
+      "title": "AI Without Opinions",
+      "description": "Ask in plain language. Get facts and sources — never recommendations."
+    }
+  ],
+
+  "privacy.heading1": "NO EMAIL.",
+  "privacy.heading2": "NO ACCOUNT FORMS.",
+  "privacy.heading3.before": "",
+  "privacy.heading3.accent": "NO BROKER LOGINS.",
+  "privacy.subtitle": "Your financial data stays on your device. You control when to back it up.",
+  "privacy.pillars": [
+    {
+      "title": "On-Device Storage",
+      "description": "All portfolio data stays on your phone — no cloud, no servers."
+    },
+    {
+      "title": "Biometric Lock",
+      "description": "Face ID or fingerprint to open. Nothing leaves the device without you."
+    },
+    {
+      "title": "Anonymous by Default",
+      "description": "No email, no account, no sign-up. Your data lives on your device — you choose if and when to back it up."
+    }
+  ],
+
+  "howItWorks.heading": "HOW IT WORKS",
+  "howItWorks.subtitle": "Three steps. That's it.",
+  "howItWorks.steps": [
+    {
+      "number": "01",
+      "title": "Add your holdings",
+      "description": "Search any supported market. Add investments in seconds."
+    },
+    {
+      "number": "02",
+      "title": "See the full picture",
+      "description": "Performance, allocation, and trends — all in one view."
+    },
+    {
+      "number": "03",
+      "title": "Check compliance",
+      "description": "Compliance screening data from trusted sources, clearly explained."
+    }
+  ],
+
+  "faq.heading": "Questions?",
+  "faq.subtitle": "Here are the ones we get most.",
+  "faq.items": [
+    {
+      "question": "Is Laak a financial advisor?",
+      "answer": "No. Laak is a calculator, translator, and reporter. It shows you data from trusted sources and helps you understand your portfolio — it never tells you what to buy or sell."
+    },
+    {
+      "question": "How does compliance screening work?",
+      "answer": "Laak aggregates screening data from recognized sources like AAOIFI standards and established screening providers. It presents compliance status clearly, with explanations — but the final judgment is always yours. Screening is an optional feature you can enable based on your investment criteria."
+    },
+    {
+      "question": "Where is my data stored?",
+      "answer": "On your device. Laak is offline-first by design. Your portfolio data never leaves your phone unless you explicitly choose to sync it (encrypted, to your own cloud backup)."
+    },
+    {
+      "question": "Do I need to create an account?",
+      "answer": "No email, no password, no personal info required. Just open the app and start tracking. Biometric lock keeps your data secure."
+    },
+    {
+      "question": "Which markets does Laak support?",
+      "answer": "We're starting with the Egyptian Exchange (EGX), expanding to Saudi (Tadawul) and GCC markets, then Malaysia and Southeast Asia. About 620 stocks total across these markets."
+    },
+    {
+      "question": "Does it work without internet?",
+      "answer": "Yes. Laak is designed for unreliable connectivity. You can view your portfolio, check screening status, and explore your data fully offline. Market prices update when you're back online."
+    },
+    {
+      "question": "Is Laak free?",
+      "answer": "The core experience — portfolio tracking, basic screening, and offline access — is free. Premium features like AI-powered analysis, advanced screening details, and multi-market support will be available through a subscription."
+    }
+  ],
+
+  "footer.heading1": "STOP GUESSING.",
+  "footer.heading2.before": "START ",
+  "footer.heading2.accent": "SEEING.",
+  "footer.subtitle": "Track your investment portfolio with full privacy. No account needed.",
+  "footer.appStore": "App Store",
+  "footer.googlePlay": "Google Play",
+  "footer.copyright": "Laak. All rights reserved.",
+  "footer.privacyLink": "Privacy Policy",
+  "footer.termsLink": "Terms",
+
+  "legal.label": "Legal",
+  "legal.home": "Home",
+  "legal.privacy": "Privacy",
+  "legal.terms": "Terms",
+
+  "privacy.page.title": "Privacy Policy — Laak",
+  "privacy.page.description": "Privacy Policy for Laak, the private investment portfolio tracker. Learn how we handle your data with on-device storage, minimal collection, and full transparency.",
+  "privacy.page.heading": "Privacy Policy",
+  "privacy.page.subtitle": "Your data belongs to you. This policy explains exactly how Laak handles it.",
+  "privacy.page.lastUpdated": "Last updated: March 26, 2026",
+
+  "terms.page.title": "Terms of Service — Laak",
+  "terms.page.description": "Terms of Service for Laak, the private investment portfolio tracker. Read our terms covering data privacy, AI features, compliance screening, credits, and more.",
+  "terms.page.heading": "Terms of Service",
+  "terms.page.subtitle": "Please read these terms carefully before using the Laak application.",
+  "terms.page.lastUpdated": "Last updated: March 26, 2026"
+}
