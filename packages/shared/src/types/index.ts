@@ -28,6 +28,7 @@ export type {
   PortfolioPreset,
   PortfolioPresetAllocations,
 } from "./portfolio-preset";
+export type { ExchangeRate } from "./exchange-rate";
 export type {
   PushToken,
   Notification,

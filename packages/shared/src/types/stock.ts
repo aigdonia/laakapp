@@ -7,5 +7,7 @@ export interface Stock extends BaseEntity {
   exchange: string;
   sector: string;
   enabled: boolean;
+  lastPrice: number | null;
+  lastPriceUpdatedAt: string | null;
   translations: Translations;
 }
