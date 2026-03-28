@@ -12,6 +12,7 @@ import { fetchOrCacheLanguages } from '../hooks/use-languages'
 import { fetchOrCacheCountries } from '../hooks/use-countries'
 import { fetchOrCacheOnboardingScreens } from '../hooks/use-onboarding-screens'
 import { fetchOrCachePortfolioPresets } from '../hooks/use-portfolio-presets'
+import { fetchOrCacheExchangeRates } from '../hooks/use-exchange-rates'
 import { loadRemoteTranslations } from '../i18n'
 import { usePreferences } from '../store/preferences'
 import { resolveLocale } from '../i18n/locale'
@@ -76,6 +77,11 @@ export async function prefetchAppData(
     queryClient.prefetchQuery({
       queryKey: ['portfolio-presets'],
       queryFn: fetchOrCachePortfolioPresets,
+      staleTime: STALE_24H,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ['exchange-rates'],
+      queryFn: fetchOrCacheExchangeRates,
       staleTime: STALE_24H,
     }),
   ]

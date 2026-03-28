@@ -138,6 +138,15 @@ export const cachedLearningCards = sqliteTable('cached_learning_cards', {
     .$defaultFn(() => new Date()),
 })
 
+export const cachedExchangeRates = sqliteTable('cached_exchange_rates', {
+  currency: text('currency').primaryKey(),
+  ratePerUsd: real('rate_per_usd').notNull(),
+  enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
+  fetchedAt: integer('fetched_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+})
+
 export const cachedCountries = sqliteTable('cached_countries', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),

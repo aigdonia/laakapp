@@ -133,6 +133,13 @@ export function initAppDb() {
       fetched_at INTEGER NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS cached_exchange_rates (
+      currency TEXT PRIMARY KEY NOT NULL,
+      rate_per_usd REAL NOT NULL,
+      enabled INTEGER NOT NULL DEFAULT 1,
+      fetched_at INTEGER NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS cached_portfolio_presets (
       id TEXT PRIMARY KEY NOT NULL,
       name TEXT NOT NULL,
