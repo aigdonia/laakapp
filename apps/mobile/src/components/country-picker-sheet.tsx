@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next'
 
 import { useThemeColors } from '@/src/theme/colors'
 import { usePreferences } from '@/src/store/preferences'
-import { SUPPORTED_COUNTRIES } from '@/src/i18n/locale'
+import { useCountries } from '@/src/hooks/use-countries'
 import { changeLanguage } from '@/src/i18n'
 
 function Backdrop(props: BottomSheetBackdropProps) {
@@ -23,6 +23,7 @@ export const CountryPickerSheet = forwardRef<BottomSheetModal>(function CountryP
   const language = usePreferences((s) => s.language)
   const countryCode = usePreferences((s) => s.countryCode)
   const { t } = useTranslation('settings')
+  const { data: countries = [] } = useCountries()
 
   const handleSelect = useCallback(
     (code: string) => {
@@ -44,7 +45,7 @@ export const CountryPickerSheet = forwardRef<BottomSheetModal>(function CountryP
         <Text className="text-lg font-semibold text-text mb-4">{t('country')}</Text>
 
         <View className="gap-2">
-          {SUPPORTED_COUNTRIES.map((country) => {
+          {countries.map((country) => {
             const selected = countryCode === country.code
             return (
               <Pressable
@@ -52,7 +53,7 @@ export const CountryPickerSheet = forwardRef<BottomSheetModal>(function CountryP
                 className="flex-row items-center bg-card rounded-xl px-4 py-3.5 border border-border active:opacity-70"
                 onPress={() => handleSelect(country.code)}
               >
-                <Text className="text-2xl mr-3">{country.flag}</Text>
+                <Text className="text-2xl mr-3">{country.flagEmoji}</Text>
                 <Text className="flex-1 text-base font-medium text-text">{country.name}</Text>
                 <View
                   className={`w-5 h-5 rounded-full border-2 items-center justify-center ${

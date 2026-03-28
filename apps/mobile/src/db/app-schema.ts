@@ -138,6 +138,19 @@ export const cachedLearningCards = sqliteTable('cached_learning_cards', {
     .$defaultFn(() => new Date()),
 })
 
+export const cachedCountries = sqliteTable('cached_countries', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  code: text('code').notNull(),
+  currency: text('currency').notNull(),
+  flagEmoji: text('flag_emoji').notNull().default(''),
+  enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
+  translations: text('translations').notNull().default('{}'),
+  fetchedAt: integer('fetched_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+})
+
 export const cachedPortfolioPresets = sqliteTable('cached_portfolio_presets', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),

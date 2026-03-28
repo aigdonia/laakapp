@@ -122,6 +122,17 @@ export function initAppDb() {
       fetched_at INTEGER NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS cached_countries (
+      id TEXT PRIMARY KEY NOT NULL,
+      name TEXT NOT NULL,
+      code TEXT NOT NULL,
+      currency TEXT NOT NULL,
+      flag_emoji TEXT NOT NULL DEFAULT '',
+      enabled INTEGER NOT NULL DEFAULT 1,
+      translations TEXT NOT NULL DEFAULT '{}',
+      fetched_at INTEGER NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS cached_portfolio_presets (
       id TEXT PRIMARY KEY NOT NULL,
       name TEXT NOT NULL,

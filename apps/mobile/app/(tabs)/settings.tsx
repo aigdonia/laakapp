@@ -4,7 +4,6 @@ import { useRouter } from 'expo-router'
 import Constants from 'expo-constants'
 import {
   IconCoins,
-  IconUser,
   IconLogin,
   IconBuildingBank,
   IconCurrencyDollar,
@@ -51,7 +50,7 @@ import { useCredits } from '@/src/store/credits'
 import { restorePurchases, getLakBalance, invalidateLakCache } from '@/src/lib/purchases'
 import { verifyPin, clearPin } from '@/src/lib/pin'
 import { useDisplayLanguages } from '@/src/hooks/use-languages'
-import { SUPPORTED_COUNTRIES } from '@/src/i18n/locale'
+import { useCountries } from '@/src/hooks/use-countries'
 import { usePortfolioPresets } from '@/src/hooks/use-portfolio-presets'
 
 export default function SettingsScreen() {
@@ -84,7 +83,8 @@ export default function SettingsScreen() {
 
   const { data: displayLanguages = [] } = useDisplayLanguages()
   const currentLanguage = displayLanguages.find((l) => l.code === language)
-  const currentCountry = SUPPORTED_COUNTRIES.find((c) => c.code === countryCode)
+  const { data: enabledCountries = [] } = useCountries()
+  const currentCountry = enabledCountries.find((c) => c.code === countryCode)
 
   const themeLabel = themePreference === 'light' ? t('light')
     : themePreference === 'dark' ? t('dark')
@@ -176,12 +176,6 @@ export default function SettingsScreen() {
 
         <SettingsSection title={t('account')}>
           <SettingsMenuCard
-            icon={<IconUser size={22} color={colors.muted} />}
-            label={t('profile')}
-            onPress={comingSoon}
-            dimmed
-          />
-          <SettingsMenuCard
             icon={<IconLogin size={22} color={colors.muted} />}
             label={t('sign_in')}
             onPress={comingSoon}
@@ -223,7 +217,7 @@ export default function SettingsScreen() {
           <SettingsMenuCard
             icon={<IconWorld size={22} color={colors.muted} />}
             label={t('country')}
-            subtitle={currentCountry ? `${currentCountry.flag} ${currentCountry.name}` : countryCode}
+            subtitle={currentCountry ? `${currentCountry.flagEmoji} ${currentCountry.name}` : countryCode}
             onPress={() => countrySheetRef.current?.present()}
           />
           <SettingsMenuCard

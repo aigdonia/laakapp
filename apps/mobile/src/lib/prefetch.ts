@@ -9,6 +9,7 @@ import {
   fetchOrCacheLearningCards,
 } from '../hooks/use-learn-content'
 import { fetchOrCacheLanguages } from '../hooks/use-languages'
+import { fetchOrCacheCountries } from '../hooks/use-countries'
 import { fetchOrCacheOnboardingScreens } from '../hooks/use-onboarding-screens'
 import { fetchOrCachePortfolioPresets } from '../hooks/use-portfolio-presets'
 import { loadRemoteTranslations } from '../i18n'
@@ -24,6 +25,11 @@ export async function prefetchAppData(
     queryClient.prefetchQuery({
       queryKey: ['languages'],
       queryFn: fetchOrCacheLanguages,
+      staleTime: STALE_24H,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ['countries'],
+      queryFn: fetchOrCacheCountries,
       staleTime: STALE_24H,
     }),
     loadRemoteTranslations(locale),
