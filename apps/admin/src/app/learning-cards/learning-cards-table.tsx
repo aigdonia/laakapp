@@ -92,7 +92,11 @@ export function LearningCardsTable({
                   <td className="w-10 px-2 py-3 text-center">
                     <DragHandle id={card.id} />
                   </td>
-                  <td className="px-4 py-3 font-medium">{card.title}</td>
+                  <td className="px-4 py-3 font-medium">
+                    <button type="button" className="hover:underline text-start" onClick={() => setEditingCard(card)}>
+                      {card.title}
+                    </button>
+                  </td>
                   <td className="px-4 py-3 text-muted-foreground">
                     {card.trigger}
                   </td>

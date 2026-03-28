@@ -61,7 +61,11 @@ export function StocksTable({ stocks, languages }: { stocks: Stock[]; languages:
             )}
             {stocks.map((stock) => (
               <tr key={stock.id} className="border-b last:border-b-0">
-                <td className="px-4 py-3 font-medium">{stock.name}</td>
+                <td className="px-4 py-3 font-medium">
+                  <button type="button" className="hover:underline text-start" onClick={() => setEditingStock(stock)}>
+                    {stock.name}
+                  </button>
+                </td>
                 <td className="px-4 py-3 text-muted-foreground">
                   {stock.symbol}
                 </td>

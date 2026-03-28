@@ -243,7 +243,11 @@ export function ArticleCategoriesTable({
                     <DragHandle id={cat.id} />
                   </td>
                   <td className="px-4 py-3 text-xl">{cat.icon}</td>
-                  <td className="px-4 py-3 font-medium">{cat.title}</td>
+                  <td className="px-4 py-3 font-medium">
+                    <button type="button" className="hover:underline text-start" onClick={() => setEditingCategory(cat)}>
+                      {cat.title}
+                    </button>
+                  </td>
                   <td className="px-4 py-3 text-muted-foreground font-mono text-xs">
                     {cat.slug}
                   </td>

@@ -59,7 +59,11 @@ export function ScreeningRulesTable({ rules, languages }: { rules: ScreeningRule
             )}
             {rules.map((rule) => (
               <tr key={rule.id} className="border-b last:border-b-0">
-                <td className="px-4 py-3 font-medium">{rule.name}</td>
+                <td className="px-4 py-3 font-medium">
+                  <button type="button" className="hover:underline text-start" onClick={() => setEditingRule(rule)}>
+                    {rule.name}
+                  </button>
+                </td>
                 <td className="px-4 py-3 text-muted-foreground">
                   {rule.slug}
                 </td>

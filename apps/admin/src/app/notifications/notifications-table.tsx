@@ -173,12 +173,12 @@ export function NotificationsTable({
             {notifications.map((n) => (
               <tr key={n.id} className="border-b last:border-0">
                 <td className="px-4 py-3">
-                  <div>
-                    <div className="font-medium">{n.title}</div>
+                  <button type="button" className="text-start" onClick={() => openEdit(n)}>
+                    <div className="font-medium hover:underline">{n.title}</div>
                     <div className="text-xs text-muted-foreground line-clamp-1">
                       {n.body}
                     </div>
-                  </div>
+                  </button>
                 </td>
                 <td className="px-4 py-3">
                   <Badge variant="outline" className={CATEGORY_COLORS[n.category as NotificationCategory]}>

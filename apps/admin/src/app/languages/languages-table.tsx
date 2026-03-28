@@ -60,7 +60,11 @@ export function LanguagesTable({ languages }: { languages: Language[] }) {
             )}
             {languages.map((language) => (
               <tr key={language.id} className="border-b last:border-b-0">
-                <td className="px-4 py-3 font-medium">{language.name}</td>
+                <td className="px-4 py-3 font-medium">
+                  <button type="button" className="hover:underline text-start" onClick={() => setEditingLanguage(language)}>
+                    {language.name}
+                  </button>
+                </td>
                 <td className="px-4 py-3 text-muted-foreground font-mono">
                   {language.code}
                 </td>

@@ -438,7 +438,9 @@ export function OnboardingTable({
                     </Badge>
                   </td>
                   <td className="px-4 py-3 font-medium">
-                    {screen.translations?.en?.title ?? screen.slug}
+                    <button type="button" className="hover:underline text-start" onClick={() => setEditingScreen(screen)}>
+                      {screen.translations?.en?.title ?? screen.slug}
+                    </button>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground font-mono text-xs">
                     {screen.slug}

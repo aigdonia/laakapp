@@ -92,7 +92,11 @@ export function MicroLessonsTable({
                   <td className="w-10 px-2 py-3 text-center">
                     <DragHandle id={lesson.id} />
                   </td>
-                  <td className="px-4 py-3 font-medium">{lesson.title}</td>
+                  <td className="px-4 py-3 font-medium">
+                    <button type="button" className="hover:underline text-start" onClick={() => setEditingLesson(lesson)}>
+                      {lesson.title}
+                    </button>
+                  </td>
                   <td className="px-4 py-3 text-muted-foreground">
                     {lesson.slug}
                   </td>

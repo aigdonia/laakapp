@@ -101,13 +101,13 @@ export function AssetClassesTable({
                     <DragHandle id={assetClass.id} />
                   </td>
                   <td className="px-4 py-3 font-medium">
-                    <span className="inline-flex items-center gap-2">
+                    <button type="button" className="hover:underline text-start inline-flex items-center gap-2" onClick={() => setEditingAssetClass(assetClass)}>
                       <span
                         className="size-3 shrink-0 rounded-sm"
                         style={{ backgroundColor: assetClass.color }}
                       />
                       {assetClass.name}
-                    </span>
+                    </button>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground font-mono">
                     {assetClass.slug}

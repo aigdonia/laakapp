@@ -208,7 +208,9 @@ export function TranslationsTable({
                 className="border-b last:border-b-0"
               >
                 <td className="px-4 py-3 font-mono text-xs">
-                  {group.key}
+                  <button type="button" className="hover:underline text-start" onClick={() => setEditingGroup(group)}>
+                    {group.key}
+                  </button>
                 </td>
                 <td className="px-4 py-3">
                   <Badge variant="outline">{group.namespace}</Badge>

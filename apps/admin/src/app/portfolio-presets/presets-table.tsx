@@ -102,7 +102,11 @@ export function PresetsTable({
                   <td className="w-10 px-2 py-3 text-center">
                     <DragHandle id={preset.id} />
                   </td>
-                  <td className="px-4 py-3 font-medium">{preset.name}</td>
+                  <td className="px-4 py-3 font-medium">
+                    <button type="button" className="hover:underline text-start" onClick={() => setEditingPreset(preset)}>
+                      {preset.name}
+                    </button>
+                  </td>
                   <td className="px-4 py-3 text-muted-foreground font-mono">
                     {preset.slug}
                   </td>

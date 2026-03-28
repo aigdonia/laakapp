@@ -60,8 +60,10 @@ export function CountriesTable({ countries, languages }: { countries: Country[];
             {countries.map((country) => (
               <tr key={country.id} className="border-b last:border-b-0">
                 <td className="px-4 py-3 font-medium">
-                  <span className="me-2">{country.flagEmoji}</span>
-                  {country.name}
+                  <button type="button" className="hover:underline text-start" onClick={() => setEditingCountry(country)}>
+                    <span className="me-2">{country.flagEmoji}</span>
+                    {country.name}
+                  </button>
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
                   {country.code}

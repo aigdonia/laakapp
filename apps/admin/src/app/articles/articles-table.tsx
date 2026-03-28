@@ -70,7 +70,11 @@ export function ArticlesTable({
             )}
             {articles.map((article) => (
               <tr key={article.id} className="border-b last:border-b-0">
-                <td className="px-4 py-3 font-medium">{article.title}</td>
+                <td className="px-4 py-3 font-medium">
+                  <Link href={`/articles/${article.id}/edit`} className="hover:underline">
+                    {article.title}
+                  </Link>
+                </td>
                 <td className="px-4 py-3 text-muted-foreground">
                   {article.slug}
                 </td>
