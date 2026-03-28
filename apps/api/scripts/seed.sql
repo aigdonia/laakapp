@@ -165,9 +165,9 @@ You hold EGP 100,000 in stocks for investment. Your simplified Zakat would be: 1
 
 ## 1. About Laak
 
-Laak is a personal portfolio visualization and tracking tool. The App allows you to manually record your investments, view portfolio analytics, access educational content, and receive AI-generated narrative summaries of your holdings.
+Laak is a personal portfolio visualization and tracking tool. The App allows you to manually record your investments, view portfolio analytics, access educational content, and receive AI-generated summaries of your holdings.
 
-**Laak is a calculator, translator, and reporter — not a financial advisor, regulatory authority, or trading platform.**
+**Laak is a visualization, tracking, and reporting tool — not a financial advisor, regulatory authority, or trading platform.**
 
 ## 2. Eligibility
 
@@ -186,7 +186,8 @@ All portfolio data — your holdings, transactions, preferences, and notes — i
 
 ### 4.2 What We Do Not Collect
 - We do not collect your name, phone number, or physical address
-- We do not use analytics SDKs, crash reporting tools, or tracking pixels
+- We use anonymous, aggregated usage analytics — no personal data is collected or sent
+- We do not use tracking pixels or advertising identifiers
 - We do not sell, rent, or share your data with third parties for advertising
 - We do not access your brokerage accounts, bank accounts, or financial institutions
 
@@ -207,7 +208,7 @@ Laak offers optional AI-generated portfolio narratives. When you request an AI s
 ### 5.2 What Is Sent
 - Asset breakdown by type and approximate value
 - No personally identifying information (no name, email, or account numbers)
-- A unique request hash to detect duplicate requests
+- A unique digital fingerprint (hash) to detect duplicate requests
 
 ### 5.3 What Is Not Sent
 - Your full transaction history
@@ -249,8 +250,8 @@ Once purchased, your credits remain available indefinitely and do not expire.
 ### 7.4 Refunds
 All purchases are processed through Apple or Google. Refund requests must be submitted directly to Apple App Store or Google Play Store in accordance with their respective refund policies. Laak does not process payments or refunds directly.
 
-### 7.5 No Subscription
-Laak does not use a subscription model. You pay only for credits when you choose to, with no recurring charges.
+### 7.5 Payment Model
+Currently, Laak uses a prepaid credit system with no recurring charges. We may introduce subscription options in the future — in which case you will be clearly notified before any change, and no automatic charges will apply.
 
 ## 8. Affiliate Links & Third-Party Services
 
@@ -384,7 +385,7 @@ If you have questions about these Terms, contact us at:
 
   ('art-privacy', 'Privacy Policy', 'privacy-policy',
    'Privacy Policy for Laak — learn how we handle your investment data with on-device storage, minimal collection, and full transparency.',
-   '**The short version:** Laak stores your portfolio data on your device. We don''t collect personal information, we don''t use analytics or tracking, and we don''t sell your data. Period.
+   '**The short version:** Laak stores your portfolio data on your device. We collect minimal, anonymous usage data to improve the app — but we never collect personal information and we never sell your data. Period.
 
 ## 1. Who We Are
 
@@ -406,11 +407,11 @@ To be absolutely clear, Laak does **not** collect:
 - Your physical location or GPS coordinates
 - Your device identifiers (IDFA, GAID, or fingerprints)
 - Your contacts, photos, calendar, or other personal data
-- Your browsing history or app usage patterns
+- Your browsing history
 - Your brokerage credentials or bank account details
 - Any biometric data (Face ID / Touch ID is handled by your OS, not by us)
 
-We do not embed any analytics SDKs (no Google Analytics, no Mixpanel, no Firebase Analytics, no Sentry, no Amplitude). We do not use tracking pixels or advertising identifiers.
+We use anonymous, aggregated app usage analytics to improve the app (e.g., which features are used most, general navigation patterns). Our analytics provider does not receive your name, email, portfolio data, or any personally identifiable information. We do not use tracking pixels or advertising identifiers.
 
 ## 4. Information Stored On Your Device
 
@@ -576,7 +577,9 @@ For full transparency, these are the only third-party services that may process 
 - **Apple App Store / Google Play** — processes in-app purchases
 - **Apple / Google Sign-In** — authenticates your identity (only if you opt in)
 
-We do not use any advertising networks, analytics platforms, or data brokers.
+- **Analytics provider** — anonymous app usage analytics (no personal data sent)
+
+We do not use any advertising networks or data brokers.
 
 ## 16. Cookies & Website
 
