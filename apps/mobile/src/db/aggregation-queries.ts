@@ -14,11 +14,9 @@ export function buildHoldingsQuery(assetClasses: AssetClass[]): string {
   const subqueries = assetClasses.map((ac) => {
     const keys = ac.aggregationKeys
     const groupCols = keys.length > 0 ? keys.map(toSnakeCase) : ["name"]
-    const selectIdentity = groupCols.map((col) => `${col}`).join(', ')
     const groupBy = groupCols.join(', ')
 
     // Build holding_key as "assetType:key1=val1:key2=val2:currency=XXX"
-    // Always include currency since GROUP BY includes it
     const aggKeys = keys.length > 0 ? keys : ["name"]
     const allKeys = aggKeys.includes("currency") ? aggKeys : [...aggKeys, "currency"]
     const keyParts = allKeys.map(
@@ -27,19 +25,20 @@ export function buildHoldingsQuery(assetClasses: AssetClass[]): string {
     const holdingKeyExpr =
       `'${ac.slug}:' || ${keyParts.join(" || ':' || ")}`
 
-    // Add name and symbol to SELECT for display if not already in group columns
-    const extraCols: string[] = []
-    if (!groupCols.includes('name')) extraCols.push('MAX(name) AS name')
-    if (!groupCols.includes('symbol')) extraCols.push('MAX(symbol) AS symbol')
-    if (!groupCols.includes('exchange')) extraCols.push('MAX(exchange) AS exchange')
-    const extraSelect = extraCols.length > 0 ? ', ' + extraCols.join(', ') : ''
+    // Always produce the same columns so UNION ALL works across asset classes.
+    // Columns in GROUP BY can be selected directly; others need MAX().
+    const nameExpr = groupCols.includes('name') ? 'name' : 'MAX(name)'
+    const symbolExpr = groupCols.includes('symbol') ? 'symbol' : 'MAX(symbol)'
+    const exchangeExpr = groupCols.includes('exchange') ? 'exchange' : 'MAX(exchange)'
 
     return `
       SELECT
         ${holdingKeyExpr} AS holding_key,
         '${ac.slug}' AS asset_type,
-        ${selectIdentity},
-        currency${extraSelect},
+        ${nameExpr} AS name,
+        ${symbolExpr} AS symbol,
+        ${exchangeExpr} AS exchange,
+        currency,
         SUM(CASE WHEN type = 'buy' THEN quantity ELSE -quantity END) AS total_quantity,
         SUM(CASE WHEN type = 'buy' THEN quantity * price_per_unit ELSE 0 END) AS total_cost,
         COUNT(*) AS transaction_count,
