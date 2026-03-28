@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native'
+import { ActivityIndicator, Keyboard, Pressable, ScrollView, Text, View } from 'react-native'
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import * as Haptics from 'expo-haptics'
 import { IconChevronLeft, IconChevronDown } from '@tabler/icons-react-native'
@@ -147,6 +147,8 @@ export function HoldingForm({ draft, onChange, onBack, onSave, saving, lockedFie
         className="flex-1"
         contentContainerClassName="px-5 pt-2 pb-6"
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        automaticallyAdjustKeyboardInsets
         showsVerticalScrollIndicator={false}
       >
         {/* Essential Fields */}
@@ -190,57 +192,58 @@ export function HoldingForm({ draft, onChange, onBack, onSave, saving, lockedFie
             </Animated.View>
           </>
         )}
-      </ScrollView>
 
-      {/* Buy/Sell Toggle + Save Button */}
-      <View className="px-5 pb-8 pt-3">
-        <View className="flex-row bg-card rounded-xl p-1 mb-3">
-          <Pressable
-            className={`flex-1 py-2.5 rounded-lg items-center ${draft.transactionType === 'buy' ? 'bg-accent' : ''}`}
-            onPress={() => {
-              Haptics.selectionAsync()
-              updateField('transactionType', 'buy')
-            }}
-          >
-            <Text
-              className={`text-sm font-semibold ${draft.transactionType === 'buy' ? 'text-[#1c1c1e]' : 'text-muted'}`}
+        {/* Buy/Sell Toggle + Save Button */}
+        <View className="pt-3 pb-2">
+          <View className="flex-row bg-card rounded-xl p-1 mb-3">
+            <Pressable
+              className={`flex-1 py-2.5 rounded-lg items-center ${draft.transactionType === 'buy' ? 'bg-accent' : ''}`}
+              onPress={() => {
+                Haptics.selectionAsync()
+                updateField('transactionType', 'buy')
+              }}
             >
-              {buyLabel}
-            </Text>
-          </Pressable>
-          <Pressable
-            className={`flex-1 py-2.5 rounded-lg items-center ${draft.transactionType === 'sell' ? 'bg-red-500' : ''}`}
-            onPress={() => {
-              Haptics.selectionAsync()
-              updateField('transactionType', 'sell')
-            }}
-          >
-            <Text
-              className={`text-sm font-semibold ${draft.transactionType === 'sell' ? 'text-white' : 'text-muted'}`}
+              <Text
+                className={`text-sm font-semibold ${draft.transactionType === 'buy' ? 'text-[#1c1c1e]' : 'text-muted'}`}
+              >
+                {buyLabel}
+              </Text>
+            </Pressable>
+            <Pressable
+              className={`flex-1 py-2.5 rounded-lg items-center ${draft.transactionType === 'sell' ? 'bg-red-500' : ''}`}
+              onPress={() => {
+                Haptics.selectionAsync()
+                updateField('transactionType', 'sell')
+              }}
             >
-              {sellLabel}
-            </Text>
+              <Text
+                className={`text-sm font-semibold ${draft.transactionType === 'sell' ? 'text-white' : 'text-muted'}`}
+              >
+                {sellLabel}
+              </Text>
+            </Pressable>
+          </View>
+
+          <Pressable
+            className={`bg-accent rounded-2xl py-4 items-center ${!hasRequiredFields ? 'opacity-40' : ''}`}
+            onPress={() => {
+              if (!hasRequiredFields || saving) return
+              Keyboard.dismiss()
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+              onSave()
+            }}
+            disabled={!hasRequiredFields || saving}
+          >
+            {saving ? (
+              <ActivityIndicator color="#1c1c1e" />
+            ) : (
+              <Text className="text-[#1c1c1e] text-base font-bold">
+                {t('add_transaction')}
+              </Text>
+            )}
           </Pressable>
         </View>
-
-        <Pressable
-          className={`bg-accent rounded-2xl py-4 items-center ${!hasRequiredFields ? 'opacity-40' : ''}`}
-          onPress={() => {
-            if (!hasRequiredFields || saving) return
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-            onSave()
-          }}
-          disabled={!hasRequiredFields || saving}
-        >
-          {saving ? (
-            <ActivityIndicator color="#1c1c1e" />
-          ) : (
-            <Text className="text-[#1c1c1e] text-base font-bold">
-              {t('add_transaction')}
-            </Text>
-          )}
-        </Pressable>
-      </View>
+      </ScrollView>
     </View>
   )
 }
