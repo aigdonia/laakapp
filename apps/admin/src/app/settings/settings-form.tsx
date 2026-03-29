@@ -3,6 +3,7 @@
 import { useState } from "react"
 import type { AppSettings, ExchangeRate, Language } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
@@ -35,6 +36,7 @@ export function SettingsForm({
       defaultLanguage: form.get("defaultLanguage") as string,
       onboardingEnabled: form.get("onboardingEnabled") === "on",
       baseCurrency: form.get("baseCurrency") as string,
+      minAppVersion: (form.get("minAppVersion") as string) || "0.0.0",
     }
 
     try {
@@ -132,6 +134,23 @@ export function SettingsForm({
           <p className="text-sm text-muted-foreground">
             The reference currency for exchange rate conversions. All rates are
             defined relative to this currency.
+          </p>
+        </div>
+
+        <Separator />
+
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="minAppVersion">Minimum App Version</Label>
+          <Input
+            id="minAppVersion"
+            name="minAppVersion"
+            defaultValue={settings.minAppVersion}
+            placeholder="0.0.0"
+            className="max-w-xs"
+          />
+          <p className="text-sm text-muted-foreground">
+            Users on versions below this will see a force-update screen and
+            cannot use the app. Use &quot;0.0.0&quot; to allow all versions.
           </p>
         </div>
       </div>

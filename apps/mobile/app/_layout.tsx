@@ -9,12 +9,17 @@ import { useEffect, useState } from 'react'
 import { useColorScheme } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
+import Constants from 'expo-constants'
+import type { AppSettings } from '@fin-ai/shared'
+
 import '@/src/i18n'
 import '@/src/global.css'
 import { initAppDb, useUserDbMigrations } from '@/src/db'
 import { queryClient } from '@/src/lib/query-client'
 import { prefetchAppData } from '@/src/lib/prefetch'
+import { semverGte } from '@/src/lib/semver'
 import { SplashView } from '@/src/components/splash-view'
+import { ForceUpdateScreen } from '@/src/components/force-update-screen'
 import { LockScreen } from '@/src/components/app-lock/lock-screen'
 import { useAppStateLock } from '@/src/hooks/use-app-state-lock'
 import { migrateFromSecureStore, applyThemePreference } from '@/src/store/preferences'
@@ -25,7 +30,7 @@ import { useOnboarding } from '@/src/store/onboarding'
 import { useOnboardingScreens } from '@/src/hooks/use-onboarding-screens'
 import { registerForPushNotifications, setupNotificationListeners } from '@/src/lib/notifications'
 import { useNotificationStore } from '@/src/store/notifications'
-import { getOrCreateUUID } from '@/src/lib/uuid'
+import { ensureAuth } from '@/src/lib/supabase'
 import { ActivityToastOverlay } from '@/src/components/activity-toast'
 import { ConfettiOverlay } from '@/src/components/confetti-overlay'
 
@@ -60,6 +65,7 @@ function RootLayoutInner() {
   const { success: migrated, error: migrationError } = useUserDbMigrations()
   const [progress, setProgress] = useState(0)
   const [dataReady, setDataReady] = useState(false)
+  const [userId, setUserId] = useState<string | null>(null)
 
   useEffect(() => {
     if (error) throw error
@@ -71,8 +77,11 @@ function RootLayoutInner() {
 
   useEffect(() => {
     if (loaded && migrated) {
-      prefetchAppData(setProgress).then(() => setDataReady(true))
-      initPurchases().then(() => useCredits.getState().refreshBalance())
+      ensureAuth().then((id) => {
+        setUserId(id)
+        initPurchases(id).then(() => useCredits.getState().refreshBalance())
+        prefetchAppData(setProgress).then(() => setDataReady(true))
+      })
     }
   }, [loaded, migrated])
 
@@ -84,13 +93,12 @@ function RootLayoutInner() {
 
   // Request ATT, register push notifications & identify with PostHog once data is ready
   useEffect(() => {
-    if (!dataReady) return
+    if (!dataReady || !userId) return
 
     const register = async () => {
       // Request ATT consent before any tracking/identification
       const trackingAllowed = await requestTrackingConsent()
 
-      const userId = await getOrCreateUUID()
       const posthog = getPostHog()
       if (trackingAllowed) {
         posthog?.identify(userId)
@@ -107,7 +115,7 @@ function RootLayoutInner() {
     register()
 
     return setupNotificationListeners()
-  }, [dataReady])
+  }, [dataReady, userId])
 
   const router = useRouter()
   const onboardingCompleted = useOnboarding((s) => s.completed)
@@ -121,6 +129,13 @@ function RootLayoutInner() {
 
   if (!loaded || !migrated || !dataReady) {
     return <SplashView progress={progress} />
+  }
+
+  // Version kill switch — block old app versions
+  const appSettings = queryClient.getQueryData<AppSettings>(['app-settings'])
+  const currentVersion = Constants.expoConfig?.version ?? '0.0.0'
+  if (appSettings?.minAppVersion && !semverGte(currentVersion, appSettings.minAppVersion)) {
+    return <ForceUpdateScreen />
   }
 
   return (

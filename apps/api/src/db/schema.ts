@@ -514,4 +514,5 @@ export const appSettings = sqliteTable("app_settings", {
     .notNull()
     .default(true),
   baseCurrency: text("base_currency").notNull().default("USD"),
+  minAppVersion: text("min_app_version").notNull().default("0.0.0"),
 });

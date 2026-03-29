@@ -1,4 +1,6 @@
+import type { AppSettings } from '@fin-ai/shared'
 import { queryClient } from './query-client'
+import { api } from './api'
 import { fetchOrCacheAssetClasses, STALE_24H } from '../hooks/use-asset-classes'
 import { fetchOrCacheLookups } from '../hooks/use-lookups'
 import { fetchOrCacheStocks } from '../hooks/use-stocks'
@@ -23,6 +25,11 @@ export async function prefetchAppData(
   const { language, countryCode } = usePreferences.getState()
   const locale = resolveLocale(language || 'en', countryCode || 'EG')
   const promises = [
+    queryClient.prefetchQuery({
+      queryKey: ['app-settings'],
+      queryFn: () => api.get<AppSettings>('/app-settings'),
+      staleTime: STALE_24H,
+    }),
     queryClient.prefetchQuery({
       queryKey: ['languages'],
       queryFn: fetchOrCacheLanguages,

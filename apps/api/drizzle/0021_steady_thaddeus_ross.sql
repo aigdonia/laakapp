@@ -1,0 +1,1 @@
+ALTER TABLE `app_settings` ADD `min_app_version` text DEFAULT '0.0.0' NOT NULL;

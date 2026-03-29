@@ -5,4 +5,5 @@ export interface AppSettings extends BaseEntity {
   defaultLanguage: string;
   onboardingEnabled: boolean;
   baseCurrency: string;
+  minAppVersion: string;
 }
