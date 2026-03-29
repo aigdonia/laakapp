@@ -3,7 +3,6 @@ import { Alert, ScrollView } from 'react-native'
 import { useRouter } from 'expo-router'
 import Constants from 'expo-constants'
 import {
-  IconCoins,
   IconLogin,
 
   IconCurrencyDollar,
@@ -26,6 +25,7 @@ import {
 } from '@tabler/icons-react-native'
 import type { BottomSheetModal } from '@gorhom/bottom-sheet'
 
+import { CreditIcon } from '@/src/components/credit-icon'
 import { useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import {
@@ -213,7 +213,7 @@ export default function SettingsScreen() {
       >
         <SettingsSection title={t('credits_section')}>
           <SettingsMenuCard
-            icon={<IconCoins size={22} color={colors.accent} />}
+            icon={<CreditIcon size={22} color={colors.accent} />}
             label={t('credits')}
             subtitle={t('credits_balance', { count: creditBalance })}
             onPress={() => router.push('/credits')}

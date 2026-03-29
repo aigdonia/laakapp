@@ -6,13 +6,13 @@ import {
   BottomSheetScrollView,
 } from '@gorhom/bottom-sheet'
 import {
-  IconCoins,
   IconCheck,
   IconDiamond,
   IconRefresh,
 } from '@tabler/icons-react-native'
 import * as Haptics from 'expo-haptics'
 import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet'
+import { CreditIcon } from '@/src/components/credit-icon'
 import type { PurchasesPackage } from 'react-native-purchases'
 import { useTranslation } from 'react-i18next'
 import Animated, {
@@ -147,7 +147,7 @@ export const CreditsSheet = forwardRef<BottomSheetModal>(function CreditsSheet(_
             {t('current_balance')}
           </Text>
           <View className="flex-row items-center gap-2">
-            <IconCoins size={28} color={colors.accent} />
+            <CreditIcon size={28} color={colors.accent} />
             <Animated.Text
               className="text-4xl font-bold text-accent"
               style={balanceStyle}

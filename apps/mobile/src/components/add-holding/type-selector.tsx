@@ -5,7 +5,6 @@ import {
   IconChartLine,
   IconChartPie,
   IconCurrencyBitcoin,
-  IconCoins,
   IconCash,
   IconCertificate,
   IconBuilding,
@@ -20,12 +19,13 @@ import { useStockSearch } from '@/src/hooks/use-stocks'
 import { useAssetClasses } from '@/src/hooks/use-asset-classes'
 import { useThemeColors } from '@/src/theme/colors'
 import { StockSearchResults } from './stock-search-results'
+import { CreditIcon } from '@/src/components/credit-icon'
 
 const ICON_MAP: Record<string, React.ComponentType<{ size: number; color: string }>> = {
   'chart-line': IconChartLine,
   'chart-pie': IconChartPie,
   'currency-bitcoin': IconCurrencyBitcoin,
-  'coins': IconCoins,
+  'coins': CreditIcon,
   'cash': IconCash,
   'certificate': IconCertificate,
   'building': IconBuilding,

@@ -1,7 +1,7 @@
 import { Pressable, Text, View, useWindowDimensions } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
-import { IconCoins } from '@tabler/icons-react-native'
+import { CreditIcon } from '@/src/components/credit-icon'
 
 import { useThemeColors } from '@/src/theme/colors'
 import { LaakLogo } from '@/src/components/laak-logo'
@@ -25,8 +25,8 @@ export function AppHeader() {
         className="flex-row items-center bg-card px-3 py-1.5 rounded-full gap-1 active:opacity-70"
         onPress={() => router.push('/credits')}
       >
-        <IconCoins size={16} color={colors.accent} />
-        <Text className="text-sm font-semibold text-accent">
+        <CreditIcon size={14} color={colors.accent} />
+        <Text className="text-base font-semibold text-accent">
           {balance}
         </Text>
       </Pressable>

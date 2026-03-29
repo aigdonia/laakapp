@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'react-native'
 import {
-  IconCoins,
   IconCheck,
   IconDiamond,
   IconRefresh,
@@ -9,6 +8,7 @@ import {
 } from '@tabler/icons-react-native'
 import * as Haptics from 'expo-haptics'
 import { useRouter } from 'expo-router'
+import { CreditIcon } from '@/src/components/credit-icon'
 import type { PurchasesPackage } from 'react-native-purchases'
 import { useTranslation } from 'react-i18next'
 import Animated, {
@@ -127,7 +127,7 @@ export default function CreditsScreen() {
             {t('current_balance')}
           </Text>
           <View className="flex-row items-center gap-2">
-            <IconCoins size={28} color={colors.accent} />
+            <CreditIcon size={28} color={colors.accent} />
             <Animated.Text
               className="text-4xl font-bold text-accent"
               style={balanceStyle}
