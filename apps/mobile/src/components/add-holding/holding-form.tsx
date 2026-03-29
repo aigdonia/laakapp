@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import type { Stock } from '@fin-ai/shared'
 import type { TransactionDraft } from '@/src/types/holdings'
 import { useAssetClasses } from '@/src/hooks/use-asset-classes'
+import { useCountries } from '@/src/hooks/use-countries'
 import { useLookups, buildLookupOptionsMap } from '@/src/hooks/use-lookups'
 import { useThemeColors } from '@/src/theme/colors'
 import { FormField } from './form-field'
@@ -43,6 +44,7 @@ export function HoldingForm({ draft, onChange, onBack, onSave, saving, lockedFie
   const advancedOpacity = useSharedValue(0)
   const colors = useThemeColors()
   const { data: assetClasses } = useAssetClasses()
+  const { data: countries } = useCountries()
   const { data: lookups } = useLookups()
   const { t } = useTranslation('add_holding')
 
@@ -72,12 +74,19 @@ export function HoldingForm({ draft, onChange, onBack, onSave, saving, lockedFie
   }
 
   const handleStockSelect = (stock: Stock) => {
+    const currency = countries?.find((c) => c.code === stock.countryCode)?.currency
     onChange({
       ...draft,
       symbol: stock.symbol,
       name: stock.name,
       exchange: stock.exchange,
+      ...(currency ? { currency } : {}),
     })
+  }
+
+  const isAutoFilled = (key: string) => {
+    const isStockOrEtf = draft.assetType === 'stock' || draft.assetType === 'etf'
+    return isStockOrEtf && !!draft.symbol && (key === 'name' || key === 'exchange')
   }
 
   const toggleAdvanced = () => {
@@ -159,7 +168,7 @@ export function HoldingForm({ draft, onChange, onBack, onSave, saving, lockedFie
             value={getDraftValue(draft, field.key)}
             onChange={(val) => updateField(field.key, val)}
             onStockSelect={handleStockSelect}
-            disabled={isFieldLocked(field.key)}
+            disabled={isFieldLocked(field.key) || isAutoFilled(field.key)}
           />
         ))}
 
@@ -186,7 +195,7 @@ export function HoldingForm({ draft, onChange, onBack, onSave, saving, lockedFie
                   value={getDraftValue(draft, field.key)}
                   onChange={(val) => updateField(field.key, val)}
                   onStockSelect={handleStockSelect}
-                  disabled={isFieldLocked(field.key)}
+                  disabled={isFieldLocked(field.key) || isAutoFilled(field.key)}
                 />
               ))}
             </Animated.View>
