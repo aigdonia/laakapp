@@ -39,3 +39,20 @@ export type {
   NotificationLog,
   NotificationWithStats,
 } from "./notification";
+export type {
+  StockCompliance,
+  ComplianceStatus,
+  ScreeningLayer,
+  ComplianceSource,
+  StockFinancial,
+  FiscalPeriod,
+  FinancialSource,
+  DataSource,
+  DataSourceType,
+  ScrapeJob,
+  ScrapeJobStatus,
+  ScrapeJobType,
+  ScrapeJobCreator,
+  ScrapeJobProgress,
+  StockComplianceLean,
+} from "./stock-compliance";
