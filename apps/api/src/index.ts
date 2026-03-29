@@ -24,6 +24,10 @@ import exchangeRatesRoute from "./routes/exchange-rates";
 import notificationsRoute, {
   processScheduledNotifications,
 } from "./routes/notifications";
+import stockComplianceRoute from "./routes/stock-compliance";
+import stockFinancialsRoute from "./routes/stock-financials";
+import dataSourcesRoute from "./routes/data-sources";
+import scrapeJobsRoute from "./routes/scrape-jobs";
 
 export type Env = {
   Bindings: {
@@ -66,6 +70,10 @@ app.route("/portfolio-presets", portfolioPresets);
 app.route("/push-tokens", pushTokensRoute);
 app.route("/notifications", notificationsRoute);
 app.route("/exchange-rates", exchangeRatesRoute);
+app.route("/stock-compliance", stockComplianceRoute);
+app.route("/stock-financials", stockFinancialsRoute);
+app.route("/data-sources", dataSourcesRoute);
+app.route("/scrape-jobs", scrapeJobsRoute);
 
 export default {
   fetch: app.fetch,
