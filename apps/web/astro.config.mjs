@@ -7,7 +7,7 @@ export default defineConfig({
   output: 'static',
   env: {
     schema: {
-      API_URL: envField.string({ context: 'server', access: 'secret', default: 'http://localhost:12003' }),
+      API_URL: envField.string({ context: 'server', access: 'secret', default: 'https://laak-api.ahmedgaber-1988-masterai.workers.dev' }),
     },
   },
   i18n: {
