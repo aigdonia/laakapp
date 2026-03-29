@@ -30,6 +30,17 @@ VALUES
   ('lk-gp-21k', 'gold-purity', '21K', '21K', '{"fineness":"875"}', 2, 1, '{"ar":{"label":"عيار 21"},"ms":{"label":"21K"}}'),
   ('lk-gp-18k', 'gold-purity', '18K', '18K', '{"fineness":"750"}', 3, 1, '{"ar":{"label":"عيار 18"},"ms":{"label":"18K"}}');
 
+-- Sectors (auto-populated from distinct stock sectors)
+INSERT OR IGNORE INTO lookups (id, category, label, value, enabled, "order")
+SELECT
+  'lookup-sector-' || REPLACE(REPLACE(LOWER(sector), ' ', '-'), '&', 'and'),
+  'sectors',
+  sector,
+  REPLACE(REPLACE(LOWER(sector), ' ', '_'), '&', 'and'),
+  1,
+  ROW_NUMBER() OVER (ORDER BY sector)
+FROM (SELECT DISTINCT sector FROM stocks WHERE sector <> '') sub;
+
 -- ─── 2. Migrate asset class fields: segment → lookup:<category> ─
 
 -- Stocks: currency segment → lookup:currencies
