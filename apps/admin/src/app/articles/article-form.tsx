@@ -72,6 +72,8 @@ export function ArticleForm({
       status: currentStatus,
       publishedAt,
       categoryId,
+      coverImage: (form.get("coverImage") as string) || null,
+      author: (form.get("author") as string) || null,
     }
 
     try {
@@ -202,6 +204,37 @@ export function ArticleForm({
                 </option>
               ))}
             </select>
+          </div>
+        </div>
+
+        {/* Cover Image panel */}
+        <div className="rounded-lg border">
+          <div className="border-b px-4 py-2.5">
+            <span className="text-sm font-medium">Cover Image</span>
+          </div>
+          <div className="p-4">
+            <Input
+              id="coverImage"
+              name="coverImage"
+              placeholder="https://..."
+              defaultValue={article?.coverImage ?? ""}
+              className="text-xs"
+            />
+          </div>
+        </div>
+
+        {/* Author panel */}
+        <div className="rounded-lg border">
+          <div className="border-b px-4 py-2.5">
+            <span className="text-sm font-medium">Author</span>
+          </div>
+          <div className="p-4">
+            <Input
+              id="author"
+              name="author"
+              placeholder="Author name"
+              defaultValue={article?.author ?? ""}
+            />
           </div>
         </div>
 

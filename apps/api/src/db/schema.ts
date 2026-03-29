@@ -90,6 +90,8 @@ export const articles = sqliteTable("articles", {
     .default("draft"),
   publishedAt: text("published_at"),
   categoryId: text("category_id"),
+  coverImage: text("cover_image"),
+  author: text("author"),
 });
 
 // ─── Micro Lessons ───────────────────────────────────────────
@@ -438,6 +440,67 @@ export const scrapeJobs = sqliteTable("scrape_jobs", {
   createdBy: text("created_by", { enum: ["admin", "cron", "system"] })
     .notNull()
     .default("admin"),
+});
+
+// ─── Event Types (activity registry) ────────────────────────
+export const eventTypes = sqliteTable("event_types", {
+  ...timestamps,
+  slug: text("slug").notNull().unique(),
+  label: text("label").notNull(),
+  description: text("description").notNull().default(""),
+  enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+});
+
+// ─── Activity Rules ─────────────────────────────────────────
+export const activityRules = sqliteTable("activity_rules", {
+  ...timestamps,
+  name: text("name").notNull(),
+  eventType: text("event_type").notNull(),
+  threshold: integer("threshold").notNull().default(1),
+  actionType: text("action_type", {
+    enum: [
+      "reward_credits",
+      "show_micro_lesson",
+      "show_learning_card",
+      "show_toast",
+      "show_confetti",
+      "unlock_feature",
+    ],
+  }).notNull(),
+  actionPayload: text("action_payload", { mode: "json" })
+    .notNull()
+    .$type<Record<string, unknown>>()
+    .default({}),
+  enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+  order: integer("order").notNull().default(0),
+});
+
+// ─── Activity Events (append-only log) ──────────────────────
+export const activityEvents = sqliteTable("activity_events", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  customerId: text("customer_id").notNull(),
+  eventType: text("event_type").notNull(),
+  metadata: text("metadata", { mode: "json" })
+    .$type<Record<string, unknown>>()
+    .default({}),
+  idempotencyKey: text("idempotency_key"),
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`(current_timestamp)`),
+});
+
+// ─── Activity Completions (prevents double-firing) ──────────
+export const activityCompletions = sqliteTable("activity_completions", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  customerId: text("customer_id").notNull(),
+  ruleId: text("rule_id").notNull(),
+  completedAt: text("completed_at")
+    .notNull()
+    .default(sql`(current_timestamp)`),
 });
 
 // ─── App Settings (singleton) ────────────────────────────────

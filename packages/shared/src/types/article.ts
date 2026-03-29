@@ -11,4 +11,6 @@ export interface Article extends BaseEntity {
   status: ArticleStatus;
   publishedAt: string | null;
   categoryId: string | null;
+  coverImage: string | null;
+  author: string | null;
 }
