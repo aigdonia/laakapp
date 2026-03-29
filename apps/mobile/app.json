@@ -12,7 +12,18 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "tech.olanai.finapp"
+      "bundleIdentifier": "tech.olanai.finapp",
+      "entitlements": {
+        "aps-environment": "production"
+      },
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "LSMinimumSystemVersion": "15.1",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": false,
+          "NSAllowsLocalNetworking": false
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -47,6 +58,12 @@
         {
           "icon": "./assets/images/icon.png",
           "color": "#E6F4FE"
+        }
+      ],
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "Allow Laak to collect anonymous usage data to improve the app experience."
         }
       ]
     ],
