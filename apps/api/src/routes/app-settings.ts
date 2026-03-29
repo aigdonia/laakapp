@@ -6,7 +6,7 @@ import { appSettings } from "../db/schema";
 const app = new Hono<Env>();
 
 function db(c: { get: (key: string) => unknown }): Database {
-  return c.get("db" as never) as Database;
+  return c.get("db") as Database;
 }
 
 // GET / — return the singleton row (or create default)

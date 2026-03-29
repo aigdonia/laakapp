@@ -12,7 +12,7 @@ import {
 import { screenStock } from "../lib/screening-engine";
 
 function db(c: { get: (key: string) => unknown }): Database {
-  return c.get("db" as never) as Database;
+  return c.get("db") as Database;
 }
 
 const app = new Hono<Env>();

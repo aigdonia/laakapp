@@ -9,7 +9,7 @@ import {
 import type { TranslationBundle } from "@fin-ai/shared";
 
 function db(c: { get: (key: string) => unknown }): Database {
-  return c.get("db" as never) as Database;
+  return c.get("db") as Database;
 }
 
 async function bumpVersion(database: Database, languageCode: string) {

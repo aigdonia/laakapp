@@ -9,7 +9,7 @@ type AnyTable = SQLiteTableWithColumns<any>;
 type CrudOptions = { orderable?: boolean };
 
 function db(c: { get: (key: string) => unknown }): Database {
-  return c.get("db" as never) as Database;
+  return c.get("db") as Database;
 }
 
 export function crudRoutes<T extends AnyTable>(

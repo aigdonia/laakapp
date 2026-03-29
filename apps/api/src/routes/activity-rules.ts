@@ -6,7 +6,7 @@ import { activityRules, activityEvents, activityCompletions } from "../db/schema
 import { crudRoutes } from "./_crud";
 
 function db(c: { get: (key: string) => unknown }): Database {
-  return c.get("db" as never) as Database;
+  return c.get("db") as Database;
 }
 
 const crud = crudRoutes(activityRules, { orderable: true });
