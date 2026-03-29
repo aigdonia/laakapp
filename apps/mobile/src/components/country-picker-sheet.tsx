@@ -13,6 +13,7 @@ import { useThemeColors } from '@/src/theme/colors'
 import { usePreferences } from '@/src/store/preferences'
 import { useCountries } from '@/src/hooks/use-countries'
 import { changeLanguage } from '@/src/i18n'
+import { track } from '@/src/lib/analytics'
 
 function Backdrop(props: BottomSheetBackdropProps) {
   return <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
@@ -32,6 +33,7 @@ export const CountryPickerSheet = forwardRef<BottomSheetModal>(function CountryP
   const handleSelect = useCallback(
     (code: string) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+      track('setting_changed', { setting: 'country', value: code })
 
       // Auto-update baseCurrency if user hasn't manually changed it
       // (i.e. current baseCurrency still matches current country's currency)

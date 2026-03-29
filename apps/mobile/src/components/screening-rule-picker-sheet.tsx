@@ -13,6 +13,7 @@ import { IconCheck } from '@tabler/icons-react-native'
 import { useThemeColors } from '@/src/theme/colors'
 import { usePreferences } from '@/src/store/preferences'
 import { useScreeningRules } from '@/src/hooks/use-screening-rules'
+import { track } from '@/src/lib/analytics'
 
 function Backdrop(props: BottomSheetBackdropProps) {
   return <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
@@ -33,6 +34,7 @@ export const ScreeningRulePickerSheet = forwardRef<BottomSheetModal>(function Sc
 
   const handleSelect = useCallback((slug: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    track('setting_changed', { setting: 'sharia_authority', value: slug })
     usePreferences.getState().setShariaAuthority(slug)
   }, [])
 

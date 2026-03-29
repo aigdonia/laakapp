@@ -5,6 +5,7 @@ import type { StateStorage } from 'zustand/middleware'
 
 import { api } from '@/src/lib/api'
 import { getLakBalance, invalidateLakCache, getAppUserID } from '@/src/lib/purchases'
+import { track } from '@/src/lib/analytics'
 
 // --- MMKV instance ---
 
@@ -64,6 +65,7 @@ export const useCredits = create<CreditsState & CreditsActions>()(
           { 'X-RC-Customer-Id': appUserID },
         )
         set({ balance: result.balance })
+        track('credits_spent', { feature, new_balance: result.balance })
         return result
       },
     }),

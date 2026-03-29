@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Alert, useColorScheme } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { router, useLocalSearchParams } from 'expo-router'
@@ -9,6 +9,7 @@ import { TypeSelector, HoldingForm } from '@/src/components/add-holding'
 import { useAddTransaction } from '@/src/hooks/use-add-transaction'
 import type { AssetType, TransactionDraft } from '@/src/types/holdings'
 import { createEmptyDraft } from '@/src/types/holdings'
+import { track } from '@/src/lib/analytics'
 
 type Step = 'select' | 'form'
 
@@ -37,7 +38,20 @@ export default function AddHoldingModal() {
   })
   const addTransaction = useAddTransaction()
 
+  // Track modal open
+  const tracked = useRef(false)
+  useEffect(() => {
+    if (!tracked.current) {
+      tracked.current = true
+      track('holding_add_started', {
+        is_existing_holding: isAddToExisting,
+        asset_type: isAddToExisting ? params.assetType : undefined,
+      })
+    }
+  }, [])
+
   const handleSelectType = (type: AssetType, stock?: Stock) => {
+    track('asset_type_selected', { asset_type: type, has_stock: !!stock })
     const newDraft = createEmptyDraft(type)
     if (stock) {
       newDraft.symbol = stock.symbol
@@ -60,6 +74,12 @@ export default function AddHoldingModal() {
   const handleSave = async () => {
     try {
       await addTransaction.mutateAsync(draft)
+      track('transaction_saved', {
+        asset_type: draft.assetType,
+        transaction_type: draft.transactionType,
+        currency: draft.currency,
+        is_new_holding: !isAddToExisting,
+      })
       router.back()
     } catch {
       Alert.alert(t('common:error'), t('save_failed'))

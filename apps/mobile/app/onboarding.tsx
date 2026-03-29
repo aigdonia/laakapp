@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import {
   Dimensions,
   Image,
@@ -17,6 +17,7 @@ import { useOnboardingScreens } from '@/src/hooks/use-onboarding-screens'
 import { useOnboarding } from '@/src/store/onboarding'
 import { t } from '@/src/lib/translate'
 import type { OnboardingScreen, OnboardingScreenType } from '@fin-ai/shared'
+import { track } from '@/src/lib/analytics'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 
@@ -27,9 +28,29 @@ export default function OnboardingRoute() {
   const { data: screens = [] } = useOnboardingScreens()
   const { answers, setAnswer, markCompleted } = useOnboarding()
   const [index, setIndex] = useState(0)
+  const tracked = useRef(false)
 
   const screen = screens[index]
   const isLast = index === screens.length - 1
+
+  // Track onboarding start (once)
+  useEffect(() => {
+    if (screens.length > 0 && !tracked.current) {
+      tracked.current = true
+      track('onboarding_started', { total_screens: screens.length })
+    }
+  }, [screens.length])
+
+  // Track each screen view
+  useEffect(() => {
+    if (screen) {
+      track('onboarding_screen_viewed', {
+        screen_slug: screen.slug,
+        screen_type: screen.type,
+        screen_index: index,
+      })
+    }
+  }, [index, screen?.slug])
 
   const finish = useCallback(() => {
     markCompleted()
@@ -38,11 +59,12 @@ export default function OnboardingRoute() {
 
   const next = useCallback(() => {
     if (isLast) {
+      track('onboarding_completed', { screens_viewed: index + 1 })
       finish()
     } else {
       setIndex((i) => i + 1)
     }
-  }, [isLast, finish])
+  }, [isLast, finish, index])
 
   if (!screen) return null
 
@@ -64,7 +86,10 @@ export default function OnboardingRoute() {
     >
       {/* Skip button */}
       <View className="flex-row justify-end px-5 pt-2">
-        <Pressable onPress={finish} hitSlop={12}>
+        <Pressable onPress={() => {
+          track('onboarding_skipped', { at_screen_index: index, at_screen_slug: screen?.slug })
+          finish()
+        }} hitSlop={12}>
           <Text className="text-sm font-medium" style={{ color: colors.muted }}>
             Skip
           </Text>
@@ -110,7 +135,10 @@ export default function OnboardingRoute() {
         <ScreenInput
           screen={screen}
           value={answers[screen.slug]}
-          onChange={(v) => setAnswer(screen.slug, v)}
+          onChange={(v) => {
+            track('onboarding_answer_provided', { screen_slug: screen.slug, screen_type: screen.type })
+            setAnswer(screen.slug, v)
+          }}
           colors={colors}
         />
       </View>

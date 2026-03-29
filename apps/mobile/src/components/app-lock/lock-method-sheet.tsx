@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next'
 import { useThemeColors } from '@/src/theme/colors'
 import { type LockMethod, usePreferences } from '@/src/store/preferences'
 import { getBiometricLabel, getBiometricStatus } from '@/src/lib/biometrics'
+import { track } from '@/src/lib/analytics'
 
 function Backdrop(props: BottomSheetBackdropProps) {
   return <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
@@ -38,6 +39,7 @@ export const LockMethodSheet = forwardRef<BottomSheetModal>(function LockMethodS
   const handleSelect = useCallback(
     (value: LockMethod) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+      track('setting_changed', { setting: 'lock_method', value })
       setMethod(value)
     },
     [setMethod],

@@ -12,6 +12,7 @@ import { useThemeColors } from '@/src/theme/colors'
 import { savePinHash } from '@/src/lib/pin'
 import { usePreferences } from '@/src/store/preferences'
 import { PinPad } from './pin-pad'
+import { track } from '@/src/lib/analytics'
 
 function Backdrop(props: BottomSheetBackdropProps) {
   return <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
@@ -47,6 +48,7 @@ export const PinSetupSheet = forwardRef<BottomSheetModal>(function PinSetupSheet
       if (entered === firstPin) {
         await savePinHash(entered)
         setAppLockEnabled(true)
+        track('app_lock_enabled')
         reset()
         ;(ref as React.RefObject<BottomSheetModal>).current?.dismiss()
       } else {

@@ -3,6 +3,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { useFonts } from 'expo-font'
 import { Stack, useRouter } from 'expo-router'
+import * as ScreenCapture from 'expo-screen-capture'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react'
 import { useColorScheme } from 'react-native'
@@ -18,12 +19,14 @@ import { LockScreen } from '@/src/components/app-lock/lock-screen'
 import { useAppStateLock } from '@/src/hooks/use-app-state-lock'
 import { migrateFromSecureStore, applyThemePreference } from '@/src/store/preferences'
 import { initPurchases } from '@/src/lib/purchases'
+import { PostHogProvider } from '@/src/lib/posthog'
 import { useCredits } from '@/src/store/credits'
 import { useOnboarding } from '@/src/store/onboarding'
 import { useOnboardingScreens } from '@/src/hooks/use-onboarding-screens'
 import { registerForPushNotifications, setupNotificationListeners } from '@/src/lib/notifications'
 import { useNotificationStore } from '@/src/store/notifications'
 import { getOrCreateUUID } from '@/src/lib/uuid'
+import { usePostHog } from 'posthog-react-native'
 
 export { ErrorBoundary } from 'expo-router'
 
@@ -38,13 +41,16 @@ applyThemePreference()
 
 export default function RootLayout() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <RootLayoutInner />
-    </QueryClientProvider>
+    <PostHogProvider>
+      <QueryClientProvider client={queryClient}>
+        <RootLayoutInner />
+      </QueryClientProvider>
+    </PostHogProvider>
   )
 }
 
 function RootLayoutInner() {
+  ScreenCapture.usePreventScreenCapture()
   useAppStateLock()
   const colorScheme = useColorScheme()
   const [loaded, error] = useFonts({
@@ -75,12 +81,14 @@ function RootLayoutInner() {
     }
   }, [loaded, migrated])
 
-  // Register push notifications once data is ready
+  // Register push notifications & identify with PostHog once data is ready
+  const posthog = usePostHog()
   useEffect(() => {
     if (!dataReady) return
 
     const register = async () => {
       const userId = await getOrCreateUUID()
+      posthog?.identify(userId)
       const token = await registerForPushNotifications(userId)
       if (token) {
         useNotificationStore.getState().setExpoToken(token)
@@ -90,7 +98,7 @@ function RootLayoutInner() {
     register()
 
     return setupNotificationListeners()
-  }, [dataReady])
+  }, [dataReady, posthog])
 
   const router = useRouter()
   const onboardingCompleted = useOnboarding((s) => s.completed)

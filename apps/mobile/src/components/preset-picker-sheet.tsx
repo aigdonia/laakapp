@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { useThemeColors } from '@/src/theme/colors'
 import { usePreferences } from '@/src/store/preferences'
 import { usePortfolioPresets } from '@/src/hooks/use-portfolio-presets'
+import { track } from '@/src/lib/analytics'
 
 function Backdrop(props: BottomSheetBackdropProps) {
   return <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
@@ -26,6 +27,7 @@ export const PresetPickerSheet = forwardRef<BottomSheetModal>(function PresetPic
   const handleSelect = useCallback(
     (slug: string | null) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+      track('setting_changed', { setting: 'portfolio_preset', value: slug ?? 'equal_weight' })
       usePreferences.getState().setPortfolioPresetSlug(slug)
     },
     [],

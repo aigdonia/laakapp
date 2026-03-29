@@ -57,6 +57,7 @@ import { useScreeningRules } from '@/src/hooks/use-screening-rules'
 import { useAssetClasses } from '@/src/hooks/use-asset-classes'
 import { useExchangeRates } from '@/src/hooks/use-exchange-rates'
 import { exportPortfolioCsv } from '@/src/lib/export-portfolio'
+import { track } from '@/src/lib/analytics'
 
 export default function SettingsScreen() {
   const colors = useThemeColors()
@@ -112,10 +113,8 @@ export default function SettingsScreen() {
 
   const handleAppLockToggle = useCallback(() => {
     if (!appLockEnabled) {
-      // Enable: present PIN setup
       pinSetupSheetRef.current?.present()
     } else {
-      // Disable: prompt for PIN
       Alert.prompt(
         t('lock_disable_title'),
         t('lock_disable_message'),
@@ -124,6 +123,7 @@ export default function SettingsScreen() {
           if (valid) {
             setAppLockEnabled(false)
             await clearPin()
+            track('app_lock_disabled')
           } else {
             Alert.alert(t('lock_wrong_pin'))
           }
@@ -147,6 +147,7 @@ export default function SettingsScreen() {
           onPress: () => {
             resetUserDb()
             queryClient.invalidateQueries({ queryKey: ['holdings'] })
+            track('data_reset_confirmed')
             Alert.alert(t('reset_done_title'), t('reset_done_message'))
           },
         },
@@ -156,15 +157,17 @@ export default function SettingsScreen() {
 
   const handleRestore = useCallback(async () => {
     try {
+      const prevBalance = creditBalance
       await restorePurchases()
       await invalidateLakCache()
       const newBalance = await getLakBalance()
       setBalance(newBalance)
+      track('restore_purchases', { had_balance: prevBalance > 0, new_balance: newBalance })
       Alert.alert(newBalance > 0 ? t('restore_success') : t('restore_empty'))
     } catch {
       Alert.alert(t('restore_failed'))
     }
-  }, [setBalance, t])
+  }, [setBalance, creditBalance, t])
 
   const handleRefreshAppData = useCallback(() => {
     Alert.alert(
@@ -189,9 +192,12 @@ export default function SettingsScreen() {
       Alert.alert(t('common:error'))
       return
     }
+    track('export_started', { base_currency: baseCurrency })
     try {
       await exportPortfolioCsv(assetClasses, exchangeRates ?? [], baseCurrency)
+      track('export_completed', { base_currency: baseCurrency })
     } catch {
+      track('export_failed', { base_currency: baseCurrency })
       Alert.alert(t('export_failed'))
     }
   }, [assetClasses, exchangeRates, baseCurrency, t])
@@ -275,7 +281,10 @@ export default function SettingsScreen() {
             icon={<IconArrowsLeftRight size={22} color={colors.muted} />}
             label={t('swipe_tabs')}
             value={swipeNavigation}
-            onToggle={toggleSwipeNavigation}
+            onToggle={() => {
+              track('setting_changed', { setting: 'swipe_navigation', value: !swipeNavigation })
+              toggleSwipeNavigation()
+            }}
           />
         </SettingsSection>
 

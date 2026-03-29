@@ -13,6 +13,7 @@ import { useThemeColors } from '@/src/theme/colors'
 import { usePreferences } from '@/src/store/preferences'
 import { useDisplayLanguages } from '@/src/hooks/use-languages'
 import { changeLanguage } from '@/src/i18n'
+import { track } from '@/src/lib/analytics'
 
 function Backdrop(props: BottomSheetBackdropProps) {
   return <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
@@ -28,6 +29,7 @@ export const LanguagePickerSheet = forwardRef<BottomSheetModal>(function Languag
   const handleSelect = useCallback(
     (code: string) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+      track('setting_changed', { setting: 'language', value: code })
       changeLanguage(code, countryCode)
     },
     [countryCode],

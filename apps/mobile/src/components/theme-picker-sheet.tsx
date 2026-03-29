@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next'
 
 import { useThemeColors } from '@/src/theme/colors'
 import { type ThemePreference, usePreferences } from '@/src/store/preferences'
+import { track } from '@/src/lib/analytics'
 
 function Backdrop(props: BottomSheetBackdropProps) {
   return <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
@@ -33,6 +34,7 @@ export const ThemePickerSheet = forwardRef<BottomSheetModal>(function ThemePicke
   const handleSelect = useCallback(
     (value: ThemePreference) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+      track('setting_changed', { setting: 'theme', value })
       setTheme(value)
     },
     [setTheme],

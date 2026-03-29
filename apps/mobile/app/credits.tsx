@@ -19,6 +19,7 @@ import Animated, {
 } from 'react-native-reanimated'
 
 import { useThemeColors } from '@/src/theme/colors'
+import { track } from '@/src/lib/analytics'
 import { useCredits } from '@/src/store/credits'
 import {
   getOfferings,
@@ -52,18 +53,26 @@ export default function CreditsScreen() {
   }))
 
   useEffect(() => {
+    track('credits_screen_viewed', { balance })
     getOfferings()
       .then(setPackages)
       .catch(() => {})
   }, [])
 
   const handlePurchase = useCallback(async (pkg: PurchasesPackage) => {
+    const isLifetime = isLifetimePackage(pkg)
+    track('purchase_initiated', {
+      package_id: pkg.identifier,
+      price: pkg.product.priceString,
+      is_lifetime: isLifetime,
+    })
     setLoadingPkgId(pkg.identifier)
     try {
       await purchasePackage(pkg)
       await invalidateLakCache()
       const newBalance = await getLakBalance()
       setBalance(newBalance)
+      track('purchase_completed', { package_id: pkg.identifier, new_balance: newBalance })
 
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
       balanceScale.value = withSequence(
@@ -73,6 +82,7 @@ export default function CreditsScreen() {
       setShowCheck(true)
       setTimeout(() => setShowCheck(false), 1500)
     } catch (e: any) {
+      track('purchase_failed', { package_id: pkg.identifier, user_cancelled: !!e.userCancelled })
       if (!e.userCancelled) {
         Alert.alert(t('purchase_failed'))
       }

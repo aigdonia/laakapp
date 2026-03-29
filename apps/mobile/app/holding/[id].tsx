@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { Alert, Pressable, ScrollView, Text, View, useColorScheme } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { router, useLocalSearchParams } from 'expo-router'
@@ -11,6 +11,7 @@ import { useDeleteTransaction } from '@/src/hooks/use-delete-transaction'
 import { useAssetClasses } from '@/src/hooks/use-asset-classes'
 import { useThemeColors } from '@/src/theme/colors'
 import { parseHoldingKey } from '@/src/db/aggregation-queries'
+import { track } from '@/src/lib/analytics'
 
 function formatDate(date: Date | number | string | null | undefined): string {
   if (date == null) return '—'
@@ -105,6 +106,15 @@ export default function HoldingDetailScreen() {
     )
   }
 
+  useEffect(() => {
+    if (data) {
+      track('holding_detail_viewed', {
+        asset_type: data.assetType,
+        transaction_count: data.transactions.length,
+      })
+    }
+  }, [holdingKey])
+
   const assetClass = assetClasses?.find((ac) => ac.slug === data.assetType)
   const acColor = assetClass?.color ?? '#636366'
   const { keyValues } = parseHoldingKey(holdingKey)
@@ -128,6 +138,10 @@ export default function HoldingDetailScreen() {
           style: 'destructive',
           onPress: async () => {
             await deleteTransaction.mutateAsync(txnId)
+            track('transaction_deleted', {
+              asset_type: data.assetType,
+              is_last_transaction: isLastTxn,
+            })
             if (isLastTxn) router.back()
           },
         },

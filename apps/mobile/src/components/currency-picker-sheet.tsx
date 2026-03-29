@@ -13,6 +13,7 @@ import { useThemeColors } from '@/src/theme/colors'
 import { usePreferences } from '@/src/store/preferences'
 import { useExchangeRates } from '@/src/hooks/use-exchange-rates'
 import { useLookups } from '@/src/hooks/use-lookups'
+import { track } from '@/src/lib/analytics'
 
 function Backdrop(props: BottomSheetBackdropProps) {
   return <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
@@ -35,6 +36,7 @@ export const CurrencyPickerSheet = forwardRef<BottomSheetModal>(function Currenc
   const handleSelect = useCallback(
     (currency: string) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+      track('setting_changed', { setting: 'currency', value: currency })
       setBaseCurrency(currency)
     },
     [setBaseCurrency],

@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next'
 
 import { useThemeColors } from '@/src/theme/colors'
 import { type LockTimeout, usePreferences } from '@/src/store/preferences'
+import { track } from '@/src/lib/analytics'
 
 function Backdrop(props: BottomSheetBackdropProps) {
   return <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} />
@@ -26,6 +27,7 @@ export const LockTimeoutSheet = forwardRef<BottomSheetModal>(function LockTimeou
   const handleSelect = useCallback(
     (value: LockTimeout) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+      track('setting_changed', { setting: 'lock_timeout', value })
       setTimeout_(value)
     },
     [setTimeout_],
