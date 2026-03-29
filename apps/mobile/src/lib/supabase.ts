@@ -3,7 +3,7 @@ import * as SecureStore from 'expo-secure-store'
 import { AppState } from 'react-native'
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? ''
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? ''
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_KEY ?? ''
 
 const secureStoreAdapter = {
   getItem: (key: string) => SecureStore.getItemAsync(key),
