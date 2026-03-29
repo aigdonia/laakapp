@@ -54,6 +54,7 @@ export function StocksTable({ stocks, languages, exchangeLookups }: { stocks: St
               <th className="px-4 py-3 text-start font-medium">Exchange</th>
               <th className="px-4 py-3 text-start font-medium">Sector</th>
               <th className="px-4 py-3 text-end font-medium">Last Price</th>
+              <th className="px-4 py-3 text-start font-medium">Compliance</th>
               <th className="px-4 py-3 text-start font-medium">Status</th>
               <th className="px-4 py-3 text-end font-medium">Actions</th>
             </tr>
@@ -61,7 +62,7 @@ export function StocksTable({ stocks, languages, exchangeLookups }: { stocks: St
           <tbody>
             {stocks.length === 0 && (
               <tr>
-                <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
+                <td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">
                   No stocks yet. Add your first stock.
                 </td>
               </tr>
@@ -87,6 +88,9 @@ export function StocksTable({ stocks, languages, exchangeLookups }: { stocks: St
                 </td>
                 <td className="px-4 py-3 text-end text-muted-foreground tabular-nums">
                   {stock.lastPrice != null ? stock.lastPrice.toFixed(2) : "—"}
+                </td>
+                <td className="px-4 py-3">
+                  <Badge variant="secondary">Not Screened</Badge>
                 </td>
                 <td className="px-4 py-3">
                   <Badge variant={stock.enabled ? "success" : "secondary"}>
