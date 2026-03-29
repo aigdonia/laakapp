@@ -17,16 +17,16 @@ VALUES
 INSERT OR IGNORE INTO asset_classes (id, name, slug, icon, "order", enabled, fields, aggregation_keys)
 VALUES
   ('ac-stocks', 'Stocks', 'stock', 'chart-line', 1, 1,
-   '[{"key":"name","label":"Name","type":"text","placeholder":"e.g. Apple Inc.","required":true},{"key":"symbol","label":"Symbol","type":"stock","placeholder":"e.g. AAPL"},{"key":"exchange","label":"Exchange","type":"text","placeholder":"e.g. EGX"},{"key":"quantity","label":"Shares","type":"number","placeholder":"0","required":true},{"key":"costPerUnit","label":"Avg. Cost / Share","type":"number","placeholder":"0.00","required":true},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"date","label":"Purchase Date","type":"date","advanced":true},{"key":"fees","label":"Fees","type":"number","placeholder":"0.00","advanced":true},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]',
+   '[{"key":"symbol","label":"Symbol","type":"stock","placeholder":"e.g. AAPL"},{"key":"name","label":"Name","type":"text","placeholder":"e.g. Apple Inc.","required":true},{"key":"exchange","label":"Exchange","type":"text","placeholder":"e.g. EGX"},{"key":"quantity","label":"Shares","type":"number","placeholder":"0","required":true},{"key":"costPerUnit","label":"Avg. Cost / Share","type":"number","placeholder":"0.00","required":true},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"date","label":"Purchase Date","type":"date","advanced":true},{"key":"fees","label":"Fees","type":"number","placeholder":"0.00","advanced":true},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]',
    '["symbol","exchange"]'),
   ('ac-etfs', 'ETFs', 'etf', 'chart-pie', 2, 1,
-   '[{"key":"name","label":"Name","type":"text","placeholder":"e.g. Vanguard S&P 500","required":true},{"key":"symbol","label":"Symbol","type":"etf","placeholder":"e.g. VOO"},{"key":"exchange","label":"Exchange","type":"text","placeholder":"e.g. NYSE"},{"key":"quantity","label":"Units","type":"number","placeholder":"0","required":true},{"key":"costPerUnit","label":"Avg. Cost / Unit","type":"number","placeholder":"0.00","required":true},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"date","label":"Purchase Date","type":"date","advanced":true},{"key":"fees","label":"Fees","type":"number","placeholder":"0.00","advanced":true},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]',
+   '[{"key":"symbol","label":"Symbol","type":"etf","placeholder":"e.g. VOO"},{"key":"name","label":"Name","type":"text","placeholder":"e.g. Vanguard S&P 500","required":true},{"key":"exchange","label":"Exchange","type":"text","placeholder":"e.g. NYSE"},{"key":"quantity","label":"Units","type":"number","placeholder":"0","required":true},{"key":"costPerUnit","label":"Avg. Cost / Unit","type":"number","placeholder":"0.00","required":true},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"date","label":"Purchase Date","type":"date","advanced":true},{"key":"fees","label":"Fees","type":"number","placeholder":"0.00","advanced":true},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]',
    '["symbol","exchange"]'),
   ('ac-sukuk', 'Sukuk', 'sukuk', 'certificate', 3, 1,
    '[{"key":"name","label":"Name","type":"text","placeholder":"e.g. Sukuk Al-Ijara","required":true},{"key":"quantity","label":"Face Value","type":"number","placeholder":"0.00","required":true},{"key":"profitRate","label":"Profit Rate (%)","type":"number","placeholder":"0.00"},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"maturityDate","label":"Maturity Date","type":"date","advanced":true},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]',
    '["name","maturityDate"]'),
   ('ac-crypto', 'Crypto', 'crypto', 'currency-bitcoin', 4, 1,
-   '[{"key":"name","label":"Name","type":"text","placeholder":"e.g. Bitcoin","required":true},{"key":"symbol","label":"Symbol","type":"text","placeholder":"e.g. BTC"},{"key":"quantity","label":"Amount","type":"number","placeholder":"0.00000000","required":true},{"key":"costPerUnit","label":"Avg. Cost / Unit","type":"number","placeholder":"0.00","required":true},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"date","label":"Purchase Date","type":"date","advanced":true},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]',
+   '[{"key":"symbol","label":"Symbol","type":"text","placeholder":"e.g. BTC"},{"key":"name","label":"Name","type":"text","placeholder":"e.g. Bitcoin","required":true},{"key":"quantity","label":"Amount","type":"number","placeholder":"0.00000000","required":true},{"key":"costPerUnit","label":"Avg. Cost / Unit","type":"number","placeholder":"0.00","required":true},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"date","label":"Purchase Date","type":"date","advanced":true},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]',
    '["symbol"]'),
   ('ac-gold', 'Gold', 'gold', 'coins', 5, 1,
    '[{"key":"quantity","label":"Weight","type":"number","placeholder":"0.00","required":true},{"key":"unit","label":"Unit","type":"segment","options":[{"label":"Gram","value":"g"},{"label":"Ounce","value":"oz"},{"label":"Tola","value":"tola"}]},{"key":"purity","label":"Purity","type":"segment","options":[{"label":"24K","value":"24K"},{"label":"22K","value":"22K"},{"label":"21K","value":"21K"},{"label":"18K","value":"18K"}]},{"key":"costPerUnit","label":"Cost / Unit","type":"number","placeholder":"0.00","required":true},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"date","label":"Purchase Date","type":"date","advanced":true},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]',
@@ -47,19 +47,19 @@ UPDATE asset_classes SET slug = 'etf' WHERE id = 'ac-etfs' AND slug = 'etfs';
 UPDATE asset_classes SET slug = 'real_estate' WHERE id = 'ac-real-estate' AND slug = 'real-estate';
 
 -- Populate fields for existing rows (INSERT OR IGNORE skips them, so fields would be '[]')
-UPDATE asset_classes SET fields = '[{"key":"name","label":"Name","type":"text","placeholder":"e.g. Apple Inc.","required":true},{"key":"symbol","label":"Symbol","type":"stock","placeholder":"e.g. AAPL"},{"key":"exchange","label":"Exchange","type":"text","placeholder":"e.g. EGX"},{"key":"quantity","label":"Shares","type":"number","placeholder":"0","required":true},{"key":"costPerUnit","label":"Avg. Cost / Share","type":"number","placeholder":"0.00","required":true},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"date","label":"Purchase Date","type":"date","advanced":true},{"key":"fees","label":"Fees","type":"number","placeholder":"0.00","advanced":true},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]' WHERE id = 'ac-stocks' AND fields = '[]';
-UPDATE asset_classes SET fields = '[{"key":"name","label":"Name","type":"text","placeholder":"e.g. Vanguard S&P 500","required":true},{"key":"symbol","label":"Symbol","type":"etf","placeholder":"e.g. VOO"},{"key":"exchange","label":"Exchange","type":"text","placeholder":"e.g. NYSE"},{"key":"quantity","label":"Units","type":"number","placeholder":"0","required":true},{"key":"costPerUnit","label":"Avg. Cost / Unit","type":"number","placeholder":"0.00","required":true},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"date","label":"Purchase Date","type":"date","advanced":true},{"key":"fees","label":"Fees","type":"number","placeholder":"0.00","advanced":true},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]' WHERE id = 'ac-etfs' AND fields = '[]';
+UPDATE asset_classes SET fields = '[{"key":"symbol","label":"Symbol","type":"stock","placeholder":"e.g. AAPL"},{"key":"name","label":"Name","type":"text","placeholder":"e.g. Apple Inc.","required":true},{"key":"exchange","label":"Exchange","type":"text","placeholder":"e.g. EGX"},{"key":"quantity","label":"Shares","type":"number","placeholder":"0","required":true},{"key":"costPerUnit","label":"Avg. Cost / Share","type":"number","placeholder":"0.00","required":true},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"date","label":"Purchase Date","type":"date","advanced":true},{"key":"fees","label":"Fees","type":"number","placeholder":"0.00","advanced":true},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]' WHERE id = 'ac-stocks' AND fields = '[]';
+UPDATE asset_classes SET fields = '[{"key":"symbol","label":"Symbol","type":"etf","placeholder":"e.g. VOO"},{"key":"name","label":"Name","type":"text","placeholder":"e.g. Vanguard S&P 500","required":true},{"key":"exchange","label":"Exchange","type":"text","placeholder":"e.g. NYSE"},{"key":"quantity","label":"Units","type":"number","placeholder":"0","required":true},{"key":"costPerUnit","label":"Avg. Cost / Unit","type":"number","placeholder":"0.00","required":true},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"date","label":"Purchase Date","type":"date","advanced":true},{"key":"fees","label":"Fees","type":"number","placeholder":"0.00","advanced":true},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]' WHERE id = 'ac-etfs' AND fields = '[]';
 UPDATE asset_classes SET fields = '[{"key":"name","label":"Name","type":"text","placeholder":"e.g. Sukuk Al-Ijara","required":true},{"key":"quantity","label":"Face Value","type":"number","placeholder":"0.00","required":true},{"key":"profitRate","label":"Profit Rate (%)","type":"number","placeholder":"0.00"},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"maturityDate","label":"Maturity Date","type":"date","advanced":true},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]' WHERE id = 'ac-sukuk' AND fields = '[]';
-UPDATE asset_classes SET fields = '[{"key":"name","label":"Name","type":"text","placeholder":"e.g. Bitcoin","required":true},{"key":"symbol","label":"Symbol","type":"text","placeholder":"e.g. BTC"},{"key":"quantity","label":"Amount","type":"number","placeholder":"0.00000000","required":true},{"key":"costPerUnit","label":"Avg. Cost / Unit","type":"number","placeholder":"0.00","required":true},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"date","label":"Purchase Date","type":"date","advanced":true},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]' WHERE id = 'ac-crypto' AND fields = '[]';
+UPDATE asset_classes SET fields = '[{"key":"symbol","label":"Symbol","type":"text","placeholder":"e.g. BTC"},{"key":"name","label":"Name","type":"text","placeholder":"e.g. Bitcoin","required":true},{"key":"quantity","label":"Amount","type":"number","placeholder":"0.00000000","required":true},{"key":"costPerUnit","label":"Avg. Cost / Unit","type":"number","placeholder":"0.00","required":true},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"date","label":"Purchase Date","type":"date","advanced":true},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]' WHERE id = 'ac-crypto' AND fields = '[]';
 UPDATE asset_classes SET fields = '[{"key":"quantity","label":"Weight","type":"number","placeholder":"0.00","required":true},{"key":"unit","label":"Unit","type":"segment","options":[{"label":"Gram","value":"g"},{"label":"Ounce","value":"oz"},{"label":"Tola","value":"tola"}]},{"key":"purity","label":"Purity","type":"segment","options":[{"label":"24K","value":"24K"},{"label":"22K","value":"22K"},{"label":"21K","value":"21K"},{"label":"18K","value":"18K"}]},{"key":"costPerUnit","label":"Cost / Unit","type":"number","placeholder":"0.00","required":true},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"date","label":"Purchase Date","type":"date","advanced":true},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]' WHERE id = 'ac-gold' AND fields = '[]';
 UPDATE asset_classes SET fields = '[{"key":"quantity","label":"Amount","type":"number","placeholder":"0.00","required":true},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]' WHERE id = 'ac-cash' AND fields = '[]';
 UPDATE asset_classes SET fields = '[{"key":"name","label":"Property Name","type":"text","placeholder":"e.g. Apartment Downtown","required":true},{"key":"estimatedValue","label":"Estimated Value","type":"number","placeholder":"0.00","required":true},{"key":"currency","label":"Currency","type":"segment","options":[{"label":"EGP","value":"EGP"},{"label":"USD","value":"USD"},{"label":"SAR","value":"SAR"},{"label":"AED","value":"AED"},{"label":"EUR","value":"EUR"},{"label":"GBP","value":"GBP"},{"label":"MYR","value":"MYR"}]},{"key":"costPerUnit","label":"Purchase Price","type":"number","placeholder":"0.00","advanced":true},{"key":"date","label":"Purchase Date","type":"date","advanced":true},{"key":"notes","label":"Notes","type":"text","placeholder":"Optional notes...","advanced":true}]' WHERE id = 'ac-real-estate' AND fields = '[]';
 
 -- Fix symbol field type: text → stock/etf (enables searchable picker in mobile app)
-UPDATE asset_classes SET fields = json_replace(fields, '$[1].type', 'stock')
-  WHERE id = 'ac-stocks' AND json_extract(fields, '$[1].key') = 'symbol' AND json_extract(fields, '$[1].type') = 'text';
-UPDATE asset_classes SET fields = json_replace(fields, '$[1].type', 'etf')
-  WHERE id = 'ac-etfs' AND json_extract(fields, '$[1].key') = 'symbol' AND json_extract(fields, '$[1].type') = 'text';
+UPDATE asset_classes SET fields = json_replace(fields, '$[0].type', 'stock')
+  WHERE id = 'ac-stocks' AND json_extract(fields, '$[0].key') = 'symbol' AND json_extract(fields, '$[0].type') = 'text';
+UPDATE asset_classes SET fields = json_replace(fields, '$[0].type', 'etf')
+  WHERE id = 'ac-etfs' AND json_extract(fields, '$[0].key') = 'symbol' AND json_extract(fields, '$[0].type') = 'text';
 
 -- Populate aggregation_keys for existing rows
 UPDATE asset_classes SET aggregation_keys = '["symbol","exchange"]' WHERE id = 'ac-stocks' AND aggregation_keys = '[]';
@@ -105,6 +105,7 @@ VALUES ('settings-default', 0, 'en', 1);
 INSERT OR IGNORE INTO article_categories (id, title, slug, icon, "order", enabled, translations)
 VALUES
   ('cat-basics', 'Getting Started', 'getting-started', '🚀', 1, 1, '{"ar":{"title":"البداية"}}'),
+  ('cat-support', 'Support', 'support', '💬', 2, 1, '{"ar":{"title":"الدعم"}}'),
   ('cat-legal', 'Legal', 'legal', '📜', 99, 1, '{"ar":{"title":"قانوني"}}');
 
 -- Seed: Articles
@@ -613,4 +614,344 @@ If you have questions or concerns about this Privacy Policy, contact us at:
 ---
 
 *This Privacy Policy was last updated on March 26, 2026.*',
-   'en', 'published', '2026-03-26', 'cat-legal');
+   'en', 'published', '2026-03-26', 'cat-legal'),
+
+-- Support Articles (EN)
+  ('art-support-1', 'Getting Started', 'getting-started',
+   'Everything you need to start using Laak — add holdings, view your portfolio, and check compliance.',
+   'Laak is a private investment portfolio tracker that works entirely on your device. No account needed — just open the app and start adding your holdings.
+
+### First steps
+
+- **Add your first holding** — tap the "+" button, search for a stock by name or symbol, enter your quantity and purchase price.
+- **View your portfolio** — your holdings appear on the home screen with real-time performance data.
+- **Check compliance** — enable Sharia screening in Settings to see compliance status for each stock.',
+   'en', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-2', 'Managing Your Holdings', 'managing-holdings',
+   'How to add, edit, and delete holdings in your portfolio.',
+   'Your portfolio data is stored locally on your device. You have full control over what you add, edit, or remove.
+
+### Adding a holding
+
+Tap "+" on the portfolio screen. Search by stock name, ticker symbol, or market. Enter the number of shares and your average purchase price. You can also add transaction fees and notes.
+
+### Editing a holding
+
+Tap on any holding to view its details, then tap "Edit" to update quantity, price, or notes.
+
+### Deleting a holding
+
+Swipe left on a holding or use the delete option in the detail view. This action removes the holding from your local database only.',
+   'en', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-3', 'Compliance Screening', 'compliance-screening',
+   'How Sharia compliance screening works in Laak, and how to choose your screening authority.',
+   'Laak provides Sharia compliance screening data from recognized sources. This is an informational tool — not a fatwa or religious ruling.
+
+### How screening works
+
+- Screening data is sourced from established providers and standards (e.g., AAOIFI).
+- Each stock shows a compliance status: **Compliant**, **Non-Compliant**, or **Doubtful**.
+- Tap on any status to see the detailed breakdown of financial ratios and thresholds.
+
+### Choosing a screening authority
+
+Different scholars and institutions may apply different thresholds. You can select your preferred screening authority in Settings. The app will show results based on that authority''s methodology.
+
+### Important note
+
+Laak reports screening data — it does not issue rulings. The final decision on any investment is always yours. Consult a qualified scholar if you need a specific ruling.',
+   'en', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-4', 'Privacy & Your Data', 'privacy-and-data',
+   'How Laak keeps your financial data private and how to manage your data.',
+   'Laak is private by design. Your financial data never leaves your device unless you explicitly choose to back it up.
+
+### What stays on your device
+
+- All portfolio holdings and transactions
+- Your app preferences and settings
+- Cached market data and articles
+
+### Resetting your data
+
+Go to **Settings → Reset All Data** to permanently delete all local data. This cannot be undone unless you have a cloud backup.
+
+### Biometric lock
+
+Enable Face ID or Touch ID in Settings to require biometric authentication each time you open the app.',
+   'en', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-5', 'Cloud Backup', 'cloud-backup',
+   'How to enable, restore, and delete cloud backups.',
+   'Cloud backup is entirely optional. If you choose to enable it, your portfolio data is encrypted and stored securely.
+
+### Enabling backup
+
+Go to **Settings → Cloud Backup**. Sign in with Apple or Google. Your data will be encrypted and uploaded automatically.
+
+### Restoring from backup
+
+On a new device, sign in with the same Apple or Google account used for backup. Your portfolio will be restored automatically.
+
+### Deleting your backup
+
+Go to **Settings → Cloud Backup → Delete Backup**. This permanently removes your cloud data. Your local data remains unaffected.',
+   'en', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-6', 'AI-Powered Features', 'ai-features',
+   'How AI portfolio summaries work, what data is shared, and how credits are used.',
+   'Laak offers optional AI-generated portfolio summaries. These are never automatic — they only run when you request them.
+
+### How it works
+
+- Tap "Summarize" on your portfolio screen.
+- A snapshot of your portfolio allocation is sent to our AI provider (Anthropic).
+- You receive a plain-language summary of your portfolio composition.
+
+### What is NOT sent
+
+Your name, email, device info, individual transactions, and personal identifiers are never sent to the AI provider.
+
+### Credits
+
+AI features use credits. You can purchase credits through the app. Each summary request costs a set number of credits.',
+   'en', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-7', 'Offline Mode', 'offline-mode',
+   'What works offline and what requires an internet connection.',
+   'Laak is designed to work without internet. You can view your portfolio, check compliance status, and explore your data fully offline.
+
+### What works offline
+
+- Viewing your portfolio and all holdings
+- Adding, editing, and deleting holdings
+- Viewing cached compliance screening data
+- Reading cached articles and content
+
+### What needs internet
+
+- Refreshing market prices
+- Updating compliance screening data
+- AI-powered summaries
+- Cloud backup and restore',
+   'en', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-8', 'Contact & Feedback', 'contact',
+   'How to reach us for support, bug reports, or feedback.',
+   'We''d love to hear from you. Whether it''s a bug report, feature request, or general feedback — reach out anytime.
+
+**Email:** laak@olanai.tech
+
+We typically respond within 48 hours.',
+   'en', 'published', '2026-03-29', 'cat-support'),
+
+-- Support Articles (AR)
+  ('art-support-ar-1', 'البداية', 'getting-started-ar',
+   'كل ما تحتاجه لبدء استخدام «لك» — أضف استثماراتك، شاهد محفظتك، وتحقق من التوافق.',
+   '«لك» متتبع محافظ استثمارية خاص يعمل بالكامل على جهازك. لا حاجة لحساب — افتح التطبيق وابدأ بإضافة استثماراتك.
+
+### الخطوات الأولى
+
+- **أضف أول استثمار** — اضغط على زر "+"، ابحث عن السهم بالاسم أو الرمز، أدخل الكمية وسعر الشراء.
+- **شاهد محفظتك** — تظهر استثماراتك على الشاشة الرئيسية مع بيانات الأداء المحدّثة.
+- **تحقق من التوافق** — فعّل الفحص الشرعي من الإعدادات لعرض حالة التوافق لكل سهم.',
+   'ar', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-ar-2', 'إدارة استثماراتك', 'managing-holdings-ar',
+   'كيفية إضافة وتعديل وحذف الاستثمارات في محفظتك.',
+   'بيانات محفظتك مخزّنة محلياً على جهازك. لديك تحكم كامل فيما تضيفه أو تعدّله أو تحذفه.
+
+### إضافة استثمار
+
+اضغط على "+" في شاشة المحفظة. ابحث بالاسم أو رمز السهم أو السوق. أدخل عدد الأسهم ومتوسط سعر الشراء. يمكنك أيضاً إضافة رسوم المعاملة وملاحظات.
+
+### تعديل استثمار
+
+اضغط على أي استثمار لعرض تفاصيله، ثم اضغط "تعديل" لتحديث الكمية أو السعر أو الملاحظات.
+
+### حذف استثمار
+
+اسحب يساراً على الاستثمار أو استخدم خيار الحذف في صفحة التفاصيل. هذا الإجراء يحذف الاستثمار من قاعدة بياناتك المحلية فقط.',
+   'ar', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-ar-3', 'الفحص الشرعي', 'compliance-screening-ar',
+   'كيف يعمل فحص التوافق الشرعي في «لك»، وكيفية اختيار جهة الفحص.',
+   'يوفر «لك» بيانات فحص التوافق الشرعي من مصادر معتمدة. هذه أداة معلوماتية — وليست فتوى أو حكماً شرعياً.
+
+### كيف يعمل الفحص
+
+- بيانات الفحص مصدرها جهات معتمدة ومعايير معترف بها (مثل AAOIFI).
+- يعرض كل سهم حالة التوافق: **متوافق** أو **غير متوافق** أو **مشتبه**.
+- اضغط على أي حالة لعرض التفصيل الكامل للنسب المالية والحدود المطبّقة.
+
+### اختيار جهة الفحص
+
+قد يطبّق علماء ومؤسسات مختلفة حدوداً مختلفة. يمكنك اختيار جهة الفحص المفضلة لديك من الإعدادات. سيعرض التطبيق النتائج وفقاً لمنهجية تلك الجهة.
+
+### ملاحظة مهمة
+
+«لك» يعرض بيانات الفحص — ولا يصدر أحكاماً. القرار النهائي بشأن أي استثمار يعود إليك دائماً. استشر عالماً مؤهلاً إن احتجت حكماً محدداً.',
+   'ar', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-ar-4', 'الخصوصية وبياناتك', 'privacy-and-data-ar',
+   'كيف يحافظ «لك» على خصوصية بياناتك المالية وكيفية إدارة بياناتك.',
+   '«لك» مصمّم للخصوصية أولاً. بياناتك المالية لا تغادر جهازك أبداً إلا إذا اخترت النسخ الاحتياطي.
+
+### ما يبقى على جهازك
+
+- جميع الاستثمارات والمعاملات
+- تفضيلاتك وإعدادات التطبيق
+- البيانات المؤقتة للأسعار والمقالات
+
+### إعادة تعيين بياناتك
+
+انتقل إلى **الإعدادات ← إعادة تعيين جميع البيانات** لحذف جميع البيانات المحلية نهائياً. لا يمكن التراجع عن هذا إلا إذا كان لديك نسخة احتياطية سحابية.
+
+### القفل البيومتري
+
+فعّل بصمة الوجه أو الإصبع من الإعدادات لطلب المصادقة البيومترية في كل مرة تفتح فيها التطبيق.',
+   'ar', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-ar-5', 'النسخ الاحتياطي السحابي', 'cloud-backup-ar',
+   'كيفية تفعيل النسخ الاحتياطي السحابي والاستعادة والحذف.',
+   'النسخ الاحتياطي السحابي اختياري بالكامل. إذا اخترت تفعيله، تُشفَّر بياناتك وتُخزَّن بأمان.
+
+### تفعيل النسخ الاحتياطي
+
+انتقل إلى **الإعدادات ← النسخ الاحتياطي السحابي**. سجّل الدخول بحساب Apple أو Google. ستُشفَّر بياناتك وتُرفع تلقائياً.
+
+### الاستعادة من نسخة احتياطية
+
+على جهاز جديد، سجّل الدخول بنفس حساب Apple أو Google المستخدم للنسخ الاحتياطي. ستُستعاد محفظتك تلقائياً.
+
+### حذف النسخة الاحتياطية
+
+انتقل إلى **الإعدادات ← النسخ الاحتياطي السحابي ← حذف النسخة**. هذا يحذف بياناتك السحابية نهائياً. بياناتك المحلية لا تتأثر.',
+   'ar', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-ar-6', 'ميزات الذكاء الاصطناعي', 'ai-features-ar',
+   'كيف تعمل ملخصات الذكاء الاصطناعي، ما البيانات المشاركة، وكيف يُستخدم الرصيد.',
+   'يوفر «لك» ملخصات محفظة اختيارية بالذكاء الاصطناعي. لا تعمل تلقائياً أبداً — تعمل فقط عند طلبك.
+
+### كيف تعمل
+
+- اضغط "تلخيص" في شاشة المحفظة.
+- تُرسل لقطة من توزيع محفظتك إلى مزود الذكاء الاصطناعي (Anthropic).
+- تحصل على ملخص بلغة واضحة عن تكوين محفظتك.
+
+### ما لا يُرسل
+
+اسمك وبريدك الإلكتروني ومعلومات جهازك ومعاملاتك الفردية وبياناتك الشخصية لا تُرسل أبداً إلى مزود الذكاء الاصطناعي.
+
+### الرصيد
+
+ميزات الذكاء الاصطناعي تستهلك رصيداً. يمكنك شراء رصيد من داخل التطبيق. كل طلب تلخيص يكلف عدداً محدداً من الرصيد.',
+   'ar', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-ar-7', 'وضع عدم الاتصال', 'offline-mode-ar',
+   'ما يعمل بدون اتصال وما يحتاج إنترنت.',
+   '«لك» مصمّم للعمل بدون إنترنت. يمكنك عرض محفظتك، والتحقق من حالة التوافق، واستكشاف بياناتك بالكامل بدون اتصال.
+
+### ما يعمل بدون اتصال
+
+- عرض محفظتك وجميع الاستثمارات
+- إضافة وتعديل وحذف الاستثمارات
+- عرض بيانات الفحص الشرعي المؤقتة
+- قراءة المقالات والمحتوى المؤقت
+
+### ما يحتاج إنترنت
+
+- تحديث أسعار السوق
+- تحديث بيانات الفحص الشرعي
+- ملخصات الذكاء الاصطناعي
+- النسخ الاحتياطي والاستعادة السحابية',
+   'ar', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-ar-8', 'التواصل والملاحظات', 'contact-ar',
+   'كيفية التواصل معنا للدعم أو الإبلاغ عن مشاكل أو تقديم ملاحظات.',
+   'نسعد بسماع رأيك. سواء كان بلاغ خطأ أو اقتراح ميزة أو ملاحظة عامة — تواصل معنا في أي وقت.
+
+**البريد الإلكتروني:** laak@olanai.tech
+
+نرد عادةً خلال ٤٨ ساعة.',
+   'ar', 'published', '2026-03-29', 'cat-support'),
+
+-- Support Articles: App Guides (EN)
+  ('art-support-9', 'Your Portfolio at a Glance', 'portfolio-basics',
+   'How to build and read your portfolio view in Laak.',
+   'Laak gives you a clear, visual picture of everything you own — stocks, sukuk, gold, or crypto — all in one screen. To start, tap "+" and search by name or ticker. Enter the number of shares and your average cost. Your home screen updates instantly with total value, gain/loss, and allocation breakdown.
+
+Tap any holding to see performance over time, cost basis, and weight in your portfolio. Swipe between tabs to explore different views. Everything runs on your device — no server calls, no lag. You can add holdings even without internet; prices update the next time you''re online.
+
+Think of Laak as a private mirror for your investments. It shows what you have, how it''s moving, and where your money sits — without opinions or recommendations.',
+   'en', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-10', 'Settings & Preferences', 'settings-guide',
+   'Customize Laak to fit how you invest and how you want your data handled.',
+   'Open **Settings** from the tab bar to personalize your experience. Choose your default market and currency so new holdings match your region. Switch between light, dark, or system theme. Pick your preferred language — the entire interface adapts instantly.
+
+For privacy, enable **Biometric Lock** to require Face ID or fingerprint every time you open the app. Your data never leaves your phone unless you turn on **Cloud Backup**, which encrypts and stores a copy you control.
+
+If you follow a specific screening methodology, select your preferred **Screening Authority** here. This is optional — Laak works perfectly as a pure portfolio tracker without it. You can also reset cached data or clear everything from this screen. Settings are stored locally and sync with your backup if enabled.',
+   'en', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-11', 'Screening & Compliance', 'screening-guide',
+   'How the optional compliance screening layer works in Laak.',
+   'Laak is a portfolio visualizer first — but if compliance matters to you, screening is built right in as an optional layer. Enable it in **Settings → Screening Authority** and choose the methodology that matches your criteria (e.g., AAOIFI).
+
+Once active, each holding shows a status badge: **Compliant**, **Non-Compliant**, or **Doubtful**. Tap the badge for a full breakdown — debt-to-market-cap, interest income ratio, and which thresholds apply. Screening data comes from recognized sources and updates when you''re online.
+
+You can switch authorities anytime to compare results. Laak never tells you what to do with the data — it presents the numbers and the source, clearly. No recommendations, no pressure. If you don''t need screening, simply leave it off and use Laak as a straightforward investment tracker.',
+   'en', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-12', 'Credits & Premium Features', 'credits-guide',
+   'How credits work for AI summaries and premium features in Laak.',
+   'Laak''s core experience — portfolio tracking, offline access, and screening — is free. Premium features like AI-powered portfolio summaries run on a simple credit system.
+
+Credits are purchased inside the app through the App Store or Google Play. No subscription — you buy what you need, when you need it. Each AI summary costs a fixed number of credits. Tap **"Summarize"** on your portfolio to get a plain-language breakdown of your allocation, concentration, and trends.
+
+The AI sees only your portfolio allocation percentages — never your name, email, transactions, or device info. Summaries are generated on demand and stored locally on your device.
+
+Unused credits don''t expire. You can check your balance anytime in **Settings → Credits**. If you never use AI features, you never need credits — the rest of the app is fully functional without them.',
+   'en', 'published', '2026-03-29', 'cat-support'),
+
+-- Support Articles: App Guides (AR)
+  ('art-support-ar-9', 'محفظتك في لمحة', 'portfolio-basics-ar',
+   'كيف تبني وتقرأ عرض محفظتك في «لك».',
+   '«لك» يعطيك صورة واضحة ومرئية لكل ما تملكه — أسهم أو صكوك أو ذهب أو عملات رقمية — في شاشة واحدة. للبدء، اضغط "+" وابحث بالاسم أو الرمز. أدخل عدد الأسهم ومتوسط التكلفة. تتحدّث الشاشة الرئيسية فوراً بالقيمة الإجمالية والربح/الخسارة وتوزيع المحفظة.
+
+اضغط على أي استثمار لعرض الأداء عبر الزمن وأساس التكلفة ووزنه في المحفظة. اسحب بين التبويبات لاستكشاف عروض مختلفة. كل شيء يعمل على جهازك — بلا اتصال بخوادم وبلا تأخير. يمكنك إضافة استثمارات حتى بدون إنترنت؛ تتحدّث الأسعار عند عودة الاتصال.
+
+فكّر في «لك» كمرآة خاصة لاستثماراتك. يُظهر ما تملكه وكيف يتحرك وأين يقع مالك — بدون آراء أو توصيات.',
+   'ar', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-ar-10', 'الإعدادات والتفضيلات', 'settings-guide-ar',
+   'خصّص «لك» ليناسب أسلوب استثمارك وطريقة إدارتك لبياناتك.',
+   'افتح **الإعدادات** من شريط التبويبات لتخصيص تجربتك. اختر سوقك وعملتك الافتراضية ليتوافق كل استثمار جديد مع منطقتك. بدّل بين المظهر الفاتح أو الداكن أو وضع النظام. اختر لغتك المفضلة — تتكيّف الواجهة بالكامل فوراً.
+
+للخصوصية، فعّل **القفل البيومتري** لطلب بصمة الوجه أو الإصبع في كل مرة تفتح فيها التطبيق. بياناتك لا تغادر هاتفك أبداً إلا إذا فعّلت **النسخ الاحتياطي السحابي** الذي يُشفّر ويحفظ نسخة تتحكم فيها أنت.
+
+إن كنت تتبع منهجية فحص محددة، اختر **جهة الفحص** المفضلة من هنا. هذا اختياري — «لك» يعمل بامتياز كمتتبع محفظة بحت بدونه. يمكنك أيضاً مسح البيانات المؤقتة أو إعادة تعيين كل شيء من هذه الشاشة.',
+   'ar', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-ar-11', 'الفحص والتوافق', 'screening-guide-ar',
+   'كيف تعمل طبقة فحص التوافق الاختيارية في «لك».',
+   '«لك» متتبع محافظ أولاً — لكن إن كان التوافق الشرعي يهمك، فالفحص مدمج كطبقة اختيارية. فعّله من **الإعدادات ← جهة الفحص** واختر المنهجية التي تناسب معاييرك (مثل AAOIFI).
+
+بعد التفعيل، يظهر لكل استثمار شارة حالة: **متوافق** أو **غير متوافق** أو **مشتبه**. اضغط على الشارة لعرض التفصيل الكامل — نسبة الدين إلى القيمة السوقية، ونسبة إيرادات الفوائد، والحدود المطبّقة. بيانات الفحص مصدرها جهات معتمدة وتتحدّث عند الاتصال بالإنترنت.
+
+يمكنك تبديل الجهات في أي وقت للمقارنة. «لك» لا يخبرك أبداً بما تفعل بالبيانات — يعرض الأرقام والمصدر بوضوح. لا توصيات ولا ضغوط. إن لم تحتج الفحص، اتركه معطّلاً واستخدم «لك» كمتتبع استثمارات مباشر.',
+   'ar', 'published', '2026-03-29', 'cat-support'),
+
+  ('art-support-ar-12', 'الرصيد والميزات المتقدمة', 'credits-guide-ar',
+   'كيف يعمل الرصيد لملخصات الذكاء الاصطناعي والميزات المتقدمة في «لك».',
+   'التجربة الأساسية في «لك» — تتبع المحفظة والوصول بدون إنترنت والفحص — مجانية. الميزات المتقدمة مثل ملخصات المحفظة بالذكاء الاصطناعي تعمل بنظام رصيد بسيط.
+
+يُشترى الرصيد من داخل التطبيق عبر App Store أو Google Play. لا اشتراك — تشتري ما تحتاجه عندما تحتاجه. كل ملخص بالذكاء الاصطناعي يكلف عدداً ثابتاً من الرصيد. اضغط **"تلخيص"** في محفظتك للحصول على تحليل بلغة واضحة لتوزيع محفظتك وتركيزها واتجاهاتها.
+
+الذكاء الاصطناعي يرى فقط نسب توزيع محفظتك — لا اسمك ولا بريدك ولا معاملاتك ولا معلومات جهازك. تُنشأ الملخصات عند الطلب وتُخزَّن محلياً على جهازك.
+
+الرصيد غير المستخدم لا تنتهي صلاحيته. تحقق من رصيدك في **الإعدادات ← الرصيد**. إن لم تستخدم ميزات الذكاء الاصطناعي أبداً، لا تحتاج رصيداً — باقي التطبيق يعمل بالكامل بدونه.',
+   'ar', 'published', '2026-03-29', 'cat-support');
