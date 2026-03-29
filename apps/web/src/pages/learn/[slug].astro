@@ -1,0 +1,119 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import { t, localePath } from '../../i18n/utils';
+import { API_URL } from 'astro:env/server';
+import { marked } from 'marked';
+
+import '@fontsource-variable/nunito-sans';
+import '@fontsource/geist-sans/400.css';
+import '@fontsource/geist-sans/500.css';
+import '@fontsource/geist-sans/600.css';
+import '@fontsource/geist-sans/700.css';
+import '@fontsource/lora/400.css';
+import '../../styles/global.css';
+
+const locale = 'en' as const;
+
+export async function getStaticPaths() {
+  const allArticles = await fetch(`${import.meta.env.API_URL ?? 'http://localhost:12003'}/articles`).then((r) => r.json()).catch(() => []);
+  const categories = await fetch(`${import.meta.env.API_URL ?? 'http://localhost:12003'}/article-categories`).then((r) => r.json()).catch(() => []);
+  const excludedSlugs = new Set(['support', 'legal']);
+  const excludedIds = new Set(categories.filter((c: any) => excludedSlugs.has(c.slug)).map((c: any) => c.id));
+
+  return allArticles
+    .filter((a: any) => a.status === 'published' && a.languageCode === 'en' && !excludedIds.has(a.categoryId))
+    .map((article: any) => ({
+      params: { slug: article.slug },
+      props: { article, categories },
+    }));
+}
+
+const { article, categories } = Astro.props;
+const category = categories.find((c: any) => c.id === article.categoryId) ?? null;
+const readTime = Math.max(1, Math.ceil(article.body.split(/\s+/).length / 200));
+const date = article.publishedAt
+  ? new Date(article.publishedAt).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  : null;
+const htmlBody = await marked.parse(article.body);
+---
+
+<Layout
+  locale={locale}
+  title={`${article.title} — Laak Learn`}
+  description={article.summary}
+>
+  <Nav locale={locale} />
+
+  <main class="pt-28 sm:pt-36 pb-20 sm:pb-28">
+    <div class="max-w-3xl mx-auto px-6">
+      {/* Back link */}
+      <a
+        href={localePath(locale, '/learn')}
+        class="inline-flex items-center gap-2 text-text-muted hover:text-accent text-sm transition-colors mb-8 animate-on-scroll"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        {t(locale, 'learn.backToLearn')}
+      </a>
+
+      {/* Article header */}
+      <header class="mb-10 animate-on-scroll">
+        {category && (
+          <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-accent uppercase tracking-widest mb-4">
+            <span>{category.icon}</span>
+            {category.title}
+          </span>
+        )}
+
+        <h1 class="font-heading font-black text-[clamp(1.75rem,4vw,2.75rem)] leading-[1.15] tracking-tight mb-5">
+          {article.title}
+        </h1>
+
+        <div class="flex items-center gap-3 text-text-muted text-sm">
+          {article.author && <span class="text-text-secondary">{article.author}</span>}
+          {article.author && date && <span class="opacity-40">·</span>}
+          {date && <span>{date}</span>}
+          <span class="opacity-40">·</span>
+          <span>{readTime} {t(locale, 'learn.minRead')}</span>
+        </div>
+      </header>
+
+      {/* Cover image */}
+      {article.coverImage && (
+        <div class="mb-10 rounded-2xl overflow-hidden animate-on-scroll animate-delay-100">
+          <img
+            src={article.coverImage}
+            alt={article.title}
+            class="w-full"
+          />
+        </div>
+      )}
+
+      {/* Article body */}
+      <div class="prose animate-on-scroll animate-delay-200">
+        <Fragment set:html={htmlBody} />
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-white/[0.06] py-10">
+    <div class="max-w-[90rem] mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5">
+        <img src="/images/laak-logo.svg" alt="Laak" class="h-6 w-auto invert opacity-60" />
+        <span class="text-text-muted text-sm">&copy; {new Date().getFullYear()} {t(locale, 'footer.copyright')}</span>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href={localePath(locale, '/')} class="text-text-muted hover:text-text-secondary text-sm transition-colors">{t(locale, 'legal.home')}</a>
+        <a href={localePath(locale, '/learn')} class="text-text-muted hover:text-text-secondary text-sm transition-colors">{t(locale, 'footer.learnLink')}</a>
+        <a href={localePath(locale, '/privacy')} class="text-text-muted hover:text-text-secondary text-sm transition-colors">{t(locale, 'legal.privacy')}</a>
+        <a href={localePath(locale, '/terms')} class="text-text-muted hover:text-text-secondary text-sm transition-colors">{t(locale, 'legal.terms')}</a>
+      </div>
+    </div>
+  </footer>
+</Layout>

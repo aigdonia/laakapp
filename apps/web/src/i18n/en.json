@@ -7,6 +7,7 @@
   "nav.howItWorks": "How it works",
   "nav.faq": "FAQ",
   "nav.download": "Download",
+  "nav.learn": "Learn",
 
   "hero.headline1": "YOUR WEALTH.",
   "hero.headline2.before": "ONE ",
@@ -149,5 +150,19 @@
   "support.page.subtitle": "Find answers to common questions about using Laak.",
   "support.label": "Help Center",
   "support.toc": "On this page",
-  "support.empty": "Support articles are being prepared. Check back soon."
+  "support.empty": "Support articles are being prepared. Check back soon.",
+
+  "footer.learnLink": "Learn",
+
+  "learn.page.title": "Learn — Laak",
+  "learn.page.description": "Educational articles on Islamic finance, halal investing, and personal finance for Muslim investors.",
+  "learn.page.heading": "Learn",
+  "learn.page.subtitle": "Understand your money. Make informed decisions.",
+  "learn.label": "Education",
+  "learn.filterAll": "All",
+  "learn.readMore": "Read article",
+  "learn.backToLearn": "Back to Learn",
+  "learn.empty": "Articles are being prepared. Check back soon.",
+  "learn.featured": "Featured",
+  "learn.minRead": "min read"
 }

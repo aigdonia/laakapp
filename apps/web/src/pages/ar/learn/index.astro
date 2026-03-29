@@ -1,0 +1,88 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Nav from '../../../components/Nav.astro';
+import LearnHero from '../../../components/LearnHero.astro';
+import CategoryFilter from '../../../components/CategoryFilter.astro';
+import ArticleCard from '../../../components/ArticleCard.astro';
+import { t, localePath } from '../../../i18n/utils';
+import { API_URL } from 'astro:env/server';
+
+import '@fontsource-variable/nunito-sans';
+import '@fontsource/geist-sans/400.css';
+import '@fontsource/geist-sans/500.css';
+import '@fontsource/geist-sans/600.css';
+import '@fontsource/geist-sans/700.css';
+import '@fontsource/lora/400.css';
+import '@fontsource/ibm-plex-sans-arabic/400.css';
+import '@fontsource/ibm-plex-sans-arabic/500.css';
+import '@fontsource/ibm-plex-sans-arabic/600.css';
+import '@fontsource/ibm-plex-sans-arabic/700.css';
+import '../../../styles/global.css';
+
+const locale = 'ar' as const;
+
+const allArticles = await fetch(`${API_URL}/articles`).then((r) => r.json()).catch(() => []);
+const categories = await fetch(`${API_URL}/article-categories`).then((r) => r.json()).catch(() => []);
+
+const excludedSlugs = new Set(['support', 'legal']);
+const excludedIds = new Set(categories.filter((c: any) => excludedSlugs.has(c.slug)).map((c: any) => c.id));
+const learnCategories = categories.filter((c: any) => !excludedSlugs.has(c.slug) && c.enabled);
+
+const articles = allArticles
+  .filter((a: any) => a.status === 'published' && a.languageCode === 'ar' && !excludedIds.has(a.categoryId))
+  .sort((a: any, b: any) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+
+const featuredArticle = articles[0] ?? null;
+const featuredCategory = featuredArticle
+  ? learnCategories.find((c: any) => c.id === featuredArticle.categoryId) ?? null
+  : null;
+---
+
+<Layout
+  locale={locale}
+  title={t(locale, 'learn.page.title')}
+  description={t(locale, 'learn.page.description')}
+>
+  <Nav locale={locale} />
+
+  <main class="pt-28 sm:pt-36 pb-20 sm:pb-28">
+    <div class="max-w-6xl mx-auto px-6">
+      <LearnHero locale={locale} featuredArticle={featuredArticle} featuredCategory={featuredCategory} />
+
+      {learnCategories.length > 0 && (
+        <CategoryFilter categories={learnCategories} locale={locale} />
+      )}
+
+      {articles.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {articles.map((article: any) => {
+            const category = learnCategories.find((c: any) => c.id === article.categoryId) ?? null;
+            return (
+              <div data-article-category={article.categoryId ?? ''}>
+                <ArticleCard article={article} category={category} locale={locale} />
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <p class="text-text-muted text-center py-20">{t(locale, 'learn.empty')}</p>
+      )}
+    </div>
+  </main>
+
+  <footer class="border-t border-white/[0.06] py-10">
+    <div class="max-w-[90rem] mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5">
+        <img src="/images/laak-logo.svg" alt="Laak" class="h-6 w-auto invert opacity-60" />
+        <span class="text-text-muted text-sm">&copy; {new Date().getFullYear()} {t(locale, 'footer.copyright')}</span>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href={localePath(locale, '/')} class="text-text-muted hover:text-text-secondary text-sm transition-colors">{t(locale, 'legal.home')}</a>
+        <a href={localePath(locale, '/learn')} class="text-text-secondary text-sm transition-colors">{t(locale, 'footer.learnLink')}</a>
+        <a href={localePath(locale, '/privacy')} class="text-text-muted hover:text-text-secondary text-sm transition-colors">{t(locale, 'legal.privacy')}</a>
+        <a href={localePath(locale, '/terms')} class="text-text-muted hover:text-text-secondary text-sm transition-colors">{t(locale, 'legal.terms')}</a>
+        <a href={localePath(locale, '/support')} class="text-text-muted hover:text-text-secondary text-sm transition-colors">{t(locale, 'footer.supportLink')}</a>
+      </div>
+    </div>
+  </footer>
+</Layout>

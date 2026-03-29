@@ -1,0 +1,81 @@
+---
+import type { Locale } from '../i18n/config';
+import { t } from '../i18n/utils';
+
+interface Props {
+  categories: Array<{
+    id: string;
+    title: string;
+    icon: string;
+    translations?: Record<string, Record<string, string>>;
+  }>;
+  locale: Locale;
+}
+
+const { categories, locale } = Astro.props;
+
+function getCategoryTitle(cat: Props['categories'][number]) {
+  if (locale !== 'en' && cat.translations?.[locale]?.title) {
+    return cat.translations[locale].title;
+  }
+  return cat.title;
+}
+---
+
+<div class="flex flex-wrap gap-2 mb-10 animate-on-scroll animate-delay-200" id="category-filter">
+  <button
+    data-category-id=""
+    class="filter-btn active text-sm px-4 py-2 rounded-full font-medium transition-all"
+  >
+    {t(locale, 'learn.filterAll')}
+  </button>
+  {categories.map((cat) => (
+    <button
+      data-category-id={cat.id}
+      class="filter-btn text-sm px-4 py-2 rounded-full font-medium transition-all"
+    >
+      {cat.icon} {getCategoryTitle(cat)}
+    </button>
+  ))}
+</div>
+
+<style>
+  .filter-btn {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--color-text-secondary);
+    border: 1px solid transparent;
+  }
+
+  .filter-btn:hover {
+    color: var(--color-text-primary);
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .filter-btn.active {
+    background: var(--color-accent);
+    color: var(--color-surface);
+    border-color: var(--color-accent);
+  }
+</style>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('#category-filter .filter-btn');
+  const cards = document.querySelectorAll<HTMLElement>('[data-article-category]');
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      buttons.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const selectedId = btn.dataset.categoryId;
+
+      cards.forEach((card) => {
+        if (!selectedId || card.dataset.articleCategory === selectedId) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>

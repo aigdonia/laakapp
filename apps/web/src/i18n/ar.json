@@ -7,6 +7,7 @@
   "nav.howItWorks": "كيف يعمل",
   "nav.faq": "أسئلة شائعة",
   "nav.download": "حمّل",
+  "nav.learn": "تعلّم",
 
   "hero.headline1": "مدخراتك.",
   "hero.headline2.before": "كلها ",
@@ -149,5 +150,19 @@
   "support.page.subtitle": "اعثر على إجابات للأسئلة الشائعة حول استخدام «لك».",
   "support.label": "مركز المساعدة",
   "support.toc": "في هذه الصفحة",
-  "support.empty": "مقالات الدعم قيد الإعداد. تحقق مرة أخرى قريباً."
+  "support.empty": "مقالات الدعم قيد الإعداد. تحقق مرة أخرى قريباً.",
+
+  "footer.learnLink": "تعلّم",
+
+  "learn.page.title": "تعلّم — «لك»",
+  "learn.page.description": "مقالات تعليمية حول التمويل الإسلامي، الاستثمار الحلال، والتخطيط المالي الشخصي للمستثمرين المسلمين.",
+  "learn.page.heading": "تعلّم",
+  "learn.page.subtitle": "افهم أموالك. اتّخذ قرارات مستنيرة.",
+  "learn.label": "تعليم",
+  "learn.filterAll": "الكل",
+  "learn.readMore": "اقرأ المقال",
+  "learn.backToLearn": "العودة للتعلّم",
+  "learn.empty": "المقالات قيد الإعداد. تحقق مرة أخرى قريباً.",
+  "learn.featured": "مميز",
+  "learn.minRead": "دقيقة قراءة"
 }
