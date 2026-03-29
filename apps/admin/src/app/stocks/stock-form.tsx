@@ -23,14 +23,16 @@ export function StockForm({
   open,
   onOpenChange,
   stock,
-  languages,
+  languages = [],
   exchangeLookups,
+  onSaved,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
-  stock?: Stock
-  languages: Language[]
+  stock?: Stock | null
+  languages?: Language[]
   exchangeLookups: Lookup[]
+  onSaved?: () => void
 }) {
   const isEditing = !!stock
   const [loading, setLoading] = useState(false)
@@ -61,6 +63,7 @@ export function StockForm({
         toast.success(`Created ${data.symbol}`)
       }
       onOpenChange(false)
+      onSaved?.()
     } catch {
       toast.error(isEditing ? "Failed to update" : "Failed to create")
     } finally {

@@ -37,7 +37,14 @@ app.get("/", async (c) => {
   }
 
   const conditions = [];
-  if (stockId) conditions.push(eq(stockCompliance.stockId, stockId));
+  if (stockId) {
+    const ids = stockId.split(",").map((s) => s.trim()).filter(Boolean);
+    if (ids.length === 1) {
+      conditions.push(eq(stockCompliance.stockId, ids[0]));
+    } else if (ids.length > 1) {
+      conditions.push(inArray(stockCompliance.stockId, ids));
+    }
+  }
   if (screeningRuleId)
     conditions.push(eq(stockCompliance.screeningRuleId, screeningRuleId));
   if (status)

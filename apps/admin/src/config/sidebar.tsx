@@ -27,6 +27,8 @@ import {
   IconUsers,
   IconWorldWww,
   IconCurrencyDollar,
+  IconBolt,
+  IconTag,
 } from "@tabler/icons-react"
 
 export type NavItem = {
@@ -110,11 +112,6 @@ export const sidebarConfig = {
           icon: <IconShieldCheck />,
         },
         {
-          title: "Compliance",
-          url: "/compliance",
-          icon: <IconShieldCheck />,
-        },
-        {
           title: "Data Sources",
           url: "/data-sources",
           icon: <IconDatabase />,
@@ -138,6 +135,16 @@ export const sidebarConfig = {
           title: "Notifications",
           url: "/notifications",
           icon: <IconBell />,
+        },
+        {
+          title: "Event Types",
+          url: "/event-types",
+          icon: <IconTag />,
+        },
+        {
+          title: "Activity Rules",
+          url: "/activity-rules",
+          icon: <IconBolt />,
         },
       ],
     },

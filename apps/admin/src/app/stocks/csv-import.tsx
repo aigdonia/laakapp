@@ -79,9 +79,11 @@ function downloadTemplate() {
 export function CsvImport({
   open,
   onOpenChange,
+  onImported,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
+  onImported?: () => void
 }) {
   const [rows, setRows] = useState<ParsedRow[]>([])
   const [importing, setImporting] = useState(false)
@@ -111,6 +113,7 @@ export function CsvImport({
       toast.success(
         `Created ${result.created}, updated ${result.updated}${result.errors.length ? `, ${result.errors.length} errors` : ""}`
       )
+      onImported?.()
       if (result.errors.length > 0) {
         result.errors.forEach((err) => toast.error(err))
       }
