@@ -12,8 +12,6 @@ import {
   IconLanguage,
   IconDownload,
   IconLock,
-  IconHelp,
-  IconStar,
   IconInfoCircle,
   IconAlertTriangle,
   IconWorld,
@@ -24,6 +22,7 @@ import {
   IconKey,
   IconRefresh,
   IconChartPie,
+  IconArrowsLeftRight,
 } from '@tabler/icons-react-native'
 import type { BottomSheetModal } from '@gorhom/bottom-sheet'
 
@@ -32,6 +31,7 @@ import { useTranslation } from 'react-i18next'
 import {
   SettingsSection,
   SettingsMenuCard,
+  SettingsToggleCard,
 } from '@/src/components/settings-menu'
 import { ThemePickerSheet } from '@/src/components/theme-picker-sheet'
 import { LanguagePickerSheet } from '@/src/components/language-picker-sheet'
@@ -43,6 +43,7 @@ import { PinSetupSheet } from '@/src/components/app-lock/pin-setup-sheet'
 import { ChangePinSheet } from '@/src/components/app-lock/change-pin-sheet'
 import { LockMethodSheet } from '@/src/components/app-lock/lock-method-sheet'
 import { LockTimeoutSheet } from '@/src/components/app-lock/lock-timeout-sheet'
+import { SwipeAnimatedScreen } from '@/src/components/swipe-animated-screen'
 import { resetUserDb, clearAppCache } from '@/src/db'
 import { useThemeColors } from '@/src/theme/colors'
 import { usePreferences } from '@/src/store/preferences'
@@ -53,6 +54,9 @@ import { useDisplayLanguages } from '@/src/hooks/use-languages'
 import { useCountries } from '@/src/hooks/use-countries'
 import { usePortfolioPresets } from '@/src/hooks/use-portfolio-presets'
 import { useScreeningRules } from '@/src/hooks/use-screening-rules'
+import { useAssetClasses } from '@/src/hooks/use-asset-classes'
+import { useExchangeRates } from '@/src/hooks/use-exchange-rates'
+import { exportPortfolioCsv } from '@/src/lib/export-portfolio'
 
 export default function SettingsScreen() {
   const colors = useThemeColors()
@@ -64,6 +68,8 @@ export default function SettingsScreen() {
   const lockMethod = usePreferences((s) => s.lockMethod)
   const lockTimeout = usePreferences((s) => s.lockTimeout)
   const setAppLockEnabled = usePreferences((s) => s.setAppLockEnabled)
+  const swipeNavigation = usePreferences((s) => s.swipeNavigation)
+  const toggleSwipeNavigation = usePreferences((s) => s.toggleSwipeNavigation)
   const creditBalance = useCredits((s) => s.balance)
   const setBalance = useCredits((s) => s.setBalance)
   const { t } = useTranslation('settings')
@@ -76,6 +82,8 @@ export default function SettingsScreen() {
   const selectedPreset = presets?.find((p) => p.slug === presetSlug)
   const { data: screeningRules } = useScreeningRules()
   const selectedRule = screeningRules?.find((r) => r.slug === shariaAuthority)
+  const { data: assetClasses } = useAssetClasses()
+  const { data: exchangeRates } = useExchangeRates()
 
   const themeSheetRef = useRef<BottomSheetModal>(null)
   const languageSheetRef = useRef<BottomSheetModal>(null)
@@ -176,10 +184,22 @@ export default function SettingsScreen() {
     )
   }, [queryClient, t])
 
+  const handleExportPortfolio = useCallback(async () => {
+    if (!assetClasses?.length) {
+      Alert.alert(t('common:error'))
+      return
+    }
+    try {
+      await exportPortfolioCsv(assetClasses, exchangeRates ?? [], baseCurrency)
+    } catch {
+      Alert.alert(t('export_failed'))
+    }
+  }, [assetClasses, exchangeRates, baseCurrency, t])
+
   const comingSoon = () => Alert.alert(t('common:coming_soon'))
 
   return (
-    <>
+    <SwipeAnimatedScreen>
       <ScrollView
         className="flex-1 bg-screen"
         contentContainerClassName="px-5 pb-32"
@@ -251,6 +271,12 @@ export default function SettingsScreen() {
             subtitle={currentLanguage?.nativeName ?? language}
             onPress={() => languageSheetRef.current?.present()}
           />
+          <SettingsToggleCard
+            icon={<IconArrowsLeftRight size={22} color={colors.muted} />}
+            label={t('swipe_tabs')}
+            value={swipeNavigation}
+            onToggle={toggleSwipeNavigation}
+          />
         </SettingsSection>
 
         <SettingsSection title={t('security')}>
@@ -287,8 +313,8 @@ export default function SettingsScreen() {
           <SettingsMenuCard
             icon={<IconDownload size={22} color={colors.muted} />}
             label={t('export_portfolio')}
-            onPress={comingSoon}
-            dimmed
+            subtitle="CSV"
+            onPress={handleExportPortfolio}
           />
           <SettingsMenuCard
             icon={<IconRefresh size={22} color={colors.muted} />}
@@ -315,18 +341,6 @@ export default function SettingsScreen() {
 
         <SettingsSection title={t('about_support')}>
           <SettingsMenuCard
-            icon={<IconHelp size={22} color={colors.muted} />}
-            label={t('help_center')}
-            onPress={comingSoon}
-            dimmed
-          />
-          <SettingsMenuCard
-            icon={<IconStar size={22} color={colors.muted} />}
-            label={t('rate_app')}
-            onPress={comingSoon}
-            dimmed
-          />
-          <SettingsMenuCard
             icon={<IconInfoCircle size={22} color={colors.muted} />}
             label={t('version')}
             subtitle={Constants.expoConfig?.version ?? '0.0.0'}
@@ -345,6 +359,6 @@ export default function SettingsScreen() {
       <ChangePinSheet ref={changePinSheetRef} />
       <LockMethodSheet ref={lockMethodSheetRef} />
       <LockTimeoutSheet ref={lockTimeoutSheetRef} />
-    </>
+    </SwipeAnimatedScreen>
   )
 }

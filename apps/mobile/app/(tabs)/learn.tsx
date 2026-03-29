@@ -3,6 +3,7 @@ import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 
 import { useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 
+import { SwipeAnimatedScreen } from '@/src/components/swipe-animated-screen'
 import { useArticles, useArticleCategories } from '@/src/hooks/use-learn-content'
 import type { Article, ArticleCategory } from '@fin-ai/shared'
 import { t as translateContent } from '@/src/lib/translate'
@@ -104,6 +105,7 @@ export default function LearnScreen() {
   const isError = articles.isError && categoriesQuery.isError
 
   return (
+    <SwipeAnimatedScreen>
     <ScrollView
       className="flex-1 bg-screen"
       contentContainerClassName="px-5 pb-32"
@@ -175,5 +177,6 @@ export default function LearnScreen() {
         </View>
       </View>
     </ScrollView>
+    </SwipeAnimatedScreen>
   )
 }

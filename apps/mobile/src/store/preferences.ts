@@ -14,6 +14,7 @@ export type LockTimeout = 0 | 30 | 60 | 300
 interface PreferencesState {
   theme: ThemePreference
   amountsVisible: boolean
+  swipeNavigation: boolean
   baseCurrency: string
   shariaAuthority: string
   language: string
@@ -28,6 +29,7 @@ interface PreferencesState {
 interface PreferencesActions {
   setTheme: (value: ThemePreference) => void
   toggleAmountsVisible: () => void
+  toggleSwipeNavigation: () => void
 
   setBaseCurrency: (value: string) => void
   setShariaAuthority: (value: string) => void
@@ -58,6 +60,7 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
       // State
       theme: 'system',
       amountsVisible: true,
+      swipeNavigation: true,
 
       baseCurrency: 'EGP',
       shariaAuthority: 'aaoifi-standard',
@@ -76,6 +79,8 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
       },
       toggleAmountsVisible: () =>
         set((s) => ({ amountsVisible: !s.amountsVisible })),
+      toggleSwipeNavigation: () =>
+        set((s) => ({ swipeNavigation: !s.swipeNavigation })),
 
       setBaseCurrency: (value) => set({ baseCurrency: value }),
       setShariaAuthority: (value) => set({ shariaAuthority: value }),
@@ -117,9 +122,10 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
         }
         return state
       },
-      partialize: ({ theme, amountsVisible, baseCurrency, shariaAuthority, language, countryCode, appLockEnabled, lockMethod, lockTimeout, portfolioPresetSlug, stocksSyncedAt }) => ({
+      partialize: ({ theme, amountsVisible, swipeNavigation, baseCurrency, shariaAuthority, language, countryCode, appLockEnabled, lockMethod, lockTimeout, portfolioPresetSlug, stocksSyncedAt }) => ({
         theme,
         amountsVisible,
+        swipeNavigation,
         baseCurrency,
         shariaAuthority,
         language,

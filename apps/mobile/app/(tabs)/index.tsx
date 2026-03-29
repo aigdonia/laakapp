@@ -6,11 +6,13 @@ import type { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { createMMKV } from 'react-native-mmkv'
 import { useTranslation } from 'react-i18next'
 
+import { SwipeAnimatedScreen } from '@/src/components/swipe-animated-screen'
 import { useHoldings } from '@/src/hooks/use-holdings'
 import { useAssetClasses } from '@/src/hooks/use-asset-classes'
 import { usePortfolioPresets } from '@/src/hooks/use-portfolio-presets'
 import { usePortfolioScore } from '@/src/hooks/use-portfolio-score'
 import { useHealthFactors } from '@/src/hooks/use-health-factors'
+import { useStockCompliance } from '@/src/hooks/use-stock-compliance'
 import { usePreferences } from '@/src/store/preferences'
 import { useThemeColors } from '@/src/theme/colors'
 import type { ComplianceSummary, ConcentrationInsight, LearningNudge } from '@/src/types/insights'
@@ -68,6 +70,7 @@ export default function InsightsScreen() {
   const { t } = useTranslation('insights')
 
   const presetSlug = usePreferences((s) => s.portfolioPresetSlug)
+  const shariaAuthority = usePreferences((s) => s.shariaAuthority)
   const { data: presets } = usePortfolioPresets()
   const selectedPreset = presets?.find((p) => p.slug === presetSlug)
 
@@ -79,20 +82,36 @@ export default function InsightsScreen() {
   const { data: healthFactors } = useHealthFactors()
   const breakdownRef = useRef<BottomSheetModal>(null)
 
-  // --- Sharia compliance (mock for MVP — no screening data yet) ---
+  // --- Sharia compliance ---
+  const screenableHoldings = useMemo(
+    () => allHoldings.filter((h) => h.assetType !== 'cash' && h.assetType !== 'gold'),
+    [allHoldings],
+  )
+  const screenableSymbols = useMemo(
+    () => screenableHoldings.map((h) => h.symbol).filter((s): s is string => !!s),
+    [screenableHoldings],
+  )
+  const { data: complianceMap } = useStockCompliance(screenableSymbols, shariaAuthority)
+
   const compliance = useMemo<ComplianceSummary>(() => {
-    // Exclude cash & gold from screening count
-    const screenable = allHoldings.filter(
-      (h) => h.assetType !== 'cash' && h.assetType !== 'gold',
-    )
-    // MVP mock: treat all as "not screened"
-    return {
-      compliant: 0,
-      nonCompliant: 0,
-      notScreened: screenable.length,
-      total: screenable.length,
+    const total = screenableHoldings.length
+    if (!complianceMap || Object.keys(complianceMap).length === 0) {
+      return { compliant: 0, nonCompliant: 0, notScreened: total, total }
     }
-  }, [allHoldings])
+
+    let compliant = 0
+    let nonCompliant = 0
+    let notScreened = 0
+
+    for (const h of screenableHoldings) {
+      const c = h.symbol ? complianceMap[h.symbol] : undefined
+      if (!c || c.status === 'not_screened') notScreened++
+      else if (c.status === 'compliant') compliant++
+      else nonCompliant++ // non_compliant + doubtful
+    }
+
+    return { compliant, nonCompliant, notScreened, total }
+  }, [screenableHoldings, complianceMap])
 
   // --- Concentration insight ---
   const concentration = useMemo<ConcentrationInsight | null>(() => {
@@ -161,15 +180,17 @@ export default function InsightsScreen() {
   // --- Loading ---
   if (isLoading) {
     return (
-      <View className="flex-1 items-center justify-center bg-screen">
-        <Text className="text-muted">{t('common:loading')}</Text>
-      </View>
+      <SwipeAnimatedScreen>
+        <View className="flex-1 items-center justify-center bg-screen">
+          <Text className="text-muted">{t('common:loading')}</Text>
+        </View>
+      </SwipeAnimatedScreen>
     )
   }
 
   // --- Empty state ---
   if (isEmpty) {
-    return <InsightsEmptyState />
+    return <SwipeAnimatedScreen><InsightsEmptyState /></SwipeAnimatedScreen>
   }
 
   // --- Freshness ---
@@ -179,7 +200,7 @@ export default function InsightsScreen() {
   const lastUpdated = lastDates.length > 0 ? new Date(Math.max(...lastDates)) : null
 
   return (
-    <>
+    <SwipeAnimatedScreen>
       <ScrollView
         className="flex-1 bg-screen"
         contentContainerClassName="pb-32 pt-2"
@@ -258,6 +279,6 @@ export default function InsightsScreen() {
 
       {/* Score Breakdown Bottom Sheet */}
       <ScoreBreakdownSheet ref={breakdownRef} score={score} factors={healthFactors} />
-    </>
+    </SwipeAnimatedScreen>
   )
 }

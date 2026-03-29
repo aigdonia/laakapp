@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from 'react-native'
+import { Pressable, Switch, Text, View } from 'react-native'
 import { IconChevronRight } from '@tabler/icons-react-native'
 import * as Haptics from 'expo-haptics'
 import type { ReactNode } from 'react'
@@ -56,6 +56,45 @@ export function SettingsMenuCard({
       {showChevron ? (
         <IconChevronRight size={18} color={colors.muted} />
       ) : null}
+    </Pressable>
+  )
+}
+
+export function SettingsToggleCard({
+  icon,
+  label,
+  value,
+  onToggle,
+}: {
+  icon: ReactNode
+  label: string
+  value: boolean
+  onToggle: () => void
+}) {
+  const colors = useThemeColors()
+
+  return (
+    <Pressable
+      className="flex-row items-center bg-card rounded-xl px-4 py-3.5 border border-border active:opacity-70"
+      onPress={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+        onToggle()
+      }}
+    >
+      {icon}
+
+      <View className="flex-1 ml-3">
+        <Text className="text-base font-medium text-text">
+          {label}
+        </Text>
+      </View>
+
+      <Switch
+        value={value}
+        onValueChange={onToggle}
+        trackColor={{ false: colors.border, true: colors.accent }}
+        thumbColor="#fff"
+      />
     </Pressable>
   )
 }

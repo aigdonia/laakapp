@@ -5,6 +5,7 @@ import { router } from 'expo-router'
 import type { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { useTranslation } from 'react-i18next'
 
+import { SwipeAnimatedScreen } from '@/src/components/swipe-animated-screen'
 import { type HoldingGroup, useHoldings } from '@/src/hooks/use-holdings'
 import { PortfolioSummary } from '@/src/components/portfolio/portfolio-summary'
 import { HoldingCard } from '@/src/components/portfolio/holding-card'
@@ -37,14 +38,17 @@ export default function PortfolioScreen() {
 
   if (isLoading) {
     return (
-      <View className="flex-1 items-center justify-center bg-screen">
-        <Text className="text-muted">{t('common:loading')}</Text>
-      </View>
+      <SwipeAnimatedScreen>
+        <View className="flex-1 items-center justify-center bg-screen">
+          <Text className="text-muted">{t('common:loading')}</Text>
+        </View>
+      </SwipeAnimatedScreen>
     )
   }
 
   if (isEmpty) {
     return (
+      <SwipeAnimatedScreen>
       <View className="flex-1 items-center justify-center bg-screen px-6">
         <Text className="text-2xl font-bold text-text text-center">
           {t('empty_title')}
@@ -59,11 +63,12 @@ export default function PortfolioScreen() {
           <Text className="text-[#1c1c1e] text-base font-bold">{t('add_holding')}</Text>
         </Pressable>
       </View>
+      </SwipeAnimatedScreen>
     )
   }
 
   return (
-    <>
+    <SwipeAnimatedScreen>
       <ScrollView
         className="flex-1 bg-screen"
         contentContainerClassName="pb-32"
@@ -145,6 +150,6 @@ export default function PortfolioScreen() {
         group={selectedGroup}
         amountsVisible={amountsVisible}
       />
-    </>
+    </SwipeAnimatedScreen>
   )
 }
