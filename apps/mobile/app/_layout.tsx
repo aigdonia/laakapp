@@ -19,14 +19,13 @@ import { LockScreen } from '@/src/components/app-lock/lock-screen'
 import { useAppStateLock } from '@/src/hooks/use-app-state-lock'
 import { migrateFromSecureStore, applyThemePreference } from '@/src/store/preferences'
 import { initPurchases } from '@/src/lib/purchases'
-import { PostHogProvider } from '@/src/lib/posthog'
+import { PostHogProvider, getPostHog, requestTrackingConsent } from '@/src/lib/posthog'
 import { useCredits } from '@/src/store/credits'
 import { useOnboarding } from '@/src/store/onboarding'
 import { useOnboardingScreens } from '@/src/hooks/use-onboarding-screens'
 import { registerForPushNotifications, setupNotificationListeners } from '@/src/lib/notifications'
 import { useNotificationStore } from '@/src/store/notifications'
 import { getOrCreateUUID } from '@/src/lib/uuid'
-import { usePostHog } from 'posthog-react-native'
 
 export { ErrorBoundary } from 'expo-router'
 
@@ -81,14 +80,22 @@ function RootLayoutInner() {
     }
   }, [loaded, migrated])
 
-  // Register push notifications & identify with PostHog once data is ready
-  const posthog = usePostHog()
+  // Request ATT, register push notifications & identify with PostHog once data is ready
   useEffect(() => {
     if (!dataReady) return
 
     const register = async () => {
+      // Request ATT consent before any tracking/identification
+      const trackingAllowed = await requestTrackingConsent()
+
       const userId = await getOrCreateUUID()
-      posthog?.identify(userId)
+      const posthog = getPostHog()
+      if (trackingAllowed) {
+        posthog?.identify(userId)
+      } else {
+        posthog?.optOut()
+      }
+
       const token = await registerForPushNotifications(userId)
       if (token) {
         useNotificationStore.getState().setExpoToken(token)
@@ -98,7 +105,7 @@ function RootLayoutInner() {
     register()
 
     return setupNotificationListeners()
-  }, [dataReady, posthog])
+  }, [dataReady])
 
   const router = useRouter()
   const onboardingCompleted = useOnboarding((s) => s.completed)

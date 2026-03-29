@@ -1,6 +1,8 @@
 import { PostHogProvider as PHProvider, usePostHog } from 'posthog-react-native'
 import type { PostHog } from 'posthog-react-native'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { requestTrackingPermissionsAsync, getTrackingPermissionsAsync } from 'expo-tracking-transparency'
+import { Platform } from 'react-native'
 
 const POSTHOG_API_KEY = process.env.EXPO_PUBLIC_POSTHOG_API_KEY ?? ''
 const POSTHOG_HOST = process.env.EXPO_PUBLIC_POSTHOG_HOST ?? 'https://us.i.posthog.com'
@@ -9,6 +11,20 @@ const POSTHOG_HOST = process.env.EXPO_PUBLIC_POSTHOG_HOST ?? 'https://us.i.posth
 let _posthog: PostHog | null = null
 export function getPostHog() { return _posthog }
 
+/** Request ATT permission and return whether tracking is allowed */
+export async function requestTrackingConsent(): Promise<boolean> {
+  if (Platform.OS !== 'ios') return true
+  const { status } = await requestTrackingPermissionsAsync()
+  return status === 'granted'
+}
+
+/** Check current ATT status without prompting */
+export async function getTrackingConsent(): Promise<boolean> {
+  if (Platform.OS !== 'ios') return true
+  const { status } = await getTrackingPermissionsAsync()
+  return status === 'granted'
+}
+
 function Capture({ children }: { children: React.ReactNode }) {
   const posthog = usePostHog()
   useEffect(() => { _posthog = posthog }, [posthog])
@@ -16,7 +32,16 @@ function Capture({ children }: { children: React.ReactNode }) {
 }
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
-  if (!POSTHOG_API_KEY) return <>{children}</>
+  const [allowed, setAllowed] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    if (!POSTHOG_API_KEY) { setAllowed(false); return }
+    // Check existing permission (don't prompt yet — prompt happens after onboarding)
+    getTrackingConsent().then(setAllowed)
+  }, [])
+
+  // No API key or tracking not yet determined/allowed — render children without PostHog
+  if (!POSTHOG_API_KEY || allowed !== true) return <>{children}</>
 
   return (
     <PHProvider
