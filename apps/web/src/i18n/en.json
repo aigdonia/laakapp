@@ -139,5 +139,15 @@
   "terms.page.description": "Terms of Service for Laak, the private investment portfolio tracker. Read our terms covering data privacy, AI features, compliance screening, credits, and more.",
   "terms.page.heading": "Terms of Service",
   "terms.page.subtitle": "Please read these terms carefully before using the Laak application.",
-  "terms.page.lastUpdated": "Last updated: March 26, 2026"
+  "terms.page.lastUpdated": "Last updated: March 26, 2026",
+
+  "footer.supportLink": "Support",
+
+  "support.page.title": "Support — Laak",
+  "support.page.description": "Get help with Laak, the private investment portfolio tracker. Find answers about portfolio management, compliance screening, privacy, cloud backup, and more.",
+  "support.page.heading": "Support",
+  "support.page.subtitle": "Find answers to common questions about using Laak.",
+  "support.label": "Help Center",
+  "support.toc": "On this page",
+  "support.empty": "Support articles are being prepared. Check back soon."
 }
