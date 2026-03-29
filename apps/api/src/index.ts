@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { createDb } from "./db";
+import { createDb, type Database } from "./db";
+import { authMiddleware } from "./middleware/auth";
 import countries from "./routes/countries";
 import stocks from "./routes/stocks";
 import screeningRules from "./routes/screening-rules";
@@ -39,6 +40,11 @@ export type Env = {
     DB: D1Database;
     RC_SECRET_KEY: string;
     RC_PROJECT_ID: string;
+    SUPABASE_JWT_SECRET: string;
+  };
+  Variables: {
+    db: Database;
+    userId: string;
   };
 };
 
@@ -48,9 +54,11 @@ app.use("*", cors());
 
 app.use("*", async (c, next) => {
   const db = createDb(c.env.DB);
-  c.set("db" as never, db);
+  c.set("db", db);
   await next();
 });
+
+app.use("*", authMiddleware);
 
 app.get("/", (c) => c.json({ name: "fin-ai-api", status: "ok" }));
 

@@ -1,5 +1,4 @@
 import { api } from './api'
-import { getAppUserID } from './purchases'
 import type { ReportEventResponse } from '@fin-ai/shared'
 
 /**
@@ -13,14 +12,11 @@ export async function reportEvent(
   idempotencyKey?: string,
 ): Promise<ReportEventResponse> {
   try {
-    const customerId = await getAppUserID()
-    if (!customerId) return { triggered: [] }
-
-    return await api.postWithHeaders<ReportEventResponse>(
-      '/activity/events',
-      { eventType, metadata, idempotencyKey },
-      { 'X-RC-Customer-Id': customerId },
-    )
+    return await api.post<ReportEventResponse>('/activity/events', {
+      eventType,
+      metadata,
+      idempotencyKey,
+    })
   } catch {
     return { triggered: [] }
   }

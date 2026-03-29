@@ -47,11 +47,10 @@ export async function registerForPushNotifications(userId: string): Promise<stri
   return expoToken
 }
 
-/** Send push token to API */
-async function sendTokenToServer(userId: string, expoToken: string) {
+/** Send push token to API — userId comes from JWT, not body */
+async function sendTokenToServer(_userId: string, expoToken: string) {
   try {
     await api.post('/push-tokens', {
-      userId,
       expoToken,
       platform: Platform.OS as 'ios' | 'android',
     })
@@ -63,13 +62,17 @@ async function sendTokenToServer(userId: string, expoToken: string) {
 /** Unregister push token from server */
 export async function unregisterPushToken(expoToken: string) {
   try {
-    // api.delete doesn't support body, so use fetch directly
+    const { getAccessToken } = await import('./supabase')
+    const token = await getAccessToken()
     const baseUrl = __DEV__
       ? 'http://localhost:12003'
       : 'https://laak-api.ahmedgaber-1988-masterai.workers.dev'
     await fetch(`${baseUrl}/push-tokens`, {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
       body: JSON.stringify({ expoToken }),
     })
   } catch (error) {

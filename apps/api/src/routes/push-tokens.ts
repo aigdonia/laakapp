@@ -5,21 +5,21 @@ import type { Database } from "../db";
 import { pushTokens } from "../db/schema";
 
 function db(c: { get: (key: string) => unknown }): Database {
-  return c.get("db" as never) as Database;
+  return c.get("db") as Database;
 }
 
 const app = new Hono<Env>();
 
 /** Register or update a push token */
 app.post("/", async (c) => {
+  const userId = c.get("userId");
   const body = await c.req.json<{
-    userId: string;
     expoToken: string;
     platform: "ios" | "android";
     prefs?: { marketing: boolean; content: boolean; onboarding: boolean };
   }>();
 
-  if (!body.userId || !body.expoToken || !body.platform) {
+  if (!body.expoToken || !body.platform) {
     return c.json({ error: "missing_fields" }, 400);
   }
 
@@ -34,7 +34,7 @@ app.post("/", async (c) => {
     const row = await db(c)
       .update(pushTokens)
       .set({
-        userId: body.userId,
+        userId,
         platform: body.platform,
         ...(body.prefs && { prefs: body.prefs }),
         updatedAt: new Date().toISOString(),
@@ -48,7 +48,7 @@ app.post("/", async (c) => {
   const row = await db(c)
     .insert(pushTokens)
     .values({
-      userId: body.userId,
+      userId,
       expoToken: body.expoToken,
       platform: body.platform,
       ...(body.prefs && { prefs: body.prefs }),

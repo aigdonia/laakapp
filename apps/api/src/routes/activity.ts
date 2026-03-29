@@ -12,16 +12,13 @@ import { creditBack } from "../lib/revenuecat";
 import type { TriggeredAction } from "@fin-ai/shared";
 
 function db(c: { get: (key: string) => unknown }): Database {
-  return c.get("db" as never) as Database;
+  return c.get("db") as Database;
 }
 
 const app = new Hono<Env>();
 
 app.post("/events", async (c) => {
-  const customerId = c.req.header("X-RC-Customer-Id");
-  if (!customerId) {
-    return c.json({ error: "missing_customer_id" }, 400);
-  }
+  const customerId = c.get("userId");
 
   const body = await c.req.json<{
     eventType: string;

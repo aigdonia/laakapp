@@ -8,7 +8,7 @@ const isTestKey = API_KEY.startsWith('test_')
 
 let initialized = false
 
-export async function initPurchases() {
+export async function initPurchases(userId: string) {
   if (initialized) return
   if (!API_KEY) {
     console.warn('[Purchases] EXPO_PUBLIC_REVENUECAT_API_KEY is missing — skipping init')
@@ -20,8 +20,9 @@ export async function initPurchases() {
   }
   Purchases.setLogLevel(__DEV__ ? LOG_LEVEL.DEBUG : LOG_LEVEL.INFO)
   Purchases.configure({ apiKey: API_KEY })
+  await Purchases.logIn(userId)
   initialized = true
-  console.log('[Purchases] initialized successfully')
+  console.log('[Purchases] initialized with userId:', userId)
 }
 
 export async function getOfferings() {

@@ -13,16 +13,13 @@ const FEATURE_COSTS: Record<string, number> = {
 };
 
 function db(c: { get: (key: string) => unknown }): Database {
-  return c.get("db" as never) as Database;
+  return c.get("db") as Database;
 }
 
 const app = new Hono<Env>();
 
 app.post("/spend", async (c) => {
-  const customerId = c.req.header("X-RC-Customer-Id");
-  if (!customerId) {
-    return c.json({ error: "missing_customer_id" }, 400);
-  }
+  const customerId = c.get("userId");
 
   const body = await c.req.json<{ feature: string; payload?: unknown }>();
   const cost = FEATURE_COSTS[body.feature];

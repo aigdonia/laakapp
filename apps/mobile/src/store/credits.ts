@@ -4,7 +4,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import type { StateStorage } from 'zustand/middleware'
 
 import { api } from '@/src/lib/api'
-import { getLakBalance, invalidateLakCache, getAppUserID } from '@/src/lib/purchases'
+import { getLakBalance, invalidateLakCache } from '@/src/lib/purchases'
 import { track } from '@/src/lib/analytics'
 
 // --- MMKV instance ---
@@ -58,12 +58,10 @@ export const useCredits = create<CreditsState & CreditsActions>()(
       },
 
       spend: async (feature, payload) => {
-        const appUserID = await getAppUserID()
-        const result = await api.postWithHeaders<SpendResult>(
-          '/credits/spend',
-          { feature, payload },
-          { 'X-RC-Customer-Id': appUserID },
-        )
+        const result = await api.post<SpendResult>('/credits/spend', {
+          feature,
+          payload,
+        })
         set({ balance: result.balance })
         track('credits_spent', { feature, new_balance: result.balance })
         return result

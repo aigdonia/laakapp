@@ -1,3 +1,5 @@
+import { getAccessToken } from './supabase'
+
 const API_BASE_URL = __DEV__
   ? 'http://localhost:12003'
   : 'https://laak-api.ahmedgaber-1988-masterai.workers.dev'
@@ -21,10 +23,13 @@ export class ApiError extends Error {
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { method = 'GET', body, headers = {} } = options
 
+  const token = await getAccessToken()
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method,
     headers: {
       'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
       ...headers,
     },
     body: body ? JSON.stringify(body) : undefined,
