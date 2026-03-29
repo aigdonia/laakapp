@@ -10,6 +10,7 @@ import { useAddTransaction } from '@/src/hooks/use-add-transaction'
 import type { AssetType, TransactionDraft } from '@/src/types/holdings'
 import { createEmptyDraft } from '@/src/types/holdings'
 import { track } from '@/src/lib/analytics'
+import { useActivityEvent } from '@/src/hooks/use-activity-event'
 
 type Step = 'select' | 'form'
 
@@ -37,6 +38,7 @@ export default function AddHoldingModal() {
     return createEmptyDraft('stock')
   })
   const addTransaction = useAddTransaction()
+  const { report } = useActivityEvent()
 
   // Track modal open
   const tracked = useRef(false)
@@ -80,6 +82,11 @@ export default function AddHoldingModal() {
         currency: draft.currency,
         is_new_holding: !isAddToExisting,
       })
+      // Activity events (fire-and-forget, non-blocking)
+      report('transaction_added', { assetType: draft.assetType, symbol: draft.symbol })
+      if (!isAddToExisting) {
+        report('holding_added', { assetType: draft.assetType, symbol: draft.symbol })
+      }
       router.back()
     } catch {
       Alert.alert(t('common:error'), t('save_failed'))

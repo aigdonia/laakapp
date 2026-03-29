@@ -26,6 +26,8 @@ import { useOnboardingScreens } from '@/src/hooks/use-onboarding-screens'
 import { registerForPushNotifications, setupNotificationListeners } from '@/src/lib/notifications'
 import { useNotificationStore } from '@/src/store/notifications'
 import { getOrCreateUUID } from '@/src/lib/uuid'
+import { ActivityToastOverlay } from '@/src/components/activity-toast'
+import { ConfettiOverlay } from '@/src/components/confetti-overlay'
 
 export { ErrorBoundary } from 'expo-router'
 
@@ -140,6 +142,8 @@ function RootLayoutInner() {
         </BottomSheetModalProvider>
       </ThemeProvider>
       <LockScreen />
+      <ActivityToastOverlay />
+      <ConfettiOverlay />
     </GestureHandlerRootView>
   )
 }

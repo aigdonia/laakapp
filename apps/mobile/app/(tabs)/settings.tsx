@@ -58,6 +58,7 @@ import { useAssetClasses } from '@/src/hooks/use-asset-classes'
 import { useExchangeRates } from '@/src/hooks/use-exchange-rates'
 import { exportPortfolioCsv } from '@/src/lib/export-portfolio'
 import { track } from '@/src/lib/analytics'
+import { reportEvent } from '@/src/lib/activity'
 
 export default function SettingsScreen() {
   const colors = useThemeColors()
@@ -196,6 +197,7 @@ export default function SettingsScreen() {
     try {
       await exportPortfolioCsv(assetClasses, exchangeRates ?? [], baseCurrency)
       track('export_completed', { base_currency: baseCurrency })
+      reportEvent('export_completed', { baseCurrency })
     } catch {
       track('export_failed', { base_currency: baseCurrency })
       Alert.alert(t('export_failed'))

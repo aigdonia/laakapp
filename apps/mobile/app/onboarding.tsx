@@ -18,6 +18,7 @@ import { useOnboarding } from '@/src/store/onboarding'
 import { t } from '@/src/lib/translate'
 import type { OnboardingScreen, OnboardingScreenType } from '@fin-ai/shared'
 import { track } from '@/src/lib/analytics'
+import { reportEvent } from '@/src/lib/activity'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 
@@ -60,6 +61,7 @@ export default function OnboardingRoute() {
   const next = useCallback(() => {
     if (isLast) {
       track('onboarding_completed', { screens_viewed: index + 1 })
+      reportEvent('onboarding_completed')
       finish()
     } else {
       setIndex((i) => i + 1)

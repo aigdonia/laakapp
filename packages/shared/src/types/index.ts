@@ -40,6 +40,14 @@ export type {
   NotificationWithStats,
 } from "./notification";
 export type {
+  ActivityActionType,
+  EventType,
+  ActivityRule,
+  TriggeredAction,
+  ReportEventResponse,
+  RuleTestResult,
+} from "./activity";
+export type {
   StockCompliance,
   ComplianceStatus,
   ScreeningLayer,

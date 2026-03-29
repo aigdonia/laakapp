@@ -20,6 +20,7 @@ import Animated, {
 
 import { useThemeColors } from '@/src/theme/colors'
 import { track } from '@/src/lib/analytics'
+import { reportEvent } from '@/src/lib/activity'
 import { useCredits } from '@/src/store/credits'
 import {
   getOfferings,
@@ -73,6 +74,7 @@ export default function CreditsScreen() {
       const newBalance = await getLakBalance()
       setBalance(newBalance)
       track('purchase_completed', { package_id: pkg.identifier, new_balance: newBalance })
+      reportEvent('credit_purchased', { packageId: pkg.identifier })
 
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
       balanceScale.value = withSequence(

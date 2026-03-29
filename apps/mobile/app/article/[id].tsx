@@ -3,9 +3,10 @@ import { ScrollView, Text, useColorScheme } from 'react-native'
 import { useQueryClient } from '@tanstack/react-query'
 import Markdown from 'react-native-markdown-display'
 import type { Article } from '@fin-ai/shared'
-import { useMemo } from 'react'
+import { useMemo, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useThemeColors } from '@/src/theme/colors'
+import { useActivityEvent } from '@/src/hooks/use-activity-event'
 
 export default function ArticleScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -18,6 +19,15 @@ export default function ArticleScreen() {
     const articles = queryClient.getQueryData<Article[]>(['articles'])
     return articles?.find((a) => a.id === id) ?? null
   }, [id, queryClient])
+
+  const { report } = useActivityEvent()
+  const reported = useRef(false)
+  useEffect(() => {
+    if (article && !reported.current) {
+      reported.current = true
+      report('article_read', { articleId: article.id, slug: article.slug })
+    }
+  }, [article])
 
   // Markdown library requires style objects — cannot use className
   const text = colors.text
