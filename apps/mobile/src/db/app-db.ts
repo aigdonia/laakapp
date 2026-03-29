@@ -154,6 +154,15 @@ export function initAppDb() {
       fetched_at INTEGER NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS cached_stock_compliance (
+      symbol TEXT PRIMARY KEY NOT NULL,
+      rule_slug TEXT NOT NULL,
+      status TEXT NOT NULL,
+      layer TEXT NOT NULL,
+      ratios TEXT NOT NULL DEFAULT '{}',
+      fetched_at INTEGER NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS cached_portfolio_presets (
       id TEXT PRIMARY KEY NOT NULL,
       name TEXT NOT NULL,
@@ -235,6 +244,7 @@ export function clearAppCache() {
     DELETE FROM cached_countries;
     DELETE FROM cached_exchange_rates;
     DELETE FROM cached_screening_rules;
+    DELETE FROM cached_stock_compliance;
     DELETE FROM cached_portfolio_presets;
   `)
 }
