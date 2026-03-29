@@ -174,6 +174,17 @@ export const cachedScreeningRules = sqliteTable('cached_screening_rules', {
   fetchedAt: integer('fetched_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
 })
 
+export const cachedStockCompliance = sqliteTable('cached_stock_compliance', {
+  symbol: text('symbol').primaryKey(),
+  ruleSlug: text('rule_slug').notNull(),
+  status: text('status').notNull(),
+  layer: text('layer').notNull(),
+  ratios: text('ratios').notNull().default('{}'),
+  fetchedAt: integer('fetched_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+})
+
 export const cachedPortfolioPresets = sqliteTable('cached_portfolio_presets', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
