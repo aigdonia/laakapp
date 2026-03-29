@@ -98,14 +98,6 @@ export default function HoldingDetailScreen() {
   const colors = useThemeColors()
   const { t } = useTranslation('portfolio')
 
-  if (isLoading || !data) {
-    return (
-      <View className="flex-1 items-center justify-center bg-screen">
-        <Text className="text-muted">{t('common:loading')}</Text>
-      </View>
-    )
-  }
-
   useEffect(() => {
     if (data) {
       track('holding_detail_viewed', {
@@ -113,7 +105,15 @@ export default function HoldingDetailScreen() {
         transaction_count: data.transactions.length,
       })
     }
-  }, [holdingKey])
+  }, [holdingKey, data])
+
+  if (isLoading || !data) {
+    return (
+      <View className="flex-1 items-center justify-center bg-screen">
+        <Text className="text-muted">{t('common:loading')}</Text>
+      </View>
+    )
+  }
 
   const assetClass = assetClasses?.find((ac) => ac.slug === data.assetType)
   const acColor = assetClass?.color ?? '#636366'
