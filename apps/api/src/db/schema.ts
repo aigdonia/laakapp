@@ -337,6 +337,109 @@ export const exchangeRates = sqliteTable("exchange_rates", {
   enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
 });
 
+// ─── Stock Compliance ──────────────────────────────────────
+export const stockCompliance = sqliteTable("stock_compliance", {
+  ...timestamps,
+  stockId: text("stock_id").notNull(),
+  screeningRuleId: text("screening_rule_id").notNull(),
+  status: text("status", {
+    enum: ["compliant", "non_compliant", "doubtful", "not_screened"],
+  })
+    .notNull()
+    .default("not_screened"),
+  layer: text("layer", {
+    enum: ["sector", "index", "financial", "manual"],
+  }).notNull(),
+  debtRatio: real("debt_ratio"),
+  cashInterestRatio: real("cash_interest_ratio"),
+  receivablesRatio: real("receivables_ratio"),
+  nonPermissibleIncomeRatio: real("non_permissible_income_ratio"),
+  source: text("source", { enum: ["auto", "manual_override"] })
+    .notNull()
+    .default("auto"),
+  notes: text("notes").notNull().default(""),
+  validFrom: text("valid_from").notNull(),
+  validUntil: text("valid_until"),
+});
+
+// ─── Stock Financials ──────────────────────────────────────
+export const stockFinancials = sqliteTable("stock_financials", {
+  ...timestamps,
+  stockId: text("stock_id").notNull(),
+  fiscalYear: integer("fiscal_year").notNull(),
+  fiscalPeriod: text("fiscal_period", {
+    enum: ["annual", "q1", "q2", "q3", "q4"],
+  }).notNull(),
+  source: text("source", {
+    enum: ["stockanalysis", "mubasher", "manual"],
+  }).notNull(),
+  totalAssets: real("total_assets"),
+  totalDebt: real("total_debt"),
+  cashAndEquivalents: real("cash_and_equivalents"),
+  interestBearingDeposits: real("interest_bearing_deposits"),
+  receivables: real("receivables"),
+  marketCap: real("market_cap"),
+  totalRevenue: real("total_revenue"),
+  nonPermissibleRevenue: real("non_permissible_revenue"),
+  rawData: text("raw_data", { mode: "json" })
+    .$type<Record<string, unknown>>()
+    .default({}),
+  fetchedAt: text("fetched_at")
+    .notNull()
+    .default(sql`(current_timestamp)`),
+});
+
+// ─── Data Sources ──────────────────────────────────────────
+export const dataSources = sqliteTable("data_sources", {
+  ...timestamps,
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  type: text("type", {
+    enum: ["scraper", "index_list", "etf_holdings", "manual_csv"],
+  }).notNull(),
+  urlTemplate: text("url_template").notNull().default(""),
+  countryCodes: text("country_codes", { mode: "json" })
+    .notNull()
+    .$type<string[]>()
+    .default([]),
+  config: text("config", { mode: "json" })
+    .notNull()
+    .$type<Record<string, unknown>>()
+    .default({}),
+  rateLimitMs: integer("rate_limit_ms").notNull().default(3000),
+  maxRetries: integer("max_retries").notNull().default(3),
+  enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+  lastRunAt: text("last_run_at"),
+  lastRunStatus: text("last_run_status"),
+});
+
+// ─── Scrape Jobs ───────────────────────────────────────────
+export const scrapeJobs = sqliteTable("scrape_jobs", {
+  ...timestamps,
+  dataSourceId: text("data_source_id").notNull(),
+  status: text("status", {
+    enum: ["pending", "running", "completed", "failed"],
+  })
+    .notNull()
+    .default("pending"),
+  jobType: text("job_type", {
+    enum: ["full_refresh", "incremental", "single_stock"],
+  }).notNull(),
+  targetSymbols: text("target_symbols", { mode: "json" })
+    .$type<string[] | null>()
+    .default(null),
+  progress: text("progress", { mode: "json" })
+    .notNull()
+    .$type<{ total: number; completed: number; failed: number; errors: string[] }>()
+    .default({ total: 0, completed: 0, failed: 0, errors: [] }),
+  startedAt: text("started_at"),
+  completedAt: text("completed_at"),
+  errorMessage: text("error_message"),
+  createdBy: text("created_by", { enum: ["admin", "cron", "system"] })
+    .notNull()
+    .default("admin"),
+});
+
 // ─── App Settings (singleton) ────────────────────────────────
 export const appSettings = sqliteTable("app_settings", {
   ...timestamps,
