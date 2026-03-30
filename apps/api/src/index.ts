@@ -42,7 +42,7 @@ export type Env = {
     BACKUP_BUCKET: R2Bucket;
     RC_SECRET_KEY: string;
     RC_PROJECT_ID: string;
-    SUPABASE_JWT_SECRET: string;
+    ADMIN_API_KEY: string;
   };
   Variables: {
     db: Database;

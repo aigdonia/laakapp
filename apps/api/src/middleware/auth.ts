@@ -1,5 +1,5 @@
 import { createMiddleware } from "hono/factory";
-import { jwtVerify } from "jose";
+import { createRemoteJWKSet, jwtVerify } from "jose";
 import type { Env } from "../index";
 
 /**
@@ -32,6 +32,13 @@ const PUBLIC_GET_PREFIXES = [
   "/activity-rules",
 ];
 
+/**
+ * Supabase JWKS endpoint — ES256 public keys for JWT verification.
+ * jose caches the keyset automatically.
+ */
+const SUPABASE_JWKS_URL = "https://jkkprobjmqwoethrpxyh.supabase.co/auth/v1/.well-known/jwks.json";
+const jwks = createRemoteJWKSet(new URL(SUPABASE_JWKS_URL));
+
 export const authMiddleware = createMiddleware<Env>(async (c, next) => {
   const method = c.req.method;
   const path = c.req.path;
@@ -49,20 +56,26 @@ export const authMiddleware = createMiddleware<Env>(async (c, next) => {
     if (isPublic) return next();
   }
 
-  // All other routes require a valid JWT
+  // All other routes require auth (JWT or admin API key)
   const authHeader = c.req.header("Authorization");
+
+  // Admin API key — trusted internal tools (admin dashboard)
+  if (authHeader === `Bearer ${c.env.ADMIN_API_KEY}`) {
+    c.set("userId", "admin");
+    return next();
+  }
+
   if (!authHeader?.startsWith("Bearer ")) {
     return c.json({ error: "missing_token" }, 401);
   }
 
   const token = authHeader.slice(7);
   try {
-    const secret = new TextEncoder().encode(c.env.SUPABASE_JWT_SECRET);
-    const { payload } = await jwtVerify(token, secret, {
-      algorithms: ["HS256"],
-    });
+    const { payload } = await jwtVerify(token, jwks);
     c.set("userId", payload.sub!);
-  } catch {
+  } catch (e) {
+    const errMsg = e instanceof Error ? e.message : "unknown";
+    console.error(`[auth] JWT verification failed: ${errMsg}`);
     return c.json({ error: "invalid_token" }, 401);
   }
 

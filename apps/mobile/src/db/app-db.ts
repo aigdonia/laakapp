@@ -227,8 +227,11 @@ export function initAppDb() {
   }
 }
 
-/** Wipe all cached app data (stocks, articles, rates, etc). Does NOT touch user data. */
-export function clearAppCache() {
+/** Wipe all cached app data (stocks, articles, rates, etc). Does NOT touch user data.
+ *  Also resets sync timestamps so next fetch does a full sync. */
+export function clearAppCache(resetSyncTimestamps?: () => void) {
+  resetSyncTimestamps?.()
+
   expoDb.execSync(`
     DELETE FROM cached_prices;
     DELETE FROM cached_stocks;

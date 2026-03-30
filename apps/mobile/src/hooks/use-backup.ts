@@ -69,10 +69,9 @@ export function useBackup() {
 
   return useMutation({
     mutationFn: async () => {
-      const rows = userDb
+      const rows = await userDb
         .select()
         .from(transactions)
-        .all()
 
       // Serialize dates as ISO strings for portability
       const serialized = rows.map((row) => ({

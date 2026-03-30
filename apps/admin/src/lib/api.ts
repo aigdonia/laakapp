@@ -28,8 +28,13 @@ export async function api<T>(
   const env = (cookieStore.get("api_env")?.value ?? "local") as ApiEnv;
   const baseUrl = API_URLS[env];
 
+  const adminKey = process.env.ADMIN_API_KEY ?? "";
   const res = await fetch(`${baseUrl}${path}`, {
-    headers: { "Content-Type": "application/json", ...options?.headers },
+    headers: {
+      "Content-Type": "application/json",
+      ...(adminKey && { Authorization: `Bearer ${adminKey}` }),
+      ...options?.headers,
+    },
     ...options,
   });
   if (!res.ok) {

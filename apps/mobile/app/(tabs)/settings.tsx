@@ -185,7 +185,9 @@ export default function SettingsScreen() {
         {
           text: t('refresh_app_data_confirm'),
           onPress: () => {
-            clearAppCache()
+            clearAppCache(() => {
+              usePreferences.getState().setStocksSyncedAt(null)
+            })
             queryClient.invalidateQueries()
             Alert.alert(t('refresh_app_data_done'))
           },
@@ -257,8 +259,8 @@ export default function SettingsScreen() {
       track('backup_created', { transaction_count: result.transactionCount })
       reportEvent('backup_created', { transactionCount: result.transactionCount })
       Alert.alert(t('backup_success', { count: result.transactionCount }))
-    } catch {
-      Alert.alert(t('backup_failed'))
+    } catch (e: any) {
+      Alert.alert(t('backup_failed'), __DEV__ ? JSON.stringify(e?.data ?? e?.message ?? e) : undefined)
     }
   }, [backupMutation, t])
 
