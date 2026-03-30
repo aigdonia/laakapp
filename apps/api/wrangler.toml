@@ -9,6 +9,10 @@ database_name = "fin-ai-db"
 database_id = "local"
 migrations_dir = "drizzle"
 
+[[r2_buckets]]
+binding = "BACKUP_BUCKET"
+bucket_name = "laak-backups-dev"
+
 # --- Production ---
 [env.production]
 name = "laak-api"
@@ -21,3 +25,7 @@ binding = "DB"
 database_name = "laak-db"
 database_id = "0b317a07-ab6e-41bd-8c2b-7c90e7faec0c"
 migrations_dir = "drizzle"
+
+[[env.production.r2_buckets]]
+binding = "BACKUP_BUCKET"
+bucket_name = "laak-backups"

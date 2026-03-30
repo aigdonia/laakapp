@@ -34,10 +34,12 @@ import activityRulesRoute from "./routes/activity-rules";
 import activityRoute, {
   purgeOldActivityEvents,
 } from "./routes/activity";
+import backupsRoute from "./routes/backups";
 
 export type Env = {
   Bindings: {
     DB: D1Database;
+    BACKUP_BUCKET: R2Bucket;
     RC_SECRET_KEY: string;
     RC_PROJECT_ID: string;
     SUPABASE_JWT_SECRET: string;
@@ -90,6 +92,7 @@ app.route("/scrape-jobs", scrapeJobsRoute);
 app.route("/event-types", eventTypesRoute);
 app.route("/activity-rules", activityRulesRoute);
 app.route("/activity", activityRoute);
+app.route("/backups", backupsRoute);
 
 export default {
   fetch: app.fetch,

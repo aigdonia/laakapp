@@ -1,10 +1,11 @@
-import { useCallback, useRef } from 'react'
-import { Alert, ScrollView } from 'react-native'
+import { useCallback, useRef, useState } from 'react'
+import { ActivityIndicator, Alert, Platform, ScrollView } from 'react-native'
 import { useRouter } from 'expo-router'
 import Constants from 'expo-constants'
 import {
+  IconBrandApple,
   IconLogin,
-
+  IconLogout,
   IconCurrencyDollar,
   IconShieldCheck,
   IconPalette,
@@ -22,6 +23,8 @@ import {
   IconRefresh,
   IconChartPie,
   IconArrowsLeftRight,
+  IconCloudUpload,
+  IconCloudDownload,
 } from '@tabler/icons-react-native'
 import type { BottomSheetModal } from '@gorhom/bottom-sheet'
 
@@ -59,6 +62,9 @@ import { useExchangeRates } from '@/src/hooks/use-exchange-rates'
 import { exportPortfolioCsv } from '@/src/lib/export-portfolio'
 import { track } from '@/src/lib/analytics'
 import { reportEvent } from '@/src/lib/activity'
+import { useAuth } from '@/src/hooks/use-auth'
+import { useBackupMeta, useBackup, useRestore } from '@/src/hooks/use-backup'
+import { signInWithApple, signOut } from '@/src/lib/apple-auth'
 
 export default function SettingsScreen() {
   const colors = useThemeColors()
@@ -204,6 +210,88 @@ export default function SettingsScreen() {
     }
   }, [assetClasses, exchangeRates, baseCurrency, t])
 
+  const { isAnonymous, email } = useAuth()
+  const { data: backupMeta } = useBackupMeta()
+  const backupMutation = useBackup()
+  const restoreMutation = useRestore()
+  const [authLoading, setAuthLoading] = useState(false)
+
+  const handleAppleSignIn = useCallback(async () => {
+    setAuthLoading(true)
+    try {
+      await signInWithApple()
+    } catch (e: any) {
+      if (e?.code !== 'ERR_REQUEST_CANCELED') {
+        Alert.alert(t('sign_in_failed'))
+      }
+    } finally {
+      setAuthLoading(false)
+    }
+  }, [t])
+
+  const handleSignOut = useCallback(() => {
+    Alert.alert(
+      t('sign_out_title'),
+      t('sign_out_message'),
+      [
+        { text: t('common:cancel'), style: 'cancel' },
+        {
+          text: t('sign_out'),
+          style: 'destructive',
+          onPress: async () => {
+            setAuthLoading(true)
+            try {
+              await signOut()
+            } finally {
+              setAuthLoading(false)
+            }
+          },
+        },
+      ],
+    )
+  }, [t])
+
+  const handleBackup = useCallback(async () => {
+    try {
+      const result = await backupMutation.mutateAsync()
+      track('backup_created', { transaction_count: result.transactionCount })
+      reportEvent('backup_created', { transactionCount: result.transactionCount })
+      Alert.alert(t('backup_success', { count: result.transactionCount }))
+    } catch {
+      Alert.alert(t('backup_failed'))
+    }
+  }, [backupMutation, t])
+
+  const handleRestoreBackup = useCallback(() => {
+    if (!backupMeta?.snapshot) return
+
+    Alert.alert(
+      t('restore_confirm_title'),
+      t('restore_confirm_message', { count: backupMeta.snapshot.transactionCount }),
+      [
+        { text: t('common:cancel'), style: 'cancel' },
+        {
+          text: t('restore_confirm_button'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const result = await restoreMutation.mutateAsync()
+              track('backup_restored', { transaction_count: result.transactionCount })
+              reportEvent('backup_restored', { transactionCount: result.transactionCount })
+              Alert.alert(t('restore_success_backup', { count: result.transactionCount }))
+            } catch (e: any) {
+              if (e?.message === 'schema_version_newer') {
+                Alert.alert(t('restore_version_mismatch'))
+              } else {
+                Alert.alert(t('restore_failed_backup'))
+              }
+            }
+          },
+        },
+      ],
+    )
+  }, [backupMeta, restoreMutation, t])
+
   const comingSoon = () => Alert.alert(t('common:coming_soon'))
 
   return (
@@ -228,12 +316,55 @@ export default function SettingsScreen() {
         </SettingsSection>
 
         <SettingsSection title={t('account')}>
-          <SettingsMenuCard
-            icon={<IconLogin size={22} color={colors.muted} />}
-            label={t('sign_in')}
-            onPress={comingSoon}
-            dimmed
-          />
+          {isAnonymous ? (
+            Platform.OS === 'ios' && (
+              <SettingsMenuCard
+                icon={authLoading
+                  ? <ActivityIndicator size="small" />
+                  : <IconBrandApple size={22} color={colors.muted} />}
+                label={t('sign_in_apple')}
+                subtitle={t('sign_in_subtitle')}
+                onPress={authLoading ? undefined : handleAppleSignIn}
+              />
+            )
+          ) : (
+            <>
+              <SettingsMenuCard
+                icon={<IconLogin size={22} color={colors.muted} />}
+                label={t('signed_in_as')}
+                subtitle={email ?? ''}
+                showChevron={false}
+              />
+              <SettingsMenuCard
+                icon={backupMutation.isPending
+                  ? <ActivityIndicator size="small" />
+                  : <IconCloudUpload size={22} color={colors.muted} />}
+                label={t('backup_to_cloud')}
+                subtitle={backupMeta?.exists
+                  ? t('last_backup', { date: new Date(backupMeta.snapshot!.createdAt).toLocaleDateString() })
+                  : t('no_backup_yet')}
+                onPress={backupMutation.isPending ? undefined : handleBackup}
+              />
+              {backupMeta?.exists && (
+                <SettingsMenuCard
+                  icon={restoreMutation.isPending
+                    ? <ActivityIndicator size="small" />
+                    : <IconCloudDownload size={22} color={colors.muted} />}
+                  label={t('restore_from_cloud')}
+                  subtitle={t('restore_subtitle', { count: backupMeta.snapshot!.transactionCount })}
+                  onPress={restoreMutation.isPending ? undefined : handleRestoreBackup}
+                />
+              )}
+              <SettingsMenuCard
+                icon={authLoading
+                  ? <ActivityIndicator size="small" />
+                  : <IconLogout size={22} color="#ef4444" />}
+                label={t('sign_out')}
+                onPress={authLoading ? undefined : handleSignOut}
+                destructive
+              />
+            </>
+          )}
         </SettingsSection>
 
         <SettingsSection title={t('screening')}>

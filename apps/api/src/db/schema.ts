@@ -516,3 +516,17 @@ export const appSettings = sqliteTable("app_settings", {
   baseCurrency: text("base_currency").notNull().default("USD"),
   minAppVersion: text("min_app_version").notNull().default("0.0.0"),
 });
+
+// ─── Backup Snapshots ───────────────────────────────────────
+export const backupSnapshots = sqliteTable("backup_snapshots", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("user_id").notNull(),
+  transactionCount: integer("transaction_count").notNull(),
+  sizeBytes: integer("size_bytes").notNull(),
+  schemaVersion: integer("schema_version").notNull().default(1),
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`(current_timestamp)`),
+});
