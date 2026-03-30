@@ -1,0 +1,3 @@
+#!/bin/sh
+export CCACHE_LOGFILE=/tmp/ccache.log
+exec /opt/homebrew/bin/ccache /usr/bin/clang "$@"

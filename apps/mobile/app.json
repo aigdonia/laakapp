@@ -13,8 +13,10 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "tech.olanai.finapp",
+      "usesAppleSignIn": true,
       "entitlements": {
-        "aps-environment": "production"
+        "aps-environment": "production",
+        "com.apple.developer.applesignin": ["Default"]
       },
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
@@ -60,13 +62,18 @@
           "color": "#E6F4FE"
         }
       ],
+      "expo-apple-authentication",
       [
         "expo-tracking-transparency",
         {
           "userTrackingPermission": "Allow Laak to collect anonymous usage data to improve the app experience."
         }
-      ]
+      ],
+      "./plugins/withCcache"
     ],
+    "buildCacheProvider": {
+      "plugin": "expo-build-disk-cache"
+    },
     "experiments": {
       "typedRoutes": true
     }
