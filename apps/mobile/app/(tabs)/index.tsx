@@ -19,6 +19,7 @@ import type { ComplianceSummary, ConcentrationInsight, LearningNudge } from '@/s
 
 import { PortfolioScoreGauge } from '@/src/components/insights/portfolio-score-gauge'
 import { ScoreBreakdownSheet } from '@/src/components/insights/score-breakdown-sheet'
+import { ComplianceBreakdownSheet } from '@/src/components/insights/compliance-breakdown-sheet'
 import { ShariaComplianceCard } from '@/src/components/insights/sharia-compliance-card'
 import { NarrativeBlock } from '@/src/components/insights/narrative-block'
 import { ConcentrationCard } from '@/src/components/insights/concentration-card'
@@ -81,6 +82,7 @@ export default function InsightsScreen() {
   const score = usePortfolioScore(groups, assetClasses, selectedPreset?.allocations ?? null)
   const { data: healthFactors } = useHealthFactors()
   const breakdownRef = useRef<BottomSheetModal>(null)
+  const complianceRef = useRef<BottomSheetModal>(null)
 
   // --- Sharia compliance ---
   const screenableHoldings = useMemo(
@@ -226,7 +228,7 @@ export default function InsightsScreen() {
               compliance={compliance}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-                // Future: open compliance detail sheet
+                complianceRef.current?.present()
               }}
             />
           </View>
@@ -279,6 +281,11 @@ export default function InsightsScreen() {
 
       {/* Score Breakdown Bottom Sheet */}
       <ScoreBreakdownSheet ref={breakdownRef} score={score} factors={healthFactors} />
+      <ComplianceBreakdownSheet
+        ref={complianceRef}
+        holdings={screenableHoldings}
+        complianceMap={complianceMap}
+      />
     </SwipeAnimatedScreen>
   )
 }

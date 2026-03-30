@@ -81,6 +81,8 @@ export function ShariaComplianceCard({ compliance, onPress }: Props) {
           </View>
         )}
       </View>
+
+      <Text className="text-xs text-subtle mt-2">{t('tap_for_breakdown')}</Text>
     </Pressable>
   )
 }

@@ -88,6 +88,8 @@ export const defaults = {
     zone_good: 'Good',
     zone_excellent: 'Excellent',
     // Learning nudges
+    compliance_breakdown: 'Compliance Breakdown',
+    compliance_breakdown_description: 'Per-holding Sharia compliance status based on your selected screening authority.',
     nudge_sukuk_title: 'What are Sukuk?',
     nudge_sukuk_description: 'Learn about Islamic bonds and how they can diversify your portfolio.',
     nudge_gold_title: 'Gold as a Hedge',
