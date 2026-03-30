@@ -20,8 +20,8 @@ import '../../../styles/global.css';
 const locale = 'ar' as const;
 
 export async function getStaticPaths() {
-  const allArticles = await fetch(`${import.meta.env.API_URL ?? 'http://localhost:12003'}/articles`).then((r) => r.json()).catch(() => []);
-  const categories = await fetch(`${import.meta.env.API_URL ?? 'http://localhost:12003'}/article-categories`).then((r) => r.json()).catch(() => []);
+  const allArticles = await fetch(`${API_URL}/articles`).then((r) => r.json()).catch(() => []);
+  const categories = await fetch(`${API_URL}/article-categories`).then((r) => r.json()).catch(() => []);
   const excludedSlugs = new Set(['support', 'legal']);
   const excludedIds = new Set(categories.filter((c: any) => excludedSlugs.has(c.slug)).map((c: any) => c.id));
 
