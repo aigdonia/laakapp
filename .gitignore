@@ -1,6 +1,12 @@
 # Dependencies
 node_modules/
 
+# Apple signing keys
+*.p8
+
+# MCP config (contains API keys)
+.mcp.json
+
 # Build outputs
 dist/
 .next/
