@@ -27,6 +27,7 @@ export const defaults = {
     add_holding: '+ Add Holding',
     total_value: 'Total Value',
     cost_basis: 'Cost Basis',
+    converted_to_base: 'All values converted to {{currency}}',
     quantity: 'Quantity',
     avg_cost: 'Avg Cost',
     shares: 'shares',
@@ -57,7 +58,6 @@ export const defaults = {
     score_breakdown_description: 'Each asset class has an equal ideal weight. Your score is how close you are to balanced diversification.',
     allocated: '{{pct}}% allocated',
     not_in_portfolio: 'Not in portfolio',
-    maxed_at: 'Maxed at {{pct}}%',
     target: 'Target: {{pct}}%',
     diversification_score: 'Diversification Score',
     diversification_description: "Sum of each class's contribution, capped at its ideal weight",
@@ -218,6 +218,12 @@ export const defaults = {
     restore_success_backup: 'Restored {{count}} transactions',
     restore_failed_backup: 'Restore failed. Please try again.',
     restore_version_mismatch: 'This backup was created with a newer app version. Please update the app first.',
+    // Activity rhythm
+    activity_rhythm: 'Activity Rhythm',
+    rhythm_daily: 'Daily',
+    rhythm_weekly: 'Weekly',
+    rhythm_biweekly: 'Biweekly',
+    rhythm_monthly: 'Monthly',
   },
   credits: {
     title: 'Credits',

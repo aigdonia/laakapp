@@ -35,6 +35,7 @@ const en = {
     add_holding: '+ Add Holding',
     total_value: 'Total Value',
     cost_basis: 'Cost Basis',
+    converted_to_base: 'All values converted to {{currency}}',
     quantity: 'Quantity',
     avg_cost: 'Avg Cost',
     shares: 'shares',
@@ -65,7 +66,6 @@ const en = {
     score_breakdown_description: 'Each asset class has an equal ideal weight. Your score is how close you are to balanced diversification.',
     allocated: '{{pct}}% allocated',
     not_in_portfolio: 'Not in portfolio',
-    maxed_at: 'Maxed at {{pct}}%',
     target: 'Target: {{pct}}%',
     diversification_score: 'Diversification Score',
     diversification_description: "Sum of each class's contribution, capped at its ideal weight",
@@ -149,17 +149,34 @@ const en = {
     default_market: 'Default Market',
     base_currency: 'Base Currency',
     sharia_authority: 'Sharia Authority',
+    sharia_authority_description: 'Choose the screening standard used to evaluate your holdings.',
     compliance_alerts: 'Compliance Alerts',
     theme: 'Theme',
     language: 'Language',
     country: 'Country',
     export_portfolio: 'Export Portfolio',
+    export_failed: 'Could not export portfolio. Please try again.',
+    refresh_app_data: 'Refresh App Data',
+    refresh_app_data_message: 'This will re-download stocks, articles, exchange rates, and other app content. Your portfolio and personal data are not affected.',
+    refresh_app_data_confirm: 'Refresh',
+    refresh_app_data_done: 'App data refreshed successfully.',
+    swipe_tabs: 'Swipe Between Tabs',
     clear_cache: 'Clear Cache',
     privacy: 'Privacy',
+    privacy_policy: 'Privacy Policy',
+    terms_of_service: 'Terms of Service',
     reset_all_data: 'Reset All Data',
     help_center: 'Help Center',
     rate_app: 'Rate App',
     version: 'Version',
+    // Credits
+    credits_section: 'Credits',
+    credits: 'Buy Credits',
+    credits_balance: '{{count}} credits available',
+    restore_purchases: 'Restore Purchases',
+    restore_success: 'Purchases restored',
+    restore_empty: 'No purchases to restore',
+    restore_failed: 'Restore failed. Please try again.',
     light: 'Light',
     dark: 'Dark',
     system: 'System',
@@ -190,6 +207,12 @@ const en = {
     portfolio_preset: 'Portfolio Preset',
     equal_weight: 'Equal Weight',
     equal_weight_description: 'All asset classes weighted equally',
+    // Activity rhythm
+    activity_rhythm: 'Activity Rhythm',
+    rhythm_daily: 'Daily',
+    rhythm_weekly: 'Weekly',
+    rhythm_biweekly: 'Biweekly',
+    rhythm_monthly: 'Monthly',
     // Reset dialog
     reset_dialog_title: 'Reset All Data',
     reset_dialog_message: 'This will permanently delete all your portfolio data, transactions, and sync history. This action cannot be undone.',
@@ -211,6 +234,17 @@ const en = {
     restore_failed_backup: 'Restore failed. Please try again.',
     restore_version_mismatch: 'This backup was created with a newer app version. Please update the app first.',
   },
+  credits: {
+    title: 'Credits',
+    current_balance: 'Your Balance',
+    credits_label: 'credits',
+    best_value: 'Best Value',
+    purchase_success: 'Purchase successful!',
+    purchase_failed: 'Purchase failed. Please try again.',
+    restore_purchases: 'Restore Purchases',
+    restore_success: 'Purchases restored',
+    restore_empty: 'No purchases to restore',
+  },
   onboarding: {
     welcome: 'Welcome',
     get_started: 'Get Started',
@@ -229,6 +263,7 @@ const en = {
     title: 'Add Holding',
     subtitle: 'Search for a stock or pick an asset type',
     search_stock: 'Search stocks & ETFs...',
+    search_stocks: 'Search stocks & ETFs...',
     total_cost: 'Total Cost',
     more_details: 'More details',
     add_transaction: 'Add Transaction',
@@ -268,6 +303,7 @@ const ar: Record<string, Record<string, string>> = {
     add_holding: '+ إضافة أصل',
     total_value: 'القيمة الإجمالية',
     cost_basis: 'أساس التكلفة',
+    converted_to_base: 'جميع القيم محولة إلى {{currency}}',
     quantity: 'الكمية',
     avg_cost: 'متوسط التكلفة',
     shares: 'سهم',
@@ -298,7 +334,6 @@ const ar: Record<string, Record<string, string>> = {
     score_breakdown_description: 'كل فئة أصول لها وزن مثالي متساوٍ. نتيجتك تعكس مدى قربك من التنويع المتوازن.',
     allocated: '{{pct}}% مخصص',
     not_in_portfolio: 'غير موجود في المحفظة',
-    maxed_at: 'الحد الأقصى {{pct}}%',
     target: 'المستهدف: {{pct}}%',
     diversification_score: 'نتيجة التنويع',
     diversification_description: 'مجموع مساهمة كل فئة، بحد أقصى وزنها المثالي',
@@ -382,18 +417,34 @@ const ar: Record<string, Record<string, string>> = {
     default_market: 'السوق الافتراضي',
     base_currency: 'العملة الأساسية',
     sharia_authority: 'الهيئة الشرعية',
+    sharia_authority_description: 'اختر معيار الفحص المستخدم لتقييم ممتلكاتك.',
     compliance_alerts: 'تنبيهات الامتثال',
     theme: 'المظهر',
     language: 'اللغة',
     country: 'البلد',
     export_portfolio: 'تصدير المحفظة',
+    export_failed: 'تعذر تصدير المحفظة. يرجى المحاولة مرة أخرى.',
+    refresh_app_data: 'تحديث بيانات التطبيق',
+    refresh_app_data_message: 'سيتم إعادة تحميل الأسهم والمقالات وأسعار الصرف ومحتوى التطبيق الآخر. بيانات محفظتك وبياناتك الشخصية لن تتأثر.',
+    refresh_app_data_confirm: 'تحديث',
+    refresh_app_data_done: 'تم تحديث بيانات التطبيق بنجاح.',
+    swipe_tabs: 'التمرير بين الأقسام',
     clear_cache: 'مسح الذاكرة المؤقتة',
+    privacy: 'الخصوصية',
     privacy_policy: 'سياسة الخصوصية',
     terms_of_service: 'شروط الاستخدام',
     reset_all_data: 'إعادة تعيين جميع البيانات',
     help_center: 'مركز المساعدة',
     rate_app: 'تقييم التطبيق',
     version: 'الإصدار',
+    // Credits
+    credits_section: 'الرصيد',
+    credits: 'شراء رصيد',
+    credits_balance: '{{count}} رصيد متاح',
+    restore_purchases: 'استعادة المشتريات',
+    restore_success: 'تمت استعادة المشتريات',
+    restore_empty: 'لا توجد مشتريات للاستعادة',
+    restore_failed: 'فشلت الاستعادة. يرجى المحاولة مرة أخرى.',
     light: 'فاتح',
     dark: 'داكن',
     system: 'النظام',
@@ -424,6 +475,12 @@ const ar: Record<string, Record<string, string>> = {
     portfolio_preset: 'نمط المحفظة',
     equal_weight: 'وزن متساوٍ',
     equal_weight_description: 'جميع فئات الأصول بأوزان متساوية',
+    // Activity rhythm
+    activity_rhythm: 'نمط النشاط',
+    rhythm_daily: 'يومي',
+    rhythm_weekly: 'أسبوعي',
+    rhythm_biweekly: 'كل أسبوعين',
+    rhythm_monthly: 'شهري',
     // Reset dialog
     reset_dialog_title: 'إعادة تعيين جميع البيانات',
     reset_dialog_message: 'سيتم حذف جميع بيانات محفظتك والمعاملات وسجل المزامنة نهائياً. لا يمكن التراجع عن هذا الإجراء.',
@@ -445,6 +502,17 @@ const ar: Record<string, Record<string, string>> = {
     restore_failed_backup: 'فشلت الاستعادة. حاول مرة أخرى.',
     restore_version_mismatch: 'تم إنشاء هذه النسخة بإصدار أحدث من التطبيق. يرجى تحديث التطبيق أولاً.',
   },
+  credits: {
+    title: 'الرصيد',
+    current_balance: 'رصيدك',
+    credits_label: 'رصيد',
+    best_value: 'أفضل قيمة',
+    purchase_success: 'تمت عملية الشراء بنجاح!',
+    purchase_failed: 'فشلت عملية الشراء. يرجى المحاولة مرة أخرى.',
+    restore_purchases: 'استعادة المشتريات',
+    restore_success: 'تمت استعادة المشتريات',
+    restore_empty: 'لا توجد مشتريات للاستعادة',
+  },
   onboarding: {
     welcome: 'مرحباً',
     get_started: 'ابدأ',
@@ -463,6 +531,7 @@ const ar: Record<string, Record<string, string>> = {
     title: 'إضافة أصل',
     subtitle: 'ابحث عن سهم أو اختر نوع الأصل',
     search_stock: 'ابحث عن أسهم وصناديق...',
+    search_stocks: 'ابحث عن أسهم وصناديق...',
     total_cost: 'إجمالي التكلفة',
     more_details: 'تفاصيل إضافية',
     add_transaction: 'إضافة معاملة',
@@ -492,6 +561,13 @@ async function main() {
   const args = process.argv.slice(2)
   const apiUrlIdx = args.indexOf('--api-url')
   const apiUrl = apiUrlIdx >= 0 ? args[apiUrlIdx + 1] : DEFAULT_API_URL
+  const keyIdx = args.indexOf('--admin-key')
+  const adminKey = keyIdx >= 0 ? args[keyIdx + 1] : process.env.ADMIN_API_KEY
+
+  if (!adminKey) {
+    console.error('Missing admin key. Use --admin-key <key> or set ADMIN_API_KEY env var.')
+    process.exit(1)
+  }
 
   console.log(`Seeding translations to ${apiUrl}...`)
 
@@ -504,7 +580,10 @@ async function main() {
 
   const res = await fetch(`${apiUrl}/ui-translations/bulk`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${adminKey}`,
+    },
     body: JSON.stringify(payload),
   })
 
@@ -567,7 +646,10 @@ async function main() {
   for (const preset of presets) {
     const presetRes = await fetch(`${apiUrl}/portfolio-presets`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${adminKey}`,
+      },
       body: JSON.stringify(preset),
     })
     if (presetRes.ok) {

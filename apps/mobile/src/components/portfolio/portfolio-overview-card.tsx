@@ -32,7 +32,14 @@ export function PortfolioOverviewCard({ costByCurrency, groups, amountsVisible, 
       <View className="flex-1 rounded-2xl p-4 justify-between" style={{ backgroundColor: colors.card }}>
         {/* Top: Value + Cost Basis */}
         <View>
-          <Text className="text-xs font-medium text-muted">{t('total_value')}</Text>
+          <View className="flex-row items-center justify-between">
+            <Text className="text-xs font-medium text-muted">{t('total_value')}</Text>
+            {Object.keys(costByCurrency).length > 1 && (
+              <Text className="text-[10px]" style={{ color: '#c8874a' }}>
+                {t('converted_to_base', { currency: baseCurrency })}
+              </Text>
+            )}
+          </View>
           <Redacted visible={amountsVisible}>
             <Text
               className="text-3xl font-bold text-text mt-1"
@@ -53,6 +60,7 @@ export function PortfolioOverviewCard({ costByCurrency, groups, amountsVisible, 
               })}
             </Text>
           </Redacted>
+
         </View>
 
         {/* Bottom: Allocation Bar + Legend */}

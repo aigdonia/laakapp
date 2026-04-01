@@ -1,9 +1,7 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import * as Haptics from 'expo-haptics'
-import { router } from 'expo-router'
 import type { BottomSheetModal } from '@gorhom/bottom-sheet'
-import { createMMKV } from 'react-native-mmkv'
 import { useTranslation } from 'react-i18next'
 
 import { SwipeAnimatedScreen } from '@/src/components/swipe-animated-screen'
@@ -14,8 +12,9 @@ import { usePortfolioScore } from '@/src/hooks/use-portfolio-score'
 import { useHealthFactors } from '@/src/hooks/use-health-factors'
 import { useStockCompliance } from '@/src/hooks/use-stock-compliance'
 import { usePreferences } from '@/src/store/preferences'
-import { useThemeColors } from '@/src/theme/colors'
-import type { ComplianceSummary, ConcentrationInsight, LearningNudge } from '@/src/types/insights'
+import { useExchangeRates } from '@/src/hooks/use-exchange-rates'
+import { buildRateMap, convertCurrency } from '@/src/lib/currency'
+import type { ComplianceSummary, ConcentrationInsight } from '@/src/types/insights'
 
 import { PortfolioScoreGauge } from '@/src/components/insights/portfolio-score-gauge'
 import { ScoreBreakdownSheet } from '@/src/components/insights/score-breakdown-sheet'
@@ -23,55 +22,18 @@ import { ComplianceBreakdownSheet } from '@/src/components/insights/compliance-b
 import { ShariaComplianceCard } from '@/src/components/insights/sharia-compliance-card'
 import { NarrativeBlock } from '@/src/components/insights/narrative-block'
 import { ConcentrationCard } from '@/src/components/insights/concentration-card'
-import { LearningNudgeCard } from '@/src/components/insights/learning-nudge-card'
 import { InsightsEmptyState } from '@/src/components/insights/insights-empty-state'
-
-// --- MMKV for dismissed nudges ---
-const insightsMmkv = createMMKV({ id: 'insights-state' })
-
-// --- Learning nudges catalog ---
-const NUDGES: LearningNudge[] = [
-  {
-    id: 'sukuk-intro',
-    titleKey: 'nudge_sukuk_title',
-    descriptionKey: 'nudge_sukuk_description',
-    triggerWhenMissing: ['sukuk'],
-  },
-  {
-    id: 'gold-hedge',
-    titleKey: 'nudge_gold_title',
-    descriptionKey: 'nudge_gold_description',
-    triggerWhenMissing: ['gold'],
-  },
-  {
-    id: 'etf-basics',
-    titleKey: 'nudge_etf_title',
-    descriptionKey: 'nudge_etf_description',
-    triggerWhenMissing: ['etf'],
-  },
-  {
-    id: 'real-estate-investing',
-    titleKey: 'nudge_real_estate_title',
-    descriptionKey: 'nudge_real_estate_description',
-    triggerWhenMissing: ['real_estate'],
-  },
-  {
-    id: 'crypto-screening',
-    titleKey: 'nudge_crypto_title',
-    descriptionKey: 'nudge_crypto_description',
-    triggerWhenMissing: ['crypto'],
-  },
-]
 
 export default function InsightsScreen() {
   const { data, isLoading } = useHoldings()
   const { data: assetClasses } = useAssetClasses()
-  const amountsVisible = usePreferences((s) => s.amountsVisible)
-  const colors = useThemeColors()
   const { t } = useTranslation('insights')
 
+  const baseCurrency = usePreferences((s) => s.baseCurrency)
   const presetSlug = usePreferences((s) => s.portfolioPresetSlug)
   const shariaAuthority = usePreferences((s) => s.shariaAuthority)
+  const { data: exchangeRates } = useExchangeRates()
+  const rates = useMemo(() => buildRateMap(exchangeRates ?? []), [exchangeRates])
   const { data: presets } = usePortfolioPresets()
   const selectedPreset = presets?.find((p) => p.slug === presetSlug)
 
@@ -80,7 +42,6 @@ export default function InsightsScreen() {
   const isEmpty = groups.length === 0
 
   const score = usePortfolioScore(groups, assetClasses, selectedPreset?.allocations ?? null)
-  const { data: healthFactors } = useHealthFactors()
   const breakdownRef = useRef<BottomSheetModal>(null)
   const complianceRef = useRef<BottomSheetModal>(null)
 
@@ -94,6 +55,7 @@ export default function InsightsScreen() {
     [screenableHoldings],
   )
   const { data: complianceMap } = useStockCompliance(screenableSymbols, shariaAuthority)
+  const { data: healthFactors } = useHealthFactors(complianceMap, screenableHoldings)
 
   const compliance = useMemo<ComplianceSummary>(() => {
     const total = screenableHoldings.length
@@ -129,10 +91,15 @@ export default function InsightsScreen() {
       color: g.assetClass?.color ?? '#636366',
     }))
 
-    // Top holding
-    const sorted = [...allHoldings].sort((a, b) => b.totalCost - a.totalCost)
+    // Top holding (convert to base currency for fair comparison)
+    const sorted = [...allHoldings].sort(
+      (a, b) =>
+        convertCurrency(b.totalCost, b.currency, baseCurrency, rates) -
+        convertCurrency(a.totalCost, a.currency, baseCurrency, rates),
+    )
     const top = sorted[0]
-    const topPct = Math.round((top.totalCost / totalValue) * 100)
+    const topValueInBase = convertCurrency(top.totalCost, top.currency, baseCurrency, rates)
+    const topPct = Math.round((topValueInBase / totalValue) * 100)
     const topHolding = {
       name: top.symbol ?? top.name ?? top.assetType,
       percentage: topPct,
@@ -153,31 +120,7 @@ export default function InsightsScreen() {
     }
 
     return { topHolding, segments, verdict }
-  }, [groups, allHoldings, t])
-
-  // --- Learning nudge ---
-  const [dismissedNudges, setDismissedNudges] = useState<Set<string>>(() => {
-    const stored = insightsMmkv.getString('dismissed-nudges')
-    return stored ? new Set(JSON.parse(stored)) : new Set()
-  })
-
-  const activeNudge = useMemo(() => {
-    const holdingTypes = new Set(groups.map((g) => g.type))
-    return NUDGES.find(
-      (n) =>
-        !dismissedNudges.has(n.id) &&
-        n.triggerWhenMissing.some((t) => !holdingTypes.has(t)),
-    ) ?? null
-  }, [groups, dismissedNudges])
-
-  const dismissNudge = useCallback((id: string) => {
-    setDismissedNudges((prev) => {
-      const next = new Set(prev)
-      next.add(id)
-      insightsMmkv.set('dismissed-nudges', JSON.stringify([...next]))
-      return next
-    })
-  }, [])
+  }, [groups, allHoldings, baseCurrency, rates, t])
 
   // --- Loading ---
   if (isLoading) {
@@ -199,7 +142,7 @@ export default function InsightsScreen() {
   const lastDates = allHoldings
     .map((h) => h.lastDate)
     .filter((d): d is number => d !== null)
-  const lastUpdated = lastDates.length > 0 ? new Date(Math.max(...lastDates)) : null
+  const lastUpdated = lastDates.length > 0 ? new Date(Math.max(...lastDates) * 1000) : null
 
   return (
     <SwipeAnimatedScreen>
@@ -249,17 +192,6 @@ export default function InsightsScreen() {
         {concentration && (
           <View className="mb-3">
             <ConcentrationCard concentration={concentration} />
-          </View>
-        )}
-
-        {/* 5. Learning Nudge */}
-        {activeNudge && (
-          <View className="mb-3">
-            <LearningNudgeCard
-              nudge={activeNudge}
-              onDismiss={() => dismissNudge(activeNudge.id)}
-              onPress={() => router.push('/(tabs)/learn')}
-            />
           </View>
         )}
 
