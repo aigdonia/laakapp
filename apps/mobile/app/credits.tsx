@@ -30,7 +30,7 @@ import {
   invalidateLakCache,
 } from '@/src/lib/purchases'
 
-const BEST_VALUE_ID = 'laak_credits_value'
+const BEST_VALUE_ID = 'credits_value'
 
 function isLifetimePackage(pkg: PurchasesPackage) {
   return pkg.product.identifier === 'unlock_all_lifetime'
