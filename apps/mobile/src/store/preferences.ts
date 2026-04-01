@@ -10,6 +10,14 @@ import * as SecureStore from 'expo-secure-store'
 export type ThemePreference = 'light' | 'dark' | 'system'
 export type LockMethod = 'biometric' | 'pin'
 export type LockTimeout = 0 | 30 | 60 | 300
+export type ActivityRhythm = 'daily' | 'weekly' | 'biweekly' | 'monthly'
+
+export const ACTIVITY_RHYTHM_DAYS: Record<ActivityRhythm, number> = {
+  daily: 1,
+  weekly: 7,
+  biweekly: 14,
+  monthly: 30,
+}
 
 interface PreferencesState {
   theme: ThemePreference
@@ -24,6 +32,7 @@ interface PreferencesState {
   lockTimeout: LockTimeout
   portfolioPresetSlug: string | null
   stocksSyncedAt: string | null
+  activityRhythm: ActivityRhythm
 }
 
 interface PreferencesActions {
@@ -40,6 +49,7 @@ interface PreferencesActions {
   setLockTimeout: (value: LockTimeout) => void
   setPortfolioPresetSlug: (value: string | null) => void
   setStocksSyncedAt: (value: string | null) => void
+  setActivityRhythm: (value: ActivityRhythm) => void
 }
 
 // --- MMKV instance ---
@@ -71,6 +81,7 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
       lockTimeout: 0,
       portfolioPresetSlug: null,
       stocksSyncedAt: null,
+      activityRhythm: 'biweekly',
 
       // Actions
       setTheme: (value) => {
@@ -91,11 +102,12 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
       setLockTimeout: (value) => set({ lockTimeout: value }),
       setPortfolioPresetSlug: (value) => set({ portfolioPresetSlug: value }),
       setStocksSyncedAt: (value) => set({ stocksSyncedAt: value }),
+      setActivityRhythm: (value) => set({ activityRhythm: value }),
     }),
     {
       name: 'preferences',
       storage: createJSONStorage(() => mmkvStorage),
-      version: 6,
+      version: 7,
       migrate: (persisted: unknown, version: number) => {
         const raw = persisted as Record<string, unknown>
         const state = raw as unknown as PreferencesState & PreferencesActions
@@ -120,9 +132,12 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
           const old = raw.shariaAuthority as string | undefined
           state.shariaAuthority = slugMap[old ?? 'AAOIFI'] ?? 'aaoifi-standard'
         }
+        if (version < 7) {
+          state.activityRhythm = 'biweekly'
+        }
         return state
       },
-      partialize: ({ theme, amountsVisible, swipeNavigation, baseCurrency, shariaAuthority, language, countryCode, appLockEnabled, lockMethod, lockTimeout, portfolioPresetSlug, stocksSyncedAt }) => ({
+      partialize: ({ theme, amountsVisible, swipeNavigation, baseCurrency, shariaAuthority, language, countryCode, appLockEnabled, lockMethod, lockTimeout, portfolioPresetSlug, stocksSyncedAt, activityRhythm }) => ({
         theme,
         amountsVisible,
         swipeNavigation,
@@ -135,6 +150,7 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
         lockTimeout,
         portfolioPresetSlug,
         stocksSyncedAt,
+        activityRhythm,
       }),
     },
   ),

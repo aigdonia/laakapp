@@ -42,6 +42,7 @@ import { CountryPickerSheet } from '@/src/components/country-picker-sheet'
 import { PresetPickerSheet } from '@/src/components/preset-picker-sheet'
 import { CurrencyPickerSheet } from '@/src/components/currency-picker-sheet'
 import { ScreeningRulePickerSheet } from '@/src/components/screening-rule-picker-sheet'
+import { ActivityRhythmPickerSheet } from '@/src/components/activity-rhythm-picker-sheet'
 import { PinSetupSheet } from '@/src/components/app-lock/pin-setup-sheet'
 import { ChangePinSheet } from '@/src/components/app-lock/change-pin-sheet'
 import { LockMethodSheet } from '@/src/components/app-lock/lock-method-sheet'
@@ -86,6 +87,7 @@ export default function SettingsScreen() {
   const baseCurrency = usePreferences((s) => s.baseCurrency)
   const shariaAuthority = usePreferences((s) => s.shariaAuthority)
   const presetSlug = usePreferences((s) => s.portfolioPresetSlug)
+  const activityRhythm = usePreferences((s) => s.activityRhythm)
   const { data: presets } = usePortfolioPresets()
   const selectedPreset = presets?.find((p) => p.slug === presetSlug)
   const { data: screeningRules } = useScreeningRules()
@@ -103,6 +105,7 @@ export default function SettingsScreen() {
   const changePinSheetRef = useRef<BottomSheetModal>(null)
   const lockMethodSheetRef = useRef<BottomSheetModal>(null)
   const lockTimeoutSheetRef = useRef<BottomSheetModal>(null)
+  const activityRhythmSheetRef = useRef<BottomSheetModal>(null)
 
   const { data: displayLanguages = [] } = useDisplayLanguages()
   const currentLanguage = displayLanguages.find((l) => l.code === language)
@@ -397,6 +400,12 @@ export default function SettingsScreen() {
             subtitle={selectedPreset?.name ?? t('equal_weight')}
             onPress={() => presetSheetRef.current?.present()}
           />
+          <SettingsMenuCard
+            icon={<IconClock size={22} color={colors.muted} />}
+            label={t('activity_rhythm')}
+            subtitle={t(`rhythm_${activityRhythm}`)}
+            onPress={() => activityRhythmSheetRef.current?.present()}
+          />
         </SettingsSection>
 
         <SettingsSection title={t('appearance')}>
@@ -503,6 +512,7 @@ export default function SettingsScreen() {
       <ChangePinSheet ref={changePinSheetRef} />
       <LockMethodSheet ref={lockMethodSheetRef} />
       <LockTimeoutSheet ref={lockTimeoutSheetRef} />
+      <ActivityRhythmPickerSheet ref={activityRhythmSheetRef} />
     </SwipeAnimatedScreen>
   )
 }
