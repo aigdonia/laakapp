@@ -1,4 +1,6 @@
-const upstreamTransformer = require('@expo/metro-config/babel-transformer')
+const upstreamTransformer = require(require.resolve('@expo/metro-config/babel-transformer', {
+  paths: [require.resolve('expo/package.json')],
+}))
 
 module.exports.transform = async ({ src, filename, options }) => {
   if (filename.endsWith('.sql')) {
