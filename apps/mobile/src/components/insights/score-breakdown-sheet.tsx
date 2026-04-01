@@ -8,6 +8,7 @@ import {
 import type { BottomSheetBackdropProps } from '@gorhom/bottom-sheet'
 import { useTranslation } from 'react-i18next'
 
+import { ScoreBar } from '@/src/components/ui/score-bar'
 import { useThemeColors } from '@/src/theme/colors'
 import type { HealthFactor, PortfolioScore } from '@/src/types/insights'
 import { getScoreColor } from '@/src/types/insights'
@@ -44,7 +45,9 @@ export const ScoreBreakdownSheet = forwardRef<BottomSheetModal, Props>(
 
           {score.classes.map((cls) => {
             const hasHoldings = cls.actualPct > 0
-            const isCapped = cls.actualPct >= cls.idealPct
+            const deviation = Math.round((cls.actualPct - cls.idealPct) * 10) / 10
+            const isOver = deviation > 0.5
+            const isUnder = deviation < -0.5
 
             return (
               <View key={cls.slug} className="mb-4">
@@ -56,28 +59,30 @@ export const ScoreBreakdownSheet = forwardRef<BottomSheetModal, Props>(
                     />
                     <Text className="text-sm font-medium text-text">{cls.name}</Text>
                   </View>
-                  <Text
-                    className="text-sm font-bold"
-                    style={{
-                      color: hasHoldings ? cls.color : colors.subtle,
-                      fontVariant: ['tabular-nums'],
-                    }}
-                  >
-                    +{cls.contribution}
-                  </Text>
+                  {isOver && (
+                    <Text
+                      className="text-sm font-bold"
+                      style={{ color: '#ff9500', fontVariant: ['tabular-nums'] }}
+                    >
+                      +{deviation}%
+                    </Text>
+                  )}
+                  {isUnder && (
+                    <Text
+                      className="text-sm font-bold"
+                      style={{ color: colors.muted, fontVariant: ['tabular-nums'] }}
+                    >
+                      {deviation}%
+                    </Text>
+                  )}
                 </View>
 
-                {/* Bar: shows actual % with ideal marker */}
-                <View className="h-2 rounded-full bg-subtle/15 overflow-hidden">
-                  <View
-                    className="h-2 rounded-full"
-                    style={{
-                      width: `${Math.min(cls.actualPct, 100)}%`,
-                      backgroundColor: cls.color,
-                      opacity: hasHoldings ? 1 : 0.15,
-                    }}
-                  />
-                </View>
+                <ScoreBar
+                  value={cls.actualPct}
+                  color={cls.color}
+                  target={cls.idealPct}
+                  active={hasHoldings}
+                />
 
                 {/* Labels row */}
                 <View className="flex-row items-center justify-between mt-1">
@@ -87,9 +92,7 @@ export const ScoreBreakdownSheet = forwardRef<BottomSheetModal, Props>(
                       : t('not_in_portfolio')}
                   </Text>
                   <Text className="text-xs text-subtle">
-                    {isCapped
-                      ? t('maxed_at', { pct: cls.idealPct })
-                      : t('target', { pct: cls.idealPct })}
+                    {t('target', { pct: cls.idealPct })}
                   </Text>
                 </View>
               </View>
@@ -135,15 +138,7 @@ export const ScoreBreakdownSheet = forwardRef<BottomSheetModal, Props>(
                       </Text>
                     </View>
 
-                    <View className="h-2 rounded-full bg-subtle/15 overflow-hidden">
-                      <View
-                        className="h-2 rounded-full"
-                        style={{
-                          width: `${factor.score}%`,
-                          backgroundColor: barColor,
-                        }}
-                      />
-                    </View>
+                    <ScoreBar value={factor.score} color={barColor} />
 
                     <Text className="text-xs text-muted mt-1">{factor.description}</Text>
                   </View>
