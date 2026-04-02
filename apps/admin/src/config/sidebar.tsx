@@ -29,6 +29,7 @@ import {
   IconCurrencyDollar,
   IconBolt,
   IconTag,
+  IconSparkles,
 } from "@tabler/icons-react"
 
 export type NavItem = {
@@ -207,8 +208,13 @@ export const sidebarConfig = {
       label: "AI",
       items: [
         {
+          title: "AI Features",
+          url: "/ai-features",
+          icon: <IconSparkles />,
+        },
+        {
           title: "Prompts",
-          url: "#",
+          url: "/prompts",
           icon: <IconRobot />,
         },
       ],
