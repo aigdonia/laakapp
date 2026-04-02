@@ -15,6 +15,7 @@ import {
   IconLanguage,
   IconFlag,
   IconPalette,
+  IconScreenshot,
   IconPlayerPlay,
   IconQuestionMark,
   IconRefresh,
@@ -22,6 +23,7 @@ import {
   IconRobot,
   IconSettings2,
   IconShieldCheck,
+  IconSpeakerphone,
   IconStack2,
   IconTags,
   IconUsers,
@@ -220,12 +222,22 @@ export const sidebarConfig = {
       ],
     },
     {
-      label: "Brand",
+      label: "Brand & Growth",
       items: [
         {
           title: "Brand & Theme",
           url: "/brand",
           icon: <IconPalette />,
+        },
+        {
+          title: "Screenshots",
+          url: "/screenshots",
+          icon: <IconScreenshot />,
+        },
+        {
+          title: "Content Ops",
+          url: "/content-ops",
+          icon: <IconSpeakerphone />,
         },
       ],
     },
