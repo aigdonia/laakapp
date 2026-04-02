@@ -20,6 +20,8 @@ name = "laak-api"
 [env.production.triggers]
 crons = ["*/5 * * * *"]
 
+# Note: database_id must be in wrangler.toml (CF D1 requirement).
+# This is a resource identifier, not a secret — D1 access is gated by CF API tokens.
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "laak-db"
