@@ -35,6 +35,9 @@ import activityRoute, {
   purgeOldActivityEvents,
 } from "./routes/activity";
 import backupsRoute from "./routes/backups";
+import friendRoute from "./routes/friend";
+import aiFeaturesRoute from "./routes/ai-features";
+import stockAnalysisRoute from "./routes/stock-analysis";
 
 export type Env = {
   Bindings: {
@@ -43,6 +46,7 @@ export type Env = {
     RC_SECRET_KEY: string;
     RC_PROJECT_ID: string;
     ADMIN_API_KEY: string;
+    GEMINI_API_KEY: string;
   };
   Variables: {
     db: Database;
@@ -93,6 +97,9 @@ app.route("/event-types", eventTypesRoute);
 app.route("/activity-rules", activityRulesRoute);
 app.route("/activity", activityRoute);
 app.route("/backups", backupsRoute);
+app.route("/friend", friendRoute);
+app.route("/stock-analysis", stockAnalysisRoute);
+app.route("/ai-features", aiFeaturesRoute);
 
 export default {
   fetch: app.fetch,
