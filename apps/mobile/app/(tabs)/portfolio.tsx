@@ -22,6 +22,9 @@ export default function PortfolioScreen() {
   const groups = data?.groups ?? []
   const costByCurrency = data?.costByCurrency ?? {}
   const totalInBase = data?.totalInBase ?? 0
+  const totalMarketValueInBase = data?.totalMarketValueInBase ?? 0
+  const totalGainLoss = data?.totalGainLoss ?? 0
+  const totalGainLossPct = data?.totalGainLossPct ?? null
   const isEmpty = groups.length === 0
   const { t } = useTranslation('portfolio')
 
@@ -79,6 +82,9 @@ export default function PortfolioScreen() {
           groups={groups}
           amountsVisible={amountsVisible}
           totalInBase={totalInBase}
+          totalMarketValueInBase={totalMarketValueInBase}
+          totalGainLoss={totalGainLoss}
+          totalGainLossPct={totalGainLossPct}
           onToggleVisibility={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
             toggleAmountsVisible()

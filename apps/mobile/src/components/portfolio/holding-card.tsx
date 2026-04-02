@@ -1,19 +1,19 @@
 import { Pressable, Text, View } from 'react-native'
 import { useTranslation } from 'react-i18next'
 
-import type { AggregatedHolding } from '@/src/types/holdings'
+import type { EnrichedHolding } from '@/src/types/holdings'
 import { parseHoldingKey } from '@/src/db/aggregation-queries'
 import { Redacted } from './redacted'
 
 type Props = {
-  holding: AggregatedHolding
+  holding: EnrichedHolding
   typeName: string
   color: string
   amountsVisible?: boolean
   onPress: () => void
 }
 
-function deriveDisplay(holding: AggregatedHolding): { title: string; subtitle: string } {
+function deriveDisplay(holding: EnrichedHolding): { title: string; subtitle: string } {
   const { assetType, keyValues } = parseHoldingKey(holding.holdingKey)
 
   if (assetType === 'cash') {
@@ -44,7 +44,8 @@ export function HoldingCard({ holding, typeName, color, amountsVisible = true, o
   const { title, subtitle } = deriveDisplay(holding)
   const { t } = useTranslation('portfolio')
 
-  const formattedCost = holding.totalCost.toLocaleString(undefined, {
+  const displayValue = holding.marketValue ?? holding.totalCost
+  const formattedValue = displayValue.toLocaleString(undefined, {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   })
@@ -76,16 +77,29 @@ export function HoldingCard({ holding, typeName, color, amountsVisible = true, o
         ) : null}
       </View>
 
-      {/* Right: value + txn count */}
+      {/* Right: value + gain/loss */}
       <View className="items-end">
         <Redacted visible={amountsVisible}>
           <Text
             className="text-base font-semibold text-text"
             style={{ fontVariant: ['tabular-nums'] }}
           >
-            {formattedCost}
+            {formattedValue}
           </Text>
         </Redacted>
+        {holding.gainLossPct != null && (
+          <Redacted visible={amountsVisible}>
+            <Text
+              className="text-xs font-medium mt-0.5"
+              style={{
+                fontVariant: ['tabular-nums'],
+                color: holding.gainLossPct >= 0 ? '#34c759' : '#ff3b30',
+              }}
+            >
+              {holding.gainLossPct >= 0 ? '+' : ''}{holding.gainLossPct.toFixed(1)}%
+            </Text>
+          </Redacted>
+        )}
         {showCurrencyUnderAmount && (
           <Text className="text-xs text-muted mt-0.5">
             {holding.currency}

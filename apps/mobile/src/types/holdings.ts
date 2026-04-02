@@ -50,6 +50,15 @@ export interface AggregatedHolding {
   lastDate: number | null
 }
 
+/** AggregatedHolding enriched with current market price and gain/loss */
+export interface EnrichedHolding extends AggregatedHolding {
+  lastPrice: number | null
+  priceUpdatedAt: string | null
+  marketValue: number | null
+  gainLoss: number | null
+  gainLossPct: number | null
+}
+
 export function createEmptyDraft(assetType: AssetType): TransactionDraft {
   const today = new Date().toISOString().split('T')[0]
   return {

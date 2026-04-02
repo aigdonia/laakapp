@@ -17,12 +17,15 @@ type Props = {
   amountsVisible: boolean
   onToggleVisibility: () => void
   totalInBase: number
+  totalMarketValueInBase: number
+  totalGainLoss: number
+  totalGainLossPct: number | null
 }
 
 const PAGE_COUNT = 2
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 
-export function PortfolioSummary({ costByCurrency, groups, amountsVisible, onToggleVisibility, totalInBase }: Props) {
+export function PortfolioSummary({ costByCurrency, groups, amountsVisible, onToggleVisibility, totalInBase, totalMarketValueInBase, totalGainLoss, totalGainLossPct }: Props) {
   const colors = useThemeColors()
   const { t } = useTranslation('portfolio')
   const baseCurrency = usePreferences((s) => s.baseCurrency)
@@ -141,6 +144,9 @@ export function PortfolioSummary({ costByCurrency, groups, amountsVisible, onTog
             amountsVisible={amountsVisible}
             baseCurrency={baseCurrency}
             totalInBase={totalInBase}
+            totalMarketValueInBase={totalMarketValueInBase}
+            totalGainLoss={totalGainLoss}
+            totalGainLossPct={totalGainLossPct}
           />
         </View>
       </ScrollView>

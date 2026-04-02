@@ -1,19 +1,21 @@
 import { useQuery } from '@tanstack/react-query'
-import type { AssetClass } from '@fin-ai/shared'
+import type { AssetClass, Stock } from '@fin-ai/shared'
 
 import { query } from '@/src/db/duckdb'
 import { buildHoldingsQuery } from '@/src/db/aggregation-queries'
 import { useAssetClasses } from './use-asset-classes'
 import { useExchangeRates } from './use-exchange-rates'
+import { useStocks } from './use-stocks'
 import { usePreferences } from '@/src/store/preferences'
 import { buildRateMap, convertCurrency, convertTotalToBase } from '@/src/lib/currency'
-import type { AggregatedHolding, AssetType } from '@/src/types/holdings'
+import type { AggregatedHolding, AssetType, EnrichedHolding } from '@/src/types/holdings'
 
 export type HoldingGroup = {
   type: string
   assetClass: AssetClass | undefined
   totalValue: number
-  holdings: AggregatedHolding[]
+  totalCostInBase: number
+  holdings: EnrichedHolding[]
 }
 
 type AggRow = {
@@ -49,9 +51,45 @@ function rowToHolding(row: AggRow): AggregatedHolding {
   }
 }
 
+type PriceEntry = { price: number; updatedAt: string | null }
+
+function buildPriceMap(stocks: Stock[] | undefined): Map<string, PriceEntry> {
+  const map = new Map<string, PriceEntry>()
+  if (!stocks) return map
+  for (const s of stocks) {
+    if (s.lastPrice != null) {
+      map.set(s.symbol, { price: s.lastPrice, updatedAt: s.lastPriceUpdatedAt })
+    }
+  }
+  return map
+}
+
+function enrichHolding(h: AggregatedHolding, priceMap: Map<string, PriceEntry>): EnrichedHolding {
+  const canPrice = (h.assetType === 'stock' || h.assetType === 'etf') && h.symbol
+  const entry = canPrice ? priceMap.get(h.symbol!) : undefined
+
+  if (!entry) {
+    return { ...h, lastPrice: null, priceUpdatedAt: null, marketValue: null, gainLoss: null, gainLossPct: null }
+  }
+
+  const marketValue = h.totalQuantity * entry.price
+  const gainLoss = marketValue - h.totalCost
+  const gainLossPct = h.totalCost > 0 ? (gainLoss / h.totalCost) * 100 : null
+
+  return {
+    ...h,
+    lastPrice: entry.price,
+    priceUpdatedAt: entry.updatedAt,
+    marketValue,
+    gainLoss,
+    gainLossPct,
+  }
+}
+
 export function useHoldings() {
   const { data: assetClasses } = useAssetClasses()
   const { data: exchangeRates } = useExchangeRates()
+  const { data: stocks } = useStocks()
   const baseCurrency = usePreferences((s) => s.baseCurrency)
 
   return useQuery({
@@ -64,23 +102,32 @@ export function useHoldings() {
     },
     select: (holdings) => {
       const rates = buildRateMap(exchangeRates ?? [])
-      const byType = new Map<string, AggregatedHolding[]>()
+      const priceMap = buildPriceMap(stocks)
+      const byType = new Map<string, EnrichedHolding[]>()
 
       for (const h of holdings) {
-        const existing = byType.get(h.assetType) ?? []
-        existing.push(h)
-        byType.set(h.assetType, existing)
+        const enriched = enrichHolding(h, priceMap)
+        const existing = byType.get(enriched.assetType) ?? []
+        existing.push(enriched)
+        byType.set(enriched.assetType, existing)
       }
 
       const groups: HoldingGroup[] = Array.from(byType.entries()).map(
         ([type, items]) => {
           const totalValue = items.reduce(
+            (sum, h) => {
+              const value = h.marketValue ?? h.totalCost
+              return sum + convertCurrency(value, h.currency, baseCurrency, rates)
+            },
+            0,
+          )
+          const totalCostInBase = items.reduce(
             (sum, h) => sum + convertCurrency(h.totalCost, h.currency, baseCurrency, rates),
             0,
           )
           const assetClass = assetClasses?.find((ac) => ac.slug === type)
-          items.sort((a, b) => b.totalCost - a.totalCost)
-          return { type, assetClass, totalValue, holdings: items }
+          items.sort((a, b) => (b.marketValue ?? b.totalCost) - (a.marketValue ?? a.totalCost))
+          return { type, assetClass, totalValue, totalCostInBase, holdings: items }
         },
       )
 
@@ -94,7 +141,18 @@ export function useHoldings() {
 
       const totalInBase = convertTotalToBase(costByCurrency, baseCurrency, rates)
 
-      return { groups, costByCurrency, totalInBase }
+      const totalMarketValueInBase = groups.reduce((sum, g) => sum + g.totalValue, 0)
+      const totalGainLoss = totalMarketValueInBase - totalInBase
+      const totalGainLossPct = totalInBase > 0 ? (totalGainLoss / totalInBase) * 100 : null
+
+      return {
+        groups,
+        costByCurrency,
+        totalInBase,
+        totalMarketValueInBase,
+        totalGainLoss,
+        totalGainLossPct,
+      }
     },
     enabled: !!assetClasses,
   })

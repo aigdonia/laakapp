@@ -11,9 +11,21 @@ type Props = {
   amountsVisible: boolean
   baseCurrency: string
   totalInBase: number
+  totalMarketValueInBase: number
+  totalGainLoss: number
+  totalGainLossPct: number | null
 }
 
-export function PortfolioOverviewCard({ costByCurrency, groups, amountsVisible, baseCurrency, totalInBase }: Props) {
+export function PortfolioOverviewCard({
+  costByCurrency,
+  groups,
+  amountsVisible,
+  baseCurrency,
+  totalInBase,
+  totalMarketValueInBase,
+  totalGainLoss,
+  totalGainLossPct,
+}: Props) {
   const colors = useThemeColors()
   const { t } = useTranslation('portfolio')
 
@@ -26,11 +38,13 @@ export function PortfolioOverviewCard({ costByCurrency, groups, amountsVisible, 
     }))
 
   const chartTotal = chartData.reduce((sum, d) => sum + d.value, 0)
+  const hasGainLoss = totalGainLossPct != null && totalGainLoss !== 0
+  const gainColor = totalGainLoss >= 0 ? '#34c759' : '#ff3b30'
 
   return (
     <View className="flex-1 px-4">
       <View className="flex-1 rounded-2xl p-4 justify-between" style={{ backgroundColor: colors.card }}>
-        {/* Top: Value + Cost Basis */}
+        {/* Top: Market Value + Cost Basis + Gain/Loss */}
         <View>
           <View className="flex-row items-center justify-between">
             <Text className="text-xs font-medium text-muted">{t('total_value')}</Text>
@@ -45,7 +59,7 @@ export function PortfolioOverviewCard({ costByCurrency, groups, amountsVisible, 
               className="text-3xl font-bold text-text mt-1"
               style={{ fontVariant: ['tabular-nums'] }}
             >
-              {baseCurrency} {totalInBase.toLocaleString(undefined, {
+              {baseCurrency} {totalMarketValueInBase.toLocaleString(undefined, {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
               })}
@@ -61,6 +75,19 @@ export function PortfolioOverviewCard({ costByCurrency, groups, amountsVisible, 
             </Text>
           </Redacted>
 
+          {hasGainLoss && (
+            <Redacted visible={amountsVisible}>
+              <Text
+                className="text-sm font-semibold mt-1"
+                style={{ fontVariant: ['tabular-nums'], color: gainColor }}
+              >
+                {totalGainLoss >= 0 ? '+' : ''}{totalGainLoss.toLocaleString(undefined, {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                })} ({totalGainLossPct! >= 0 ? '+' : ''}{totalGainLossPct!.toFixed(1)}%)
+              </Text>
+            </Redacted>
+          )}
         </View>
 
         {/* Bottom: Allocation Bar + Legend */}

@@ -11,7 +11,8 @@ import { getScoreZone } from '@/src/types/insights'
  * Each class contributes min(actualPct, idealPct) to the total score.
  * A perfectly diversified portfolio across all classes = 100.
  *
- * Currency conversion is handled upstream — HoldingGroup.totalValue is already converted to baseCurrency.
+ * Uses cost basis (totalCostInBase) — the actual money spent — not market value.
+ * Currency conversion is handled upstream.
  */
 export function usePortfolioScore(
   groups: HoldingGroup[],
@@ -21,7 +22,7 @@ export function usePortfolioScore(
   return useMemo(() => {
     if (!assetClasses?.length || groups.length === 0) return null
 
-    const totalValue = groups.reduce((sum, g) => sum + g.totalValue, 0)
+    const totalValue = groups.reduce((sum, g) => sum + g.totalCostInBase, 0)
     if (totalValue === 0) return null
 
     // When a preset is active, only show classes defined in the preset
@@ -36,7 +37,7 @@ export function usePortfolioScore(
     // Build a map of actual percentages by slug
     const actualBySlug = new Map<string, number>()
     for (const g of groups) {
-      const pct = (g.totalValue / totalValue) * 100
+      const pct = (g.totalCostInBase / totalValue) * 100
       actualBySlug.set(g.type, pct)
     }
 

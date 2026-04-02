@@ -13,6 +13,10 @@ import { useHealthFactors } from '@/src/hooks/use-health-factors'
 import { useStockCompliance } from '@/src/hooks/use-stock-compliance'
 import { usePreferences } from '@/src/store/preferences'
 import { useExchangeRates } from '@/src/hooks/use-exchange-rates'
+import { usePortfolioHash } from '@/src/hooks/use-portfolio-hash'
+import { useNarrative } from '@/src/hooks/use-narrative'
+import { useDeepAnalysis } from '@/src/hooks/use-deep-analysis'
+import { useAiFeatures, getFeatureConfig } from '@/src/hooks/use-ai-features'
 import { buildRateMap, convertCurrency } from '@/src/lib/currency'
 import type { ComplianceSummary, ConcentrationInsight } from '@/src/types/insights'
 
@@ -21,13 +25,14 @@ import { ScoreBreakdownSheet } from '@/src/components/insights/score-breakdown-s
 import { ComplianceBreakdownSheet } from '@/src/components/insights/compliance-breakdown-sheet'
 import { ShariaComplianceCard } from '@/src/components/insights/sharia-compliance-card'
 import { NarrativeBlock } from '@/src/components/insights/narrative-block'
+import { DeepAnalysisBlock } from '@/src/components/insights/deep-analysis-block'
 import { ConcentrationCard } from '@/src/components/insights/concentration-card'
 import { InsightsEmptyState } from '@/src/components/insights/insights-empty-state'
 
 export default function InsightsScreen() {
   const { data, isLoading } = useHoldings()
   const { data: assetClasses } = useAssetClasses()
-  const { t } = useTranslation('insights')
+  const { t, i18n } = useTranslation('insights')
 
   const baseCurrency = usePreferences((s) => s.baseCurrency)
   const presetSlug = usePreferences((s) => s.portfolioPresetSlug)
@@ -81,13 +86,13 @@ export default function InsightsScreen() {
   const concentration = useMemo<ConcentrationInsight | null>(() => {
     if (allHoldings.length === 0) return null
 
-    const totalValue = groups.reduce((sum, g) => sum + g.totalValue, 0)
-    if (totalValue === 0) return null
+    const totalCost = groups.reduce((sum, g) => sum + g.totalCostInBase, 0)
+    if (totalCost === 0) return null
 
-    // Segments by asset class
+    // Segments by asset class (based on cost basis)
     const segments = groups.map((g) => ({
       label: g.assetClass?.name ?? g.type,
-      percentage: Math.round((g.totalValue / totalValue) * 100),
+      percentage: Math.round((g.totalCostInBase / totalCost) * 100),
       color: g.assetClass?.color ?? '#636366',
     }))
 
@@ -99,7 +104,7 @@ export default function InsightsScreen() {
     )
     const top = sorted[0]
     const topValueInBase = convertCurrency(top.totalCost, top.currency, baseCurrency, rates)
-    const topPct = Math.round((topValueInBase / totalValue) * 100)
+    const topPct = Math.round((topValueInBase / totalCost) * 100)
     const topHolding = {
       name: top.symbol ?? top.name ?? top.assetType,
       percentage: topPct,
@@ -121,6 +126,19 @@ export default function InsightsScreen() {
 
     return { topHolding, segments, verdict }
   }, [groups, allHoldings, baseCurrency, rates, t])
+
+  // --- AI Features ---
+  const { data: aiFeatures } = useAiFeatures()
+  const narrativeConfig = getFeatureConfig(aiFeatures, 'narrative')
+  const deepAnalysisConfig = getFeatureConfig(aiFeatures, 'deep_analysis')
+
+  const portfolioHash = usePortfolioHash(allHoldings)
+  const narrativeState = useNarrative(
+    allHoldings, compliance, portfolioHash, i18n.language, narrativeConfig,
+  )
+  const deepAnalysisState = useDeepAnalysis(
+    allHoldings, compliance, complianceMap, portfolioHash, score, i18n.language, deepAnalysisConfig,
+  )
 
   // --- Loading ---
   if (isLoading) {
@@ -177,18 +195,35 @@ export default function InsightsScreen() {
           </View>
         )}
 
-        {/* 3. AI Narrative (locked for MVP) */}
+        {/* 3. AI Narrative */}
         <View className="mb-3">
           <NarrativeBlock
-            narrative={null}
+            narrative={narrativeState.narrative}
+            isStale={narrativeState.isStale}
+            isLoading={narrativeState.isLoading}
+            creditCost={narrativeState.creditCost}
             onGenerate={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-              // Future: AI call with credit deduction
+              narrativeState.generate()
             }}
           />
         </View>
 
-        {/* 4. Concentration Insight */}
+        {/* 4. Deep Portfolio Analysis */}
+        <View className="mb-3">
+          <DeepAnalysisBlock
+            analysis={deepAnalysisState.analysis}
+            isStale={deepAnalysisState.isStale}
+            isLoading={deepAnalysisState.isLoading}
+            creditCost={deepAnalysisConfig.creditCost}
+            onGenerate={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+              deepAnalysisState.generate()
+            }}
+          />
+        </View>
+
+        {/* 5. Concentration Insight */}
         {concentration && (
           <View className="mb-3">
             <ConcentrationCard concentration={concentration} />
