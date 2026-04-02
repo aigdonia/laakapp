@@ -162,6 +162,20 @@
       "when": 1774856628760,
       "tag": "0022_easy_metal_master",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "6",
+      "when": 1775139217590,
+      "tag": "0023_zippy_iceman",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "6",
+      "when": 1775141044175,
+      "tag": "0024_quiet_nebula",
+      "breakpoints": true
     }
   ]
 }

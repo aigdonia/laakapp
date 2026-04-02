@@ -27,6 +27,8 @@ const PUBLIC_GET_PREFIXES = [
   "/exchange-rates",
   "/stock-compliance",
   "/stock-financials",
+  "/stock-analysis",
+  "/ai-features",
   "/data-sources",
   "/event-types",
   "/activity-rules",
