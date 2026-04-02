@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { z } from "zod";
 import { eq, and, inArray } from "drizzle-orm";
 import type { Env } from "../index";
 import type { Database } from "../db";
@@ -10,6 +11,12 @@ import {
   stockFinancials,
 } from "../db/schema";
 import { screenStock } from "../lib/screening-engine";
+import { stockComplianceInsert, stockComplianceUpdate } from "../validation/schemas";
+
+const runScreeningSchema = z.object({
+  stockIds: z.array(z.string()).optional(),
+  screeningRuleId: z.string().optional(),
+});
 
 function db(c: { get: (key: string) => unknown }): Database {
   return c.get("db") as Database;
@@ -146,10 +153,14 @@ app.get("/by-symbols", async (c) => {
 
 // Manual override from admin
 app.post("/", async (c) => {
-  const body = await c.req.json();
+  const raw = await c.req.json();
+  const parsed = stockComplianceInsert.safeParse(raw);
+  if (!parsed.success) {
+    return c.json({ error: "validation_error", issues: parsed.error.issues }, 400);
+  }
   const row = await db(c)
     .insert(stockCompliance)
-    .values(body)
+    .values(parsed.data)
     .returning()
     .get();
   return c.json(row, 201);
@@ -196,10 +207,12 @@ app.post("/bulk", async (c) => {
 
 // Run screening engine for given stocks
 app.post("/run-screening", async (c) => {
-  const { stockIds, screeningRuleId } = await c.req.json<{
-    stockIds?: string[];
-    screeningRuleId?: string;
-  }>();
+  const raw = await c.req.json();
+  const parsed = runScreeningSchema.safeParse(raw);
+  if (!parsed.success) {
+    return c.json({ error: "validation_error", issues: parsed.error.issues }, 400);
+  }
+  const { stockIds, screeningRuleId } = parsed.data;
 
   // Get all screening rules (or specific one)
   const rules = screeningRuleId
@@ -326,10 +339,14 @@ app.post("/run-screening", async (c) => {
 
 // Update (for admin edits)
 app.put("/:id", async (c) => {
-  const body = await c.req.json();
+  const raw = await c.req.json();
+  const parsed = stockComplianceUpdate.safeParse(raw);
+  if (!parsed.success) {
+    return c.json({ error: "validation_error", issues: parsed.error.issues }, 400);
+  }
   const row = await db(c)
     .update(stockCompliance)
-    .set({ ...body, updatedAt: new Date().toISOString() })
+    .set({ ...parsed.data, updatedAt: new Date().toISOString() })
     .where(eq(stockCompliance.id, c.req.param("id")))
     .returning()
     .get();

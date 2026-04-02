@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import type { Env } from "../index";
 import type { Database } from "../db";
 import { appSettings } from "../db/schema";
+import { appSettingsUpdate } from "../validation/schemas";
 
 const app = new Hono<Env>();
 
@@ -20,7 +21,12 @@ app.get("/", async (c) => {
 
 // PUT / — update the singleton row
 app.put("/", async (c) => {
-  const body = await c.req.json();
+  const raw = await c.req.json();
+  const parsed = appSettingsUpdate.safeParse(raw);
+  if (!parsed.success) {
+    return c.json({ error: "validation_error", issues: parsed.error.issues }, 400);
+  }
+  const body = parsed.data;
 
   let row = await db(c).select().from(appSettings).get();
   if (!row) {

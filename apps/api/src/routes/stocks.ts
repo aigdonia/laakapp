@@ -4,6 +4,7 @@ import type { Env } from "../index";
 import type { Database } from "../db";
 import { stocks } from "../db/schema";
 import { crudRoutes } from "./_crud";
+import { stocksInsert, stocksUpdate } from "../validation/schemas";
 
 function db(c: { get: (key: string) => unknown }): Database {
   return c.get("db") as Database;
@@ -108,7 +109,10 @@ app.get("/", async (c) => {
 });
 
 // Mount standard CRUD (GET "/" already handled above, CRUD adds /:id, POST, PUT, DELETE)
-app.route("/", crudRoutes(stocks));
+app.route("/", crudRoutes(stocks, {
+  insertSchema: stocksInsert,
+  updateSchema: stocksUpdate,
+}));
 
 // Bulk upsert by symbol
 app.post("/bulk", async (c) => {

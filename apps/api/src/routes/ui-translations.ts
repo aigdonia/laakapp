@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { z } from "zod";
 import { eq, and, sql } from "drizzle-orm";
 import type { Env } from "../index";
 import type { Database } from "../db";
@@ -7,6 +8,16 @@ import {
   translationBundleVersions,
 } from "../db/schema";
 import type { TranslationBundle } from "@fin-ai/shared";
+import { uiTranslationsInsert, uiTranslationsUpdate } from "../validation/schemas";
+
+const bulkTranslationItem = z.object({
+  key: z.string().min(1).max(200),
+  namespace: z.string().min(1).max(100),
+  languageCode: z.string().min(2).max(10),
+  value: z.string().max(10000),
+});
+
+const bulkTranslationSchema = z.array(bulkTranslationItem).max(5000);
 
 function db(c: { get: (key: string) => unknown }): Database {
   return c.get("db") as Database;
@@ -50,7 +61,12 @@ app.get("/", async (c) => {
 
 // Create single translation
 app.post("/", async (c) => {
-  const body = await c.req.json();
+  const raw = await c.req.json();
+  const parsed = uiTranslationsInsert.safeParse(raw);
+  if (!parsed.success) {
+    return c.json({ error: "validation_error", issues: parsed.error.issues }, 400);
+  }
+  const body = parsed.data;
   const row = await db(c)
     .insert(uiTranslations)
     .values(body)
@@ -62,14 +78,12 @@ app.post("/", async (c) => {
 
 // Bulk upsert
 app.post("/bulk", async (c) => {
-  const items = await c.req.json<
-    Array<{
-      key: string;
-      namespace: string;
-      languageCode: string;
-      value: string;
-    }>
-  >();
+  const raw = await c.req.json();
+  const parsed = bulkTranslationSchema.safeParse(raw);
+  if (!parsed.success) {
+    return c.json({ error: "validation_error", issues: parsed.error.issues }, 400);
+  }
+  const items = parsed.data;
 
   const results = [];
   const affectedLanguages = new Set<string>();
@@ -117,7 +131,12 @@ app.post("/bulk", async (c) => {
 
 // Update single translation
 app.put("/:id", async (c) => {
-  const body = await c.req.json();
+  const raw = await c.req.json();
+  const parsed = uiTranslationsUpdate.safeParse(raw);
+  if (!parsed.success) {
+    return c.json({ error: "validation_error", issues: parsed.error.issues }, 400);
+  }
+  const body = parsed.data;
   const row = await db(c)
     .update(uiTranslations)
     .set({ ...body, updatedAt: new Date().toISOString() })

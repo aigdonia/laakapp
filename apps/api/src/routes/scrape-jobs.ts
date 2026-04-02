@@ -1,8 +1,10 @@
 import { Hono } from "hono";
+import { z } from "zod";
 import { eq } from "drizzle-orm";
 import type { Env } from "../index";
 import type { Database } from "../db";
 import { scrapeJobs } from "../db/schema";
+import { scrapeJobsInsert, scrapeJobsUpdate } from "../validation/schemas";
 
 function db(c: { get: (key: string) => unknown }): Database {
   return c.get("db") as Database;
@@ -38,10 +40,14 @@ app.get("/:id", async (c) => {
 
 // Create job (admin trigger)
 app.post("/", async (c) => {
-  const body = await c.req.json();
+  const raw = await c.req.json();
+  const parsed = scrapeJobsInsert.safeParse(raw);
+  if (!parsed.success) {
+    return c.json({ error: "validation_error", issues: parsed.error.issues }, 400);
+  }
   const row = await db(c)
     .insert(scrapeJobs)
-    .values(body)
+    .values(parsed.data)
     .returning()
     .get();
   return c.json(row, 201);
@@ -49,10 +55,14 @@ app.post("/", async (c) => {
 
 // Update progress (scraper calls this)
 app.put("/:id", async (c) => {
-  const body = await c.req.json();
+  const raw = await c.req.json();
+  const parsed = scrapeJobsUpdate.safeParse(raw);
+  if (!parsed.success) {
+    return c.json({ error: "validation_error", issues: parsed.error.issues }, 400);
+  }
   const row = await db(c)
     .update(scrapeJobs)
-    .set({ ...body, updatedAt: new Date().toISOString() })
+    .set({ ...parsed.data, updatedAt: new Date().toISOString() })
     .where(eq(scrapeJobs.id, c.req.param("id")))
     .returning()
     .get();

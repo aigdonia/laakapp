@@ -2,6 +2,8 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { createDb, type Database } from "./db";
 import { authMiddleware } from "./middleware/auth";
+import { securityHeaders } from "./middleware/security-headers";
+import { bodyLimit } from "./middleware/body-limit";
 import countries from "./routes/countries";
 import stocks from "./routes/stocks";
 import screeningRules from "./routes/screening-rules";
@@ -39,6 +41,8 @@ import friendRoute from "./routes/friend";
 import aiFeaturesRoute from "./routes/ai-features";
 import stockAnalysisRoute from "./routes/stock-analysis";
 import dashboardStatsRoute from "./routes/dashboard-stats";
+import profileRoute from "./routes/profile";
+import adminUsersRoute from "./routes/admin-users";
 
 export type Env = {
   Bindings: {
@@ -57,7 +61,27 @@ export type Env = {
 
 const app = new Hono<Env>();
 
-app.use("*", cors());
+app.use("*", securityHeaders);
+app.use("*", bodyLimit());
+
+app.use(
+  "*",
+  cors({
+    origin: (origin) => {
+      // Mobile apps don't send Origin headers — CORS only applies to browsers.
+      // Allow localhost for dev and the production admin domain.
+      const allowed = [
+        /^http:\/\/localhost(:\d+)?$/,
+        /^https:\/\/.*\.vercel\.app$/,
+      ];
+      if (!origin) return origin;
+      return allowed.some((re) => re.test(origin)) ? origin : "";
+    },
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+    maxAge: 86400,
+  })
+);
 
 app.use("*", async (c, next) => {
   const db = createDb(c.env.DB);
@@ -102,6 +126,8 @@ app.route("/friend", friendRoute);
 app.route("/stock-analysis", stockAnalysisRoute);
 app.route("/ai-features", aiFeaturesRoute);
 app.route("/dashboard-stats", dashboardStatsRoute);
+app.route("/profile", profileRoute);
+app.route("/admin/users", adminUsersRoute);
 
 export default {
   fetch: app.fetch,

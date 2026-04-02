@@ -3,10 +3,15 @@ import { eq } from "drizzle-orm";
 import type { Env } from "../index";
 import type { Database } from "../db";
 import type { SQLiteTableWithColumns } from "drizzle-orm/sqlite-core";
+import type { ZodType } from "zod";
 
 type AnyTable = SQLiteTableWithColumns<any>;
 
-type CrudOptions = { orderable?: boolean };
+type CrudOptions = {
+  orderable?: boolean;
+  insertSchema?: ZodType;
+  updateSchema?: ZodType;
+};
 
 function db(c: { get: (key: string) => unknown }): Database {
   return c.get("db") as Database;
@@ -34,16 +39,52 @@ export function crudRoutes<T extends AnyTable>(
   });
 
   app.post("/", async (c) => {
-    const body = await c.req.json();
-    const row = await db(c).insert(table).values(body).returning().get();
+    const raw = await c.req.json();
+
+    if (options?.insertSchema) {
+      const result = options.insertSchema.safeParse(raw);
+      if (!result.success) {
+        return c.json(
+          { error: "validation_error", issues: result.error.issues },
+          400
+        );
+      }
+      const row = await db(c)
+        .insert(table)
+        .values(result.data as any)
+        .returning()
+        .get();
+      return c.json(row, 201);
+    }
+
+    const row = await db(c).insert(table).values(raw).returning().get();
     return c.json(row, 201);
   });
 
   app.put("/:id", async (c) => {
-    const body = await c.req.json();
+    const raw = await c.req.json();
+
+    if (options?.updateSchema) {
+      const result = options.updateSchema.safeParse(raw);
+      if (!result.success) {
+        return c.json(
+          { error: "validation_error", issues: result.error.issues },
+          400
+        );
+      }
+      const row = await db(c)
+        .update(table)
+        .set({ ...(result.data as any), updatedAt: new Date().toISOString() })
+        .where(eq(table.id, c.req.param("id")))
+        .returning()
+        .get();
+      if (!row) return c.json({ error: "Not found" }, 404);
+      return c.json(row);
+    }
+
     const row = await db(c)
       .update(table)
-      .set({ ...body, updatedAt: new Date().toISOString() })
+      .set({ ...raw, updatedAt: new Date().toISOString() })
       .where(eq(table.id, c.req.param("id")))
       .returning()
       .get();

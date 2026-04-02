@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { z } from "zod";
 import { eq, and, sql, gt } from "drizzle-orm";
 import type { Env } from "../index";
 import type { Database } from "../db";
@@ -11,6 +12,12 @@ import {
 import { creditBack } from "../lib/revenuecat";
 import type { TriggeredAction } from "@fin-ai/shared";
 
+const trackEventSchema = z.object({
+  eventType: z.string().min(1).max(100),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+  idempotencyKey: z.string().max(200).optional(),
+});
+
 function db(c: { get: (key: string) => unknown }): Database {
   return c.get("db") as Database;
 }
@@ -20,11 +27,12 @@ const app = new Hono<Env>();
 app.post("/events", async (c) => {
   const customerId = c.get("userId");
 
-  const body = await c.req.json<{
-    eventType: string;
-    metadata?: Record<string, unknown>;
-    idempotencyKey?: string;
-  }>();
+  const raw = await c.req.json();
+  const parsed = trackEventSchema.safeParse(raw);
+  if (!parsed.success) {
+    return c.json({ error: "validation_error", issues: parsed.error.issues }, 400);
+  }
+  const body = parsed.data;
 
   // 1. Validate event type against registry
   const eventType = await db(c)

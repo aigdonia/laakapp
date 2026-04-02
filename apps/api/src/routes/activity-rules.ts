@@ -4,12 +4,17 @@ import type { Env } from "../index";
 import type { Database } from "../db";
 import { activityRules, activityEvents, activityCompletions } from "../db/schema";
 import { crudRoutes } from "./_crud";
+import { activityRulesInsert, activityRulesUpdate } from "../validation/schemas";
 
 function db(c: { get: (key: string) => unknown }): Database {
   return c.get("db") as Database;
 }
 
-const crud = crudRoutes(activityRules, { orderable: true });
+const crud = crudRoutes(activityRules, {
+  orderable: true,
+  insertSchema: activityRulesInsert,
+  updateSchema: activityRulesUpdate,
+});
 
 const app = new Hono<Env>();
 

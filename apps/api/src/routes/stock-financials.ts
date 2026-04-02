@@ -4,6 +4,7 @@ import type { Env } from "../index";
 import type { Database } from "../db";
 import { stockFinancials } from "../db/schema";
 import { crudRoutes } from "./_crud";
+import { stockFinancialsInsert, stockFinancialsUpdate } from "../validation/schemas";
 
 function db(c: { get: (key: string) => unknown }): Database {
   return c.get("db") as Database;
@@ -12,7 +13,10 @@ function db(c: { get: (key: string) => unknown }): Database {
 const app = new Hono<Env>();
 
 // Mount standard CRUD
-app.route("/", crudRoutes(stockFinancials));
+app.route("/", crudRoutes(stockFinancials, {
+  insertSchema: stockFinancialsInsert,
+  updateSchema: stockFinancialsUpdate,
+}));
 
 // Bulk insert from scraper
 app.post("/bulk", async (c) => {

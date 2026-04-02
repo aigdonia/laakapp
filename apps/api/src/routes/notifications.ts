@@ -1,8 +1,28 @@
 import { Hono } from "hono";
+import { z } from "zod";
 import { eq, and, sql, isNull, lte } from "drizzle-orm";
 import type { Env } from "../index";
 import type { Database } from "../db";
 import { notifications, notificationLogs, pushTokens } from "../db/schema";
+
+const createNotificationSchema = z.object({
+  title: z.string().min(1).max(200),
+  body: z.string().min(1).max(1000),
+  category: z.enum(["marketing", "content", "onboarding"]),
+  deepLink: z.string().max(500).optional(),
+  target: z.enum(["all", "ios", "android"]).default("all"),
+  scheduledAt: z.string().optional(),
+});
+
+const updateNotificationSchema = z.object({
+  title: z.string().min(1).max(200).optional(),
+  body: z.string().min(1).max(1000).optional(),
+  category: z.enum(["marketing", "content", "onboarding"]).optional(),
+  deepLink: z.string().max(500).nullable().optional(),
+  target: z.enum(["all", "ios", "android"]).optional(),
+  scheduledAt: z.string().nullable().optional(),
+  status: z.enum(["draft", "scheduled"]).optional(),
+});
 import {
   sendExpoPushNotifications,
   type ExpoPushMessage,
@@ -11,6 +31,27 @@ import type { NotificationCategory } from "@fin-ai/shared";
 
 function db(c: { get: (key: string) => unknown }): Database {
   return c.get("db") as Database;
+}
+
+/** Allowed deep link path prefixes — must match mobile app routes. */
+const ALLOWED_DEEP_LINK_PREFIXES = [
+  "/stock/",
+  "/holding/",
+  "/article/",
+  "/category/",
+  "/credits",
+  "/add-holding",
+  "/onboarding",
+  "/terms",
+  "/privacy",
+];
+
+function isValidDeepLink(link: string): boolean {
+  // Must be a relative path starting with /
+  if (!link.startsWith("/")) return false;
+  // Must not contain protocol or double slashes (prevents open redirect)
+  if (link.includes("://") || link.includes("//")) return false;
+  return ALLOWED_DEEP_LINK_PREFIXES.some((prefix) => link.startsWith(prefix));
 }
 
 const app = new Hono<Env>();
@@ -61,14 +102,19 @@ app.get("/:id", async (c) => {
 
 /** Create a notification campaign */
 app.post("/", async (c) => {
-  const body = await c.req.json<{
-    title: string;
-    body: string;
-    category: NotificationCategory;
-    deepLink?: string;
-    target?: "all" | "ios" | "android";
-    scheduledAt?: string;
-  }>();
+  const raw = await c.req.json();
+  const parsed = createNotificationSchema.safeParse(raw);
+  if (!parsed.success) {
+    return c.json({ error: "validation_error", issues: parsed.error.issues }, 400);
+  }
+  const body = parsed.data;
+
+  if (body.deepLink && !isValidDeepLink(body.deepLink)) {
+    return c.json(
+      { error: "invalid_deep_link", message: "Deep link must be a valid app route" },
+      400
+    );
+  }
 
   const status = body.scheduledAt ? "scheduled" : "draft";
 
@@ -102,7 +148,20 @@ app.put("/:id", async (c) => {
     return c.json({ error: "cannot_edit_sent" }, 400);
   }
 
-  const body = await c.req.json();
+  const raw = await c.req.json();
+  const parsed = updateNotificationSchema.safeParse(raw);
+  if (!parsed.success) {
+    return c.json({ error: "validation_error", issues: parsed.error.issues }, 400);
+  }
+  const body = parsed.data;
+
+  if (body.deepLink && !isValidDeepLink(body.deepLink)) {
+    return c.json(
+      { error: "invalid_deep_link", message: "Deep link must be a valid app route" },
+      400
+    );
+  }
+
   const row = await db(c)
     .update(notifications)
     .set({ ...body, updatedAt: new Date().toISOString() })
