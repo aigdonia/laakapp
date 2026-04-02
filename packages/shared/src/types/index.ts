@@ -10,6 +10,7 @@ export type { Language, TextDirection } from "./language";
 export type { CreditPackage } from "./credit-package";
 export type { Affiliate } from "./affiliate";
 export type { Prompt } from "./prompt";
+export type { AiFeature } from "./ai-feature";
 export type { AppSettings } from "./app-settings";
 export type { AssetClass, FieldConfig, FieldType } from "./asset-class";
 export type { Lookup } from "./lookup";
