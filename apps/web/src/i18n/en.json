@@ -68,17 +68,17 @@
     {
       "number": "01",
       "title": "Add your holdings",
-      "description": "Search any supported market. Add investments in seconds."
+      "description": "Search any supported market. Add stocks, ETFs, gold, and more in seconds."
     },
     {
       "number": "02",
-      "title": "See the full picture",
-      "description": "Performance, allocation, and trends — all in one view."
+      "title": "Screen for compliance",
+      "description": "Screening data from trusted sources, applied automatically and explained clearly."
     },
     {
       "number": "03",
-      "title": "Check compliance",
-      "description": "Compliance screening data from trusted sources, clearly explained."
+      "title": "Understand what you own",
+      "description": "What each holding does, how it's performing, where it stands — the full picture at a glance."
     }
   ],
 
@@ -111,7 +111,7 @@
     },
     {
       "question": "Is Laak free?",
-      "answer": "The core experience — portfolio tracking, basic screening, and offline access — is free. Premium features like AI-powered analysis, advanced screening details, and multi-market support will be available through a subscription."
+      "answer": "The core experience — portfolio tracking, basic screening, and offline access — is free. Premium features like AI-powered analysis, advanced screening details, and multi-market support are available through credits you purchase inside the app — no subscriptions, you only pay when you need depth."
     }
   ],
 
