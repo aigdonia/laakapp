@@ -31,6 +31,18 @@ export const transactions = sqliteTable('transactions', {
     .$defaultFn(() => new Date()),
 })
 
+export const aiAnalyses = sqliteTable('ai_analyses', {
+  id: text('id').primaryKey(),
+  holdingKey: text('holding_key').notNull(),
+  type: text('type', { enum: ['stock_deepdive', 'portfolio_deep'] }).notNull(),
+  content: text('content').notNull(),
+  version: integer('version').notNull().default(1),
+  creditTransactionId: text('credit_transaction_id'),
+  createdAt: integer('created_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+})
+
 export const syncMeta = sqliteTable('sync_meta', {
   key: text('key').primaryKey(),
   value: text('value').notNull(),

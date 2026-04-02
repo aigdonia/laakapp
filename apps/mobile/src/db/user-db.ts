@@ -13,4 +13,5 @@ export function useUserDbMigrations() {
 export function resetUserDb() {
   expoDb.execSync(`DELETE FROM transactions`)
   expoDb.execSync(`DELETE FROM sync_meta`)
+  expoDb.execSync(`DELETE FROM ai_analyses`)
 }
