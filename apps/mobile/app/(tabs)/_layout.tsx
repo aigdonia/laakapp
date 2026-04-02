@@ -3,7 +3,6 @@ import { Tabs, router, usePathname } from 'expo-router'
 import { I18nManager } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated from 'react-native-reanimated'
-import * as Haptics from 'expo-haptics'
 import { useTranslation } from 'react-i18next'
 
 import { AppHeader } from '@/src/components/app-header'
@@ -46,7 +45,6 @@ function TabLayoutInner() {
 
   const navigateToTab = useCallback(
     (tab: TabName, swipeIdx: number) => {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
       bounceTarget.value = swipeIdx
       activeIndex.value = swipeIdx
       router.navigate(getTabRoute(tab))
