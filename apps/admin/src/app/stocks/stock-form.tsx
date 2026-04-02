@@ -48,10 +48,11 @@ export function StockForm({
       countryCode: (form.get("countryCode") as string).toUpperCase(),
       exchange: form.get("exchange") as string,
       sector: form.get("sector") as string,
+      about: (form.get("about") as string) || null,
       enabled: form.get("enabled") === "on",
       lastPrice: form.get("lastPrice") ? Number(form.get("lastPrice")) : null,
       lastPriceUpdatedAt: form.get("lastPrice") ? new Date().toISOString() : null,
-      translations: extractTranslations(form, ["name", "sector"]),
+      translations: extractTranslations(form, ["name", "sector", "about"]),
     }
 
     try {
@@ -146,6 +147,16 @@ export function StockForm({
             translations={stock?.translations}
             required
             placeholder="Financial Services"
+          />
+
+          <LocaleInput
+            field="about"
+            label="About"
+            languages={languages}
+            defaultValue={stock?.about ?? ""}
+            translations={stock?.translations}
+            placeholder="Brief description of the company or fund"
+            multiline
           />
 
           <div className="flex flex-col gap-2">

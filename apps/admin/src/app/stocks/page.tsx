@@ -1,12 +1,14 @@
 import { PageLayout } from "@/components/page-layout"
 import { listScreeningRules, listExchangeLookups, listSectorLookups } from "./actions"
+import { listLanguages } from "../languages/actions"
 import { StocksTable } from "./stocks-table"
 
 export default async function StocksPage() {
-  const [screeningRules, exchangeLookups, sectorLookups] = await Promise.all([
+  const [screeningRules, exchangeLookups, sectorLookups, languages] = await Promise.all([
     listScreeningRules(),
     listExchangeLookups(),
     listSectorLookups(),
+    listLanguages(),
   ])
 
   return (
@@ -18,6 +20,7 @@ export default async function StocksPage() {
         screeningRules={screeningRules}
         exchangeLookups={exchangeLookups}
         sectorLookups={sectorLookups}
+        languages={languages}
       />
     </PageLayout>
   )

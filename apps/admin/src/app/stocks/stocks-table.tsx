@@ -66,10 +66,12 @@ export function StocksTable({
   screeningRules,
   exchangeLookups,
   sectorLookups,
+  languages,
 }: {
   screeningRules: ScreeningRule[]
   exchangeLookups: Lookup[]
   sectorLookups: Lookup[]
+  languages: import("@fin-ai/shared").Language[]
 }) {
   const [stocks, setStocks] = useState<Stock[]>([])
   const [compliance, setCompliance] = useState<StockCompliance[]>([])
@@ -349,7 +351,9 @@ export function StocksTable({
                     </span>
                   </td>
                   <td className="px-4 py-3 font-medium max-w-[200px] truncate">
-                    {stock.name}
+                    <button type="button" className="hover:underline text-start" onClick={() => openEdit(stock)}>
+                      {stock.name}
+                    </button>
                   </td>
                   <td className="px-4 py-3 text-xs">{stock.exchange}</td>
                   <td className="px-4 py-3 text-xs text-muted-foreground max-w-[120px] truncate">
@@ -452,6 +456,7 @@ export function StocksTable({
         open={formOpen}
         onOpenChange={setFormOpen}
         stock={editingStock}
+        languages={languages}
         exchangeLookups={exchangeLookups}
         onSaved={fetchData}
       />
