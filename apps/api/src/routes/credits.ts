@@ -1,8 +1,15 @@
 import { Hono } from "hono";
+import { z } from "zod";
 import type { Env } from "../index";
 import type { Database } from "../db";
 import { creditTransactions } from "../db/schema";
 import { getBalance, debitCredits, creditBack } from "../lib/revenuecat";
+import { rateLimit } from "../middleware/rate-limit";
+
+const spendSchema = z.object({
+  feature: z.string().min(1),
+  payload: z.unknown().optional(),
+});
 
 const FEATURE_COSTS: Record<string, number> = {
   ai_portfolio_narrative: 2,
@@ -18,10 +25,15 @@ function db(c: { get: (key: string) => unknown }): Database {
 
 const app = new Hono<Env>();
 
-app.post("/spend", async (c) => {
+app.post("/spend", rateLimit(10), async (c) => {
   const customerId = c.get("userId");
 
-  const body = await c.req.json<{ feature: string; payload?: unknown }>();
+  const raw = await c.req.json();
+  const parsed = spendSchema.safeParse(raw);
+  if (!parsed.success) {
+    return c.json({ error: "validation_error", issues: parsed.error.issues }, 400);
+  }
+  const body = parsed.data;
   const cost = FEATURE_COSTS[body.feature];
   if (!cost) {
     return c.json({ error: "invalid_feature", valid: Object.keys(FEATURE_COSTS) }, 400);

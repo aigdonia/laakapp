@@ -1,10 +1,18 @@
 import { Hono } from "hono";
+import { z } from "zod";
 import { eq } from "drizzle-orm";
 import type { Env } from "../index";
 import type { Database } from "../db";
-import { creditTransactions, aiFeatures } from "../db/schema";
+import { creditTransactions, aiFeatures, userProfiles } from "../db/schema";
 import { getBalance, debitCredits, creditBack } from "../lib/revenuecat";
 import { executors } from "../lib/ai-executors";
+import { rateLimit } from "../middleware/rate-limit";
+
+const friendRequestSchema = z.object({
+  feature: z.string().min(1),
+  payload: z.record(z.string(), z.unknown()).optional(),
+  language: z.string().min(2).max(10).optional(),
+});
 
 function db(c: { get: (key: string) => unknown }): Database {
   return c.get("db") as Database;
@@ -12,17 +20,17 @@ function db(c: { get: (key: string) => unknown }): Database {
 
 const app = new Hono<Env>();
 
-app.post("/", async (c) => {
+app.post("/", rateLimit(10), async (c) => {
   const customerId = c.get("userId");
   const { RC_SECRET_KEY, RC_PROJECT_ID, GEMINI_API_KEY } = c.env;
 
-  const body = await c.req.json<{
-    feature: string;
-    payload?: Record<string, unknown>;
-    language?: string;
-  }>();
+  const raw = await c.req.json();
+  const parsed = friendRequestSchema.safeParse(raw);
+  if (!parsed.success) {
+    return c.json({ error: "validation_error", issues: parsed.error.issues }, 400);
+  }
 
-  const { feature, payload = {}, language = "en" } = body;
+  const { feature, payload = {}, language = "en" } = parsed.data;
 
   // 1. Validate feature
   const executor = executors[feature];
@@ -55,7 +63,8 @@ app.post("/", async (c) => {
     let balance: number;
     try {
       balance = await getBalance(RC_SECRET_KEY, RC_PROJECT_ID, customerId);
-    } catch {
+    } catch (err) {
+      console.error("[friend] getBalance failed:", customerId, err instanceof Error ? err.message : err);
       return c.json({ error: "service_unavailable" }, 503);
     }
 
@@ -89,21 +98,36 @@ app.post("/", async (c) => {
         RC_PROJECT_ID,
         customerId,
       );
-    } catch {
+    } catch (err) {
+      console.error("[friend] free refresh balance check failed:", customerId, err instanceof Error ? err.message : err);
       balanceAfter = 0;
     }
   }
 
-  // 4. Execute AI pipeline
+  // 4. Inject user profile if feature opts in
+  let enrichedPayload = payload;
+  if (featureConfig.useProfile) {
+    const profile = await db(c)
+      .select({ answers: userProfiles.answers })
+      .from(userProfiles)
+      .where(eq(userProfiles.userId, customerId))
+      .get();
+    if (profile?.answers && Object.keys(profile.answers).length > 0) {
+      enrichedPayload = { ...payload, userProfile: profile.answers };
+    }
+  }
+
+  // 5. Execute AI pipeline
   let result: unknown;
   try {
-    result = await executor(payload, {
+    result = await executor(enrichedPayload, {
       apiKey: GEMINI_API_KEY,
       db: db(c),
       customerId,
       language,
     });
-  } catch {
+  } catch (err) {
+    console.error("[friend] executor failed:", feature, err instanceof Error ? err.message : err);
     // 5. Refund on failure
     if (cost > 0) {
       try {

@@ -1,8 +1,15 @@
 import { Hono } from "hono";
+import { z } from "zod";
 import { desc, eq } from "drizzle-orm";
 import type { Env } from "../index";
 import type { Database } from "../db";
 import { backupSnapshots } from "../db/schema";
+import { rateLimit } from "../middleware/rate-limit";
+
+const backupSchema = z.object({
+  schemaVersion: z.number().int().positive(),
+  transactions: z.array(z.unknown()).min(0),
+});
 
 const MAX_BACKUP_SIZE = 10 * 1024 * 1024; // 10 MB
 
@@ -43,21 +50,15 @@ app.get("/", async (c) => {
 });
 
 // ─── Create / update backup ─────────────────────────────────
-app.post("/", async (c) => {
+app.post("/", rateLimit(2), async (c) => {
   const userId = c.get("userId");
 
-  const body = await c.req.json<{
-    schemaVersion: number;
-    transactions: unknown[];
-  }>();
-
-  if (!body.transactions || !Array.isArray(body.transactions)) {
-    return c.json({ error: "invalid_payload" }, 400);
+  const raw = await c.req.json();
+  const parsed = backupSchema.safeParse(raw);
+  if (!parsed.success) {
+    return c.json({ error: "validation_error", issues: parsed.error.issues }, 400);
   }
-
-  if (!body.schemaVersion || typeof body.schemaVersion !== "number") {
-    return c.json({ error: "missing_schema_version" }, 400);
-  }
+  const body = parsed.data;
 
   const payload = JSON.stringify({
     schemaVersion: body.schemaVersion,
