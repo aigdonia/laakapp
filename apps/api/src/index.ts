@@ -38,6 +38,7 @@ import backupsRoute from "./routes/backups";
 import friendRoute from "./routes/friend";
 import aiFeaturesRoute from "./routes/ai-features";
 import stockAnalysisRoute from "./routes/stock-analysis";
+import dashboardStatsRoute from "./routes/dashboard-stats";
 
 export type Env = {
   Bindings: {
@@ -100,6 +101,7 @@ app.route("/backups", backupsRoute);
 app.route("/friend", friendRoute);
 app.route("/stock-analysis", stockAnalysisRoute);
 app.route("/ai-features", aiFeaturesRoute);
+app.route("/dashboard-stats", dashboardStatsRoute);
 
 export default {
   fetch: app.fetch,
