@@ -36,6 +36,7 @@ export const stocks = sqliteTable("stocks", {
   countryCode: text("country_code").notNull(),
   exchange: text("exchange").notNull(),
   sector: text("sector").notNull().default(""),
+  about: text("about"),
   enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
   lastPrice: real("last_price"),
   lastPriceUpdatedAt: text("last_price_updated_at"),
@@ -515,6 +516,29 @@ export const appSettings = sqliteTable("app_settings", {
     .default(true),
   baseCurrency: text("base_currency").notNull().default("USD"),
   minAppVersion: text("min_app_version").notNull().default("0.0.0"),
+});
+
+// ─── Stock Analyses (batch-generated AI deep-dives) ────────
+export const stockAnalyses = sqliteTable("stock_analyses", {
+  ...timestamps,
+  stockId: text("stock_id").notNull(),
+  languageCode: text("language_code").notNull().default("en"),
+  content: text("content").notNull(),
+  model: text("model").notNull(),
+  version: integer("version").notNull().default(1),
+  triggerReason: text("trigger_reason"),
+});
+
+// ─── AI Features (credit-gated feature config) ─────────────
+export const aiFeatures = sqliteTable("ai_features", {
+  ...timestamps,
+  slug: text("slug").notNull().unique(),
+  name: text("name").notNull(),
+  description: text("description").notNull().default(""),
+  creditCost: integer("credit_cost").notNull().default(0),
+  freeRefresh: integer("free_refresh", { mode: "boolean" }).notNull().default(false),
+  promptSlug: text("prompt_slug").notNull(),
+  enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
 });
 
 // ─── Backup Snapshots ───────────────────────────────────────

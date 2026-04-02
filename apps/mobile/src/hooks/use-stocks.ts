@@ -43,6 +43,7 @@ async function syncStocksToCache(data: Stock[], isIncremental: boolean) {
         exchange: s.exchange,
         countryCode: s.countryCode,
         sector: s.sector,
+        about: s.about ?? null,
         lastPrice: s.lastPrice ?? null,
         lastPriceUpdatedAt: s.lastPriceUpdatedAt ?? null,
         fetchedAt: new Date(),

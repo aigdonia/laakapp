@@ -58,6 +58,7 @@ export const cachedStocks = sqliteTable('cached_stocks', {
   exchange: text('exchange').notNull(),
   countryCode: text('country_code').notNull(),
   sector: text('sector').notNull(),
+  about: text('about'),
   lastPrice: real('last_price'),
   lastPriceUpdatedAt: text('last_price_updated_at'),
   fetchedAt: integer('fetched_at', { mode: 'timestamp' })
