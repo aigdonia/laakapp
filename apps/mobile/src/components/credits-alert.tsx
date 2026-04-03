@@ -20,16 +20,16 @@ type AlertMode =
   | { type: 'action'; title: string; message: string; actionLabel: string; route: string }
   | { type: 'celebration'; title: string; message: string; timeout: number }
 
-let showFn: ((data: AlertMode) => void) | null = null
+const showFnStack: Array<(data: AlertMode) => void> = []
 
 /** Show insufficient credits alert — navigates to a route on action */
 export function showCreditsAlert(data: { title: string; message: string; actionLabel: string }) {
-  showFn?.({ type: 'action', ...data, route: '/credits' })
+  showFnStack[showFnStack.length - 1]?.({ type: 'action', ...data, route: '/credits' })
 }
 
 /** Show celebration card — auto-dismisses after timeout ms (default 3000) */
 export function showCelebration(data: { title: string; message: string; timeout?: number }) {
-  showFn?.({ type: 'celebration', timeout: data.timeout ?? 3000, ...data })
+  showFnStack[showFnStack.length - 1]?.({ type: 'celebration', timeout: data.timeout ?? 3000, ...data })
 }
 
 export function CreditsAlertOverlay() {
@@ -80,9 +80,10 @@ export function CreditsAlertOverlay() {
   }, [dismiss])
 
   useEffect(() => {
-    showFn = show
+    showFnStack.push(show)
     return () => {
-      showFn = null
+      const idx = showFnStack.indexOf(show)
+      if (idx !== -1) showFnStack.splice(idx, 1)
       if (autoDismissTimer.current) clearTimeout(autoDismissTimer.current)
     }
   }, [show])

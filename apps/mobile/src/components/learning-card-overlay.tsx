@@ -22,11 +22,11 @@ type CardData = {
   dismissLabel?: string
 }
 
-let showFn: ((data: CardData) => void) | null = null
+const showFnStack: Array<(data: CardData) => void> = []
 
 /** Show a learning card overlay from anywhere */
 export function showLearningCard(data: CardData) {
-  showFn?.(data)
+  showFnStack[showFnStack.length - 1]?.(data)
 }
 
 export function LearningCardOverlay() {
@@ -54,8 +54,11 @@ export function LearningCardOverlay() {
   }, [])
 
   useEffect(() => {
-    showFn = show
-    return () => { showFn = null }
+    showFnStack.push(show)
+    return () => {
+      const idx = showFnStack.indexOf(show)
+      if (idx !== -1) showFnStack.splice(idx, 1)
+    }
   }, [show])
 
   const backdropStyle = useAnimatedStyle(() => ({
