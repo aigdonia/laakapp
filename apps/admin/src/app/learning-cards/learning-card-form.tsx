@@ -48,8 +48,9 @@ export function LearningCardForm({
     const data = {
       title: form.get("title") as string,
       content,
-      trigger: form.get("trigger") as string,
-      condition: form.get("condition") as string,
+      imageUrl: (form.get("imageUrl") as string) || "",
+      trigger: "",
+      condition: "",
       languageCode: form.get("languageCode") as string,
       order: Number(form.get("order")) || 0,
     }
@@ -108,26 +109,21 @@ export function LearningCardForm({
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="trigger">Trigger</Label>
+            <Label htmlFor="imageUrl">Image URL (optional)</Label>
             <Input
-              id="trigger"
-              name="trigger"
-              placeholder="portfolio_view"
-              defaultValue={learningCard?.trigger}
-              required
+              id="imageUrl"
+              name="imageUrl"
+              placeholder="https://..."
+              defaultValue={learningCard?.imageUrl}
             />
+            <p className="text-xs text-muted-foreground">
+              Displayed above the content. Leave empty for text-only cards.
+            </p>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="condition">Condition</Label>
-            <Input
-              id="condition"
-              name="condition"
-              placeholder="first_time_user"
-              defaultValue={learningCard?.condition}
-              required
-            />
-          </div>
+          <p className="text-xs text-muted-foreground rounded-lg border border-dashed px-3 py-2">
+            Triggering is managed via Activity Rules → &quot;Show Learning Card&quot; action.
+          </p>
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="languageCode">Language</Label>

@@ -66,7 +66,7 @@ export const sidebarConfig = {
       items: [
         {
           title: "Users",
-          url: "#",
+          url: "/users",
           icon: <IconUsers />,
         },
       ],

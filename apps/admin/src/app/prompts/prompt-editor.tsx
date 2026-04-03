@@ -12,8 +12,12 @@ import { createPrompt, updatePrompt, deletePrompt } from "./actions"
 import { toast } from "sonner"
 
 const KNOWN_MODELS = [
-  { value: "gemini-3-flash", label: "Gemini 3 Flash" },
-  { value: "gemini-3.1-pro", label: "Gemini 3.1 Pro" },
+  { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash", group: "Stable" },
+  { value: "gemini-2.5-flash-lite", label: "Gemini 2.5 Flash Lite", group: "Stable" },
+  { value: "gemini-2.0-flash", label: "Gemini 2.0 Flash", group: "Stable" },
+  { value: "gemini-2.0-flash-lite", label: "Gemini 2.0 Flash Lite", group: "Stable" },
+  { value: "gemini-3-flash-preview", label: "Gemini 3 Flash", group: "Preview" },
+  { value: "gemini-3.1-flash-lite-preview", label: "Gemini 3.1 Flash Lite", group: "Preview" },
 ]
 
 function slugify(text: string) {

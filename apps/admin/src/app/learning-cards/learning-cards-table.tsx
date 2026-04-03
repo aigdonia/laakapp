@@ -69,8 +69,6 @@ export function LearningCardsTable({
               <tr className="border-b bg-muted/50 text-muted-foreground">
                 <th className="w-10 px-2 py-3" />
                 <th className="px-4 py-3 text-start font-medium">Title</th>
-                <th className="px-4 py-3 text-start font-medium">Trigger</th>
-                <th className="px-4 py-3 text-start font-medium">Condition</th>
                 <th className="px-4 py-3 text-start font-medium">Language</th>
                 <th className="px-4 py-3 text-end font-medium">Actions</th>
               </tr>
@@ -78,7 +76,7 @@ export function LearningCardsTable({
             <tbody>
               {items.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
+                  <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">
                     No learning cards yet. Add your first learning card.
                   </td>
                 </tr>
@@ -96,12 +94,6 @@ export function LearningCardsTable({
                     <button type="button" className="hover:underline text-start" onClick={() => setEditingCard(card)}>
                       {card.title}
                     </button>
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {card.trigger}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {card.condition}
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
                     {languages.find((l) => l.code === card.languageCode)?.name ?? card.languageCode}

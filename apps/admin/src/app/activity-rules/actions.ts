@@ -59,6 +59,14 @@ export async function deleteActivityRule(id: string) {
   revalidatePath("/activity-rules");
 }
 
+export async function reorderActivityRules(ids: string[]) {
+  await api("/activity-rules/reorder", {
+    method: "POST",
+    body: JSON.stringify({ ids }),
+  });
+  revalidatePath("/activity-rules");
+}
+
 export async function testActivityRule(ruleId: string, customerId: string) {
   return api<RuleTestResult>(
     `/activity-rules/${ruleId}/test?customerId=${encodeURIComponent(customerId)}`

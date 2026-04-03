@@ -2,6 +2,7 @@
 
 import { useEditor, EditorContent, type Editor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
+import { Markdown } from "tiptap-markdown"
 import { useEffect } from "react"
 
 const menuButtonClass =
@@ -77,19 +78,26 @@ export function RichEditor({
   onChange,
 }: {
   content: string
-  onChange: (html: string) => void
+  onChange: (markdown: string) => void
 }) {
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      StarterKit,
+      Markdown.configure({
+        html: false,
+        transformPastedText: true,
+        transformCopiedText: true,
+      }),
+    ],
     content,
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML())
+      onChange(editor.storage.markdown.getMarkdown())
     },
   })
 
   useEffect(() => {
-    if (editor && content !== editor.getHTML()) {
+    if (editor && content !== editor.storage.markdown.getMarkdown()) {
       editor.commands.setContent(content)
     }
   }, [content, editor])

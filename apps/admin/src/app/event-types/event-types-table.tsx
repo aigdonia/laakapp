@@ -26,10 +26,13 @@ import { IconDots, IconPencil, IconPlus, IconTrash } from "@tabler/icons-react"
 import { createEventType, updateEventType, deleteEventType } from "./actions"
 import { toast } from "sonner"
 
+type MetadataField = { key: string; label: string; type: "string" | "number" | "boolean" }
+
 type FormData = {
   slug: string
   label: string
   description: string
+  metadataSchema: MetadataField[]
   enabled: boolean
 }
 
@@ -37,6 +40,7 @@ const emptyForm: FormData = {
   slug: "",
   label: "",
   description: "",
+  metadataSchema: [],
   enabled: true,
 }
 
@@ -58,6 +62,7 @@ export function EventTypesTable({ eventTypes }: { eventTypes: EventType[] }) {
       slug: et.slug,
       label: et.label,
       description: et.description,
+      metadataSchema: (et as any).metadataSchema ?? [],
       enabled: et.enabled,
     })
     setSheetOpen(true)
@@ -162,7 +167,7 @@ export function EventTypesTable({ eventTypes }: { eventTypes: EventType[] }) {
       </div>
 
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent className="overflow-y-auto">
+        <SheetContent>
           <SheetHeader>
             <SheetTitle>{editing ? "Edit Event Type" : "New Event Type"}</SheetTitle>
             <SheetDescription>
@@ -172,7 +177,7 @@ export function EventTypesTable({ eventTypes }: { eventTypes: EventType[] }) {
             </SheetDescription>
           </SheetHeader>
 
-          <div className="mt-6 flex flex-col gap-4">
+          <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 pb-4">
             <div className="flex flex-col gap-2">
               <Label htmlFor="slug">Slug</Label>
               <Input
@@ -207,6 +212,83 @@ export function EventTypesTable({ eventTypes }: { eventTypes: EventType[] }) {
               />
             </div>
 
+            {/* Metadata Schema */}
+            <div className="border-t pt-4">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                Event Metadata Fields
+              </p>
+              <p className="text-xs text-muted-foreground mb-3">
+                Define the metadata keys this event sends from mobile. Used for activity rule conditions.
+              </p>
+              <div className="space-y-2">
+                {form.metadataSchema.map((field, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <Input
+                      className="flex-1"
+                      placeholder="key"
+                      value={field.key}
+                      onChange={(e) => {
+                        const updated = [...form.metadataSchema]
+                        updated[i] = { ...field, key: e.target.value }
+                        setForm({ ...form, metadataSchema: updated })
+                      }}
+                    />
+                    <Input
+                      className="flex-1"
+                      placeholder="Label"
+                      value={field.label}
+                      onChange={(e) => {
+                        const updated = [...form.metadataSchema]
+                        updated[i] = { ...field, label: e.target.value }
+                        setForm({ ...form, metadataSchema: updated })
+                      }}
+                    />
+                    <select
+                      className="flex h-10 rounded-md border border-input bg-background px-2 py-2 text-sm"
+                      value={field.type}
+                      onChange={(e) => {
+                        const updated = [...form.metadataSchema]
+                        updated[i] = { ...field, type: e.target.value as MetadataField["type"] }
+                        setForm({ ...form, metadataSchema: updated })
+                      }}
+                    >
+                      <option value="string">String</option>
+                      <option value="number">Number</option>
+                      <option value="boolean">Boolean</option>
+                    </select>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setForm({
+                          ...form,
+                          metadataSchema: form.metadataSchema.filter((_, j) => j !== i),
+                        })
+                      }}
+                    >
+                      <IconTrash className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setForm({
+                      ...form,
+                      metadataSchema: [
+                        ...form.metadataSchema,
+                        { key: "", label: "", type: "string" },
+                      ],
+                    })
+                  }
+                >
+                  <IconPlus className="mr-1.5 h-3.5 w-3.5" />
+                  Add Field
+                </Button>
+              </div>
+            </div>
+
             <div className="flex items-center gap-3">
               <Switch
                 id="enabled"
@@ -217,7 +299,7 @@ export function EventTypesTable({ eventTypes }: { eventTypes: EventType[] }) {
             </div>
           </div>
 
-          <SheetFooter className="mt-6">
+          <SheetFooter>
             <Button variant="outline" onClick={() => setSheetOpen(false)}>
               Cancel
             </Button>
