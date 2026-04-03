@@ -111,6 +111,7 @@ export const learningCards = sqliteTable("learning_cards", {
   ...timestamps,
   title: text("title").notNull(),
   content: text("content").notNull().default(""),
+  imageUrl: text("image_url").notNull().default(""),
   trigger: text("trigger").notNull().default(""),
   condition: text("condition").notNull().default(""),
   order: integer("order").notNull().default(0),
@@ -449,6 +450,10 @@ export const eventTypes = sqliteTable("event_types", {
   slug: text("slug").notNull().unique(),
   label: text("label").notNull(),
   description: text("description").notNull().default(""),
+  metadataSchema: text("metadata_schema", { mode: "json" })
+    .notNull()
+    .$type<Array<{ key: string; label: string; type: "string" | "number" | "boolean" }>>()
+    .default([]),
   enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
 });
 
@@ -469,6 +474,10 @@ export const activityRules = sqliteTable("activity_rules", {
     ],
   }).notNull(),
   actionPayload: text("action_payload", { mode: "json" })
+    .notNull()
+    .$type<Record<string, unknown>>()
+    .default({}),
+  conditions: text("conditions", { mode: "json" })
     .notNull()
     .$type<Record<string, unknown>>()
     .default({}),
@@ -538,7 +547,18 @@ export const aiFeatures = sqliteTable("ai_features", {
   creditCost: integer("credit_cost").notNull().default(0),
   freeRefresh: integer("free_refresh", { mode: "boolean" }).notNull().default(false),
   promptSlug: text("prompt_slug").notNull(),
+  useProfile: integer("use_profile", { mode: "boolean" }).notNull().default(false),
   enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+});
+
+// ─── User Profiles ──────────────────────────────────────────
+export const userProfiles = sqliteTable("user_profiles", {
+  ...timestamps,
+  userId: text("user_id").notNull().unique(),
+  answers: text("answers", { mode: "json" })
+    .notNull()
+    .$type<Record<string, string | string[]>>()
+    .default({}),
 });
 
 // ─── Backup Snapshots ───────────────────────────────────────

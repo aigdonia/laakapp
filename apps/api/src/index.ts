@@ -42,7 +42,7 @@ import aiFeaturesRoute from "./routes/ai-features";
 import stockAnalysisRoute from "./routes/stock-analysis";
 import dashboardStatsRoute from "./routes/dashboard-stats";
 import profileRoute from "./routes/profile";
-import adminUsersRoute from "./routes/admin-users";
+import adminUsersRoute, { mountTestActionPoll } from "./routes/admin-users";
 
 export type Env = {
   Bindings: {
@@ -128,6 +128,7 @@ app.route("/ai-features", aiFeaturesRoute);
 app.route("/dashboard-stats", dashboardStatsRoute);
 app.route("/profile", profileRoute);
 app.route("/admin/users", adminUsersRoute);
+mountTestActionPoll(app);
 
 export default {
   fetch: app.fetch,

@@ -1,0 +1,1 @@
+ALTER TABLE `ai_features` ADD `use_profile` integer DEFAULT false NOT NULL;

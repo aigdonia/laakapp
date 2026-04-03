@@ -176,6 +176,34 @@
       "when": 1775141044175,
       "tag": "0024_quiet_nebula",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "6",
+      "when": 1775162048235,
+      "tag": "0025_overjoyed_hobgoblin",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "6",
+      "when": 1775162230841,
+      "tag": "0026_living_smasher",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "6",
+      "when": 1775174572479,
+      "tag": "0027_abnormal_brother_voodoo",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "6",
+      "when": 1775179574643,
+      "tag": "0028_furry_tattoo",
+      "breakpoints": true
     }
   ]
 }

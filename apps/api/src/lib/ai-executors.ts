@@ -48,7 +48,10 @@ async function executeNarrative(
   });
 
   const userPrompt = JSON.stringify({
-    holdings: payload.holdings,
+    baseCurrency: payload.baseCurrency,
+    gainLossPct: payload.gainLossPct,
+    classes: payload.classes,
+    top: payload.top,
     compliance: payload.compliance,
   });
 

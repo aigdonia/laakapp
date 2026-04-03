@@ -109,21 +109,7 @@ app.post("/events", async (c) => {
     idempotencyKey: body.idempotencyKey ?? null,
   });
 
-  // 6. Count events for this type
-  const countResult = await db(c)
-    .select({ count: sql<number>`count(*)` })
-    .from(activityEvents)
-    .where(
-      and(
-        eq(activityEvents.customerId, customerId),
-        eq(activityEvents.eventType, body.eventType)
-      )
-    )
-    .get();
-
-  const eventCount = countResult?.count ?? 0;
-
-  // 7. Find matching enabled rules
+  // 6. Find matching enabled rules
   const matchingRules = await db(c)
     .select()
     .from(activityRules)
@@ -133,13 +119,44 @@ app.post("/events", async (c) => {
         eq(activityRules.enabled, true)
       )
     )
+    .orderBy(activityRules.order)
     .all();
 
-  // 8. Evaluate rules
+  // 7. Evaluate rules
   const triggered: TriggeredAction[] = [];
+  const eventMetadata = body.metadata ?? {};
 
   for (const rule of matchingRules) {
-    if (eventCount < rule.threshold) continue;
+    // Check metadata conditions — all must match
+    const conditions = (rule.conditions ?? {}) as Record<string, unknown>;
+    const conditionKeys = Object.keys(conditions);
+    if (conditionKeys.length > 0) {
+      const matches = conditionKeys.every(
+        (key) => (eventMetadata as Record<string, unknown>)[key] === conditions[key]
+      );
+      if (!matches) continue;
+    }
+
+    // Count events matching this type + conditions
+    const allEvents = await db(c)
+      .select({ metadata: activityEvents.metadata })
+      .from(activityEvents)
+      .where(
+        and(
+          eq(activityEvents.customerId, customerId),
+          eq(activityEvents.eventType, body.eventType)
+        )
+      )
+      .all();
+
+    const eventCount = conditionKeys.length > 0
+      ? allEvents.filter((e) => {
+          const meta = (e.metadata ?? {}) as Record<string, unknown>;
+          return conditionKeys.every((key) => meta[key] === conditions[key]);
+        }).length
+      : allEvents.length;
+
+    if (eventCount !== rule.threshold) continue;
 
     // Check if already completed
     const completion = await db(c)
@@ -187,7 +204,10 @@ app.post("/events", async (c) => {
 
     triggered.push({
       actionType: rule.actionType as TriggeredAction["actionType"],
-      payload: rule.actionPayload,
+      payload: {
+        ...rule.actionPayload,
+        _event: { type: body.eventType, ...(body.metadata ?? {}) },
+      },
     });
   }
 
