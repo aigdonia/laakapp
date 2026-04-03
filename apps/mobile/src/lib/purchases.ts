@@ -3,19 +3,16 @@ import Purchases, {
   LOG_LEVEL,
 } from 'react-native-purchases'
 
-const API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY ?? ''
-const isTestKey = API_KEY.startsWith('test_')
+const TEST_KEY = 'test_McHHgkqWaUNufOvmHECnMlcIqLr'
+const PROD_KEY = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY ?? ''
+const API_KEY = __DEV__ ? TEST_KEY : PROD_KEY
 
 let initialized = false
 
 export async function initPurchases(userId: string) {
   if (initialized) return
   if (!API_KEY) {
-    console.warn('[Purchases] EXPO_PUBLIC_REVENUECAT_API_KEY is missing — skipping init')
-    return
-  }
-  if (isTestKey && !__DEV__) {
-    console.warn('[Purchases] test key detected in Release build — skipping init')
+    console.warn('[Purchases] No RevenueCat API key — skipping init')
     return
   }
   Purchases.setLogLevel(__DEV__ ? LOG_LEVEL.DEBUG : LOG_LEVEL.INFO)
@@ -28,7 +25,10 @@ export async function initPurchases(userId: string) {
 export async function getOfferings() {
   if (!initialized) return []
   const offerings = await Purchases.getOfferings()
-  return offerings.current?.availablePackages ?? []
+  const offering = __DEV__
+    ? offerings.all['default'] ?? offerings.current
+    : offerings.current
+  return offering?.availablePackages ?? []
 }
 
 export async function purchasePackage(pkg: PurchasesPackage) {
