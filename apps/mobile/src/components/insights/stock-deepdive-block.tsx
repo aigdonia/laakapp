@@ -9,6 +9,8 @@ import { useTranslation } from 'react-i18next'
 
 import { useThemeColors } from '@/src/theme/colors'
 import { useStockAnalysis, STOCK_DEEPDIVE_COST } from '@/src/hooks/use-stock-analysis'
+import { useCredits } from '@/src/store/credits'
+import { showCreditsAlert } from '@/src/components/credits-alert'
 
 type Props = {
   holdingKey: string
@@ -28,6 +30,8 @@ export function StockDeepDiveBlock({ holdingKey, symbol, assetType, userContext 
   const colors = useThemeColors()
   const { t, i18n } = useTranslation('insights')
 
+  const creditBalance = useCredits((s) => s.balance)
+
   const { analysis, isStale, isLoading, generate } = useStockAnalysis(
     holdingKey,
     symbol,
@@ -35,6 +39,18 @@ export function StockDeepDiveBlock({ holdingKey, symbol, assetType, userContext 
     userContext,
     i18n.language,
   )
+
+  const guardedGenerate = () => {
+    if (STOCK_DEEPDIVE_COST > 0 && creditBalance < STOCK_DEEPDIVE_COST) {
+      showCreditsAlert({
+        title: t('insufficient_credits'),
+        message: t('insufficient_credits_message', { count: STOCK_DEEPDIVE_COST }),
+        actionLabel: t('buy_credits'),
+      })
+      return
+    }
+    generate()
+  }
 
   // --- Loading ---
   if (isLoading) {
@@ -67,7 +83,7 @@ export function StockDeepDiveBlock({ holdingKey, symbol, assetType, userContext 
 
         <Pressable
           className="flex-row items-center justify-center gap-2 bg-accent/15 rounded-xl py-3 active:opacity-70"
-          onPress={generate}
+          onPress={guardedGenerate}
         >
           <IconLock size={16} color={colors.accent} />
           <Text className="text-sm font-semibold" style={{ color: colors.accent }}>
@@ -112,7 +128,7 @@ export function StockDeepDiveBlock({ holdingKey, symbol, assetType, userContext 
       {isStale && (
         <Pressable
           className="flex-row items-center gap-1.5 mt-3 pt-3 border-t border-border"
-          onPress={generate}
+          onPress={guardedGenerate}
         >
           <IconRefresh size={14} color={colors.accent} />
           <Text className="text-xs" style={{ color: colors.accent }}>

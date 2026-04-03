@@ -25,6 +25,7 @@ import { useThemeColors } from '@/src/theme/colors'
 import { parseHoldingKey } from '@/src/db/aggregation-queries'
 import { track } from '@/src/lib/analytics'
 import { StockDeepDiveBlock } from '@/src/components/insights/stock-deepdive-block'
+import { CreditsAlertOverlay } from '@/src/components/credits-alert'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 const pinStore = createMMKV({ id: 'holding-pin' })
@@ -532,6 +533,7 @@ export default function HoldingDetailScreen() {
         </ScrollView>
       </View>
       <StatusBar style={isDark ? 'light' : 'dark'} />
+      <CreditsAlertOverlay />
     </>
   )
 }
