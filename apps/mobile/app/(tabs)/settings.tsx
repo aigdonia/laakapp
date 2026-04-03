@@ -544,7 +544,7 @@ export default function SettingsScreen() {
           <SettingsMenuCard
             icon={<IconHelp size={22} color={colors.muted} />}
             label={t('help_center')}
-            onPress={() => Linking.openURL('https://laakapp.olanai.tech/support')}
+            onPress={() => Linking.openURL('https://laak.olanai.tech/support')}
           />
           <SettingsMenuCard
             icon={<IconMail size={22} color={colors.muted} />}

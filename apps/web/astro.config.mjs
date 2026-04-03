@@ -3,7 +3,7 @@ import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://laakapp.olanai.tech',
+  site: 'https://laak.olanai.tech',
   output: 'static',
   env: {
     schema: {

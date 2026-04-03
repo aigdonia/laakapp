@@ -1,0 +1,97 @@
+import { ExpoConfig, ConfigContext } from "expo/config";
+
+const IS_DEV = process.env.APP_ENV !== "production";
+
+export default ({ config }: ConfigContext): ExpoConfig => ({
+  ...config,
+  name: "Laak",
+  slug: "laak",
+  version: "1.0.0",
+  orientation: "portrait",
+  icon: "./assets/images/icon.png",
+  scheme: "halalwealth",
+  userInterfaceStyle: "automatic",
+  splash: {
+    backgroundColor: "#f2f2f7",
+  },
+  ios: {
+    supportsTablet: false,
+    bundleIdentifier: "tech.olanai.finapp",
+    usesAppleSignIn: true,
+    entitlements: {
+      "aps-environment": "production",
+      "com.apple.developer.applesignin": ["Default"],
+    },
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false,
+      LSMinimumSystemVersion: "15.1",
+      NSAppTransportSecurity: {
+        NSAllowsArbitraryLoads: false,
+        NSAllowsLocalNetworking: IS_DEV,
+      },
+    },
+  },
+  android: {
+    adaptiveIcon: {
+      backgroundColor: "#E6F4FE",
+      foregroundImage: "./assets/images/android-icon-foreground.png",
+      backgroundImage: "./assets/images/android-icon-background.png",
+      monochromeImage: "./assets/images/android-icon-monochrome.png",
+    },
+    predictiveBackGestureEnabled: false,
+    package: "tech.olanai.finapp",
+    permissions: [
+      "android.permission.USE_BIOMETRIC",
+      "android.permission.USE_FINGERPRINT",
+      "com.google.android.gms.permission.AD_ID",
+    ],
+  },
+  web: {
+    bundler: "metro",
+    output: "static",
+    favicon: "./assets/images/favicon.png",
+  },
+  plugins: [
+    "expo-router",
+    "expo-secure-store",
+    "expo-sqlite",
+    "expo-font",
+    "expo-localization",
+    "expo-web-browser",
+    [
+      "expo-local-authentication",
+      {
+        faceIDPermission: "Allow Laak to use Face ID to unlock the app",
+      },
+    ],
+    [
+      "expo-notifications",
+      {
+        icon: "./assets/images/icon.png",
+        color: "#E6F4FE",
+      },
+    ],
+    "expo-apple-authentication",
+    [
+      "expo-tracking-transparency",
+      {
+        userTrackingPermission:
+          "Allow Laak to collect anonymous usage data to improve the app experience.",
+      },
+    ],
+    "./plugins/withCcache",
+  ],
+  buildCacheProvider: {
+    plugin: "expo-build-disk-cache",
+  },
+  experiments: {
+    typedRoutes: true,
+  },
+  extra: {
+    router: {},
+    eas: {
+      projectId: "85a8b615-76fa-4bd2-9b81-2e37d615d71f",
+    },
+  },
+  owner: "aigdonia",
+});

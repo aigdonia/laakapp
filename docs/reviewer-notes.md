@@ -35,6 +35,6 @@ The app uses RevenueCat to manage credit packages (consumable IAP). Credits are 
 
 ## Support
 
-- Support URL: https://laakapp.olanai.tech/support
-- Privacy Policy: https://laakapp.olanai.tech/privacy
+- Support URL: https://laak.olanai.tech/support
+- Privacy Policy: https://laak.olanai.tech/privacy
 - Contact: laak@olanai.tech
