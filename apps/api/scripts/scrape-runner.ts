@@ -12,10 +12,19 @@ import { CircuitBreaker, rateLimitDelay } from "./scrapers/fetch-utils";
 import { scrapeStockAnalysis } from "./scrapers/stockanalysis";
 import { scrapeMubasher } from "./scrapers/mubasher";
 import { fetchEgxShariahIndex } from "./scrapers/index-list-egx";
+import { scrapeExchangePrices } from "./scrapers/stockanalysis-prices";
 
 const API_URL = process.argv.includes("--api-url")
   ? process.argv[process.argv.indexOf("--api-url") + 1]
   : "http://localhost:12003";
+
+const ADMIN_KEY = process.argv.includes("--admin-key")
+  ? process.argv[process.argv.indexOf("--admin-key") + 1]
+  : process.env.ADMIN_API_KEY ?? "";
+
+const authHeaders: Record<string, string> = ADMIN_KEY
+  ? { Authorization: `Bearer ${ADMIN_KEY}` }
+  : {};
 
 interface ScrapeJob {
   id: string;
@@ -44,7 +53,7 @@ interface Stock {
 }
 
 async function apiGet<T>(path: string): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`);
+  const res = await fetch(`${API_URL}${path}`, { headers: authHeaders });
   if (!res.ok) throw new Error(`GET ${path} → ${res.status}`);
   return res.json() as Promise<T>;
 }
@@ -52,7 +61,7 @@ async function apiGet<T>(path: string): Promise<T> {
 async function apiPost<T>(path: string, body: unknown): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...authHeaders },
     body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(`POST ${path} → ${res.status}`);
@@ -62,7 +71,7 @@ async function apiPost<T>(path: string, body: unknown): Promise<T> {
 async function apiPut(path: string, body: unknown): Promise<void> {
   const res = await fetch(`${API_URL}${path}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...authHeaders },
     body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(`PUT ${path} → ${res.status}`);
@@ -253,6 +262,86 @@ async function processIndexListJob(
   }
 }
 
+async function processPriceUpdateJob(job: ScrapeJob, source: DataSource) {
+  await apiPut(`/scrape-jobs/${job.id}`, {
+    status: "running",
+    startedAt: new Date().toISOString(),
+  });
+
+  try {
+    // targetSymbols holds exchange codes for price_update jobs (e.g. ["EGX", "TADAWUL"])
+    // If not specified, derive from data source country codes
+    const countryToExchange: Record<string, string> = {
+      EG: "EGX",
+      SA: "TADAWUL",
+      US: "NASDAQ",
+      MY: "BURSA",
+    };
+
+    const exchanges = job.targetSymbols && job.targetSymbols.length > 0
+      ? job.targetSymbols.map((s) => s.toUpperCase())
+      : source.countryCodes.map((cc) => countryToExchange[cc]).filter(Boolean);
+
+    if (exchanges.length === 0) {
+      throw new Error(`No exchange mapping for countries: ${source.countryCodes.join(", ")}`);
+    }
+
+    let totalUpdated = 0;
+    let totalStocks = 0;
+
+    for (const exchange of exchanges) {
+      console.log(`[runner] Fetching prices for ${exchange}...`);
+      const prices = await scrapeExchangePrices(exchange, {
+        rateLimitMs: source.rateLimitMs,
+        maxRetries: source.maxRetries,
+      });
+
+      if (prices.length === 0) {
+        console.warn(`[runner] No prices returned for ${exchange}`);
+        continue;
+      }
+
+      totalStocks += prices.length;
+
+      // Batch into chunks of 100 for the API
+      const BATCH_SIZE = 100;
+      for (let i = 0; i < prices.length; i += BATCH_SIZE) {
+        const batch = prices.slice(i, i + BATCH_SIZE).map((p) => ({
+          symbol: p.symbol,
+          price: p.price!,
+          marketCap: p.marketCap,
+        }));
+
+        const result = await apiPost<{ updated: number }>("/stocks/prices", batch);
+        totalUpdated += result.updated;
+      }
+
+      console.log(`[runner] ${exchange}: ${prices.length} scraped, matched in DB`);
+    }
+
+    await apiPut(`/scrape-jobs/${job.id}`, {
+      status: "completed",
+      completedAt: new Date().toISOString(),
+      progress: {
+        total: totalStocks,
+        completed: totalUpdated,
+        failed: totalStocks - totalUpdated,
+        errors: [],
+      },
+    });
+
+    console.log(`[runner] Price update done: ${totalUpdated}/${totalStocks} stocks updated`);
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(`[runner] Price update failed: ${msg}`);
+    await apiPut(`/scrape-jobs/${job.id}`, {
+      status: "failed",
+      completedAt: new Date().toISOString(),
+      errorMessage: msg,
+    });
+  }
+}
+
 async function main() {
   console.log(`[runner] Starting scrape runner (API: ${API_URL})`);
 
@@ -287,7 +376,9 @@ async function main() {
       `[runner] Processing job ${job.id} (source: ${source.slug}, type: ${job.jobType})`
     );
 
-    if (source.type === "scraper") {
+    if (job.jobType === "price_update") {
+      await processPriceUpdateJob(job, source);
+    } else if (source.type === "scraper") {
       await processScraperJob(job, source, allStocks);
     } else if (source.type === "index_list") {
       await processIndexListJob(job, source);

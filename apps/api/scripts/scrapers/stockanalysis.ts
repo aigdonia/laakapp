@@ -12,17 +12,16 @@ export interface BalanceSheetData {
 
 /**
  * Scrape balance sheet data from stockanalysis.com.
- * Returns parsed financial data for a given stock symbol.
  *
- * Note: stockanalysis.com serves data via JS hydration.
- * This scraper looks for __NEXT_DATA__ JSON in page source.
+ * StockAnalysis uses SvelteKit SSR with inline JS data objects.
+ * Financial values are in raw units (not millions) — e.g. 1442494120000.
+ * We extract named arrays like `assets:[...]`, `debt:[...]`, etc.
  */
 export async function scrapeStockAnalysis(
   symbol: string,
   exchange: string,
   options?: FetchOptions
 ): Promise<BalanceSheetData | null> {
-  // Map exchange codes to stockanalysis paths
   const exchangeMap: Record<string, string> = {
     EGX: "egx",
     TADAWUL: "tadawul",
@@ -41,37 +40,54 @@ export async function scrapeStockAnalysis(
   try {
     const html = result.data;
 
-    // Look for __NEXT_DATA__ script tag
-    const nextDataMatch = html.match(
-      /<script id="__NEXT_DATA__"[^>]*>(.*?)<\/script>/s
-    );
-
-    if (!nextDataMatch?.[1]) {
-      console.warn(`[stockanalysis] No __NEXT_DATA__ found for ${symbol}`);
+    // Extract fiscal years
+    const fyMatch = html.match(/fiscalYear:\[([^\]]+)\]/);
+    if (!fyMatch) {
+      console.warn(`[stockanalysis] No fiscalYear data found for ${symbol}`);
       return null;
     }
 
-    const nextData = JSON.parse(nextDataMatch[1]);
-    const financials = nextData?.props?.pageProps?.data;
+    const fiscalYears = fyMatch[1]
+      .split(",")
+      .map((s) => parseInt(s.replace(/"/g, ""), 10));
 
-    if (!financials) {
-      console.warn(`[stockanalysis] No financial data in page props for ${symbol}`);
-      return null;
+    // Find the most recent unique year (index 0 may be TTM duplicate)
+    // fiscalYear often has duplicates like ["2025","2025","2024",...]
+    // First non-duplicate entry is the latest actual filing
+    let latestIdx = 0;
+    if (fiscalYears.length > 1 && fiscalYears[0] === fiscalYears[1]) {
+      latestIdx = 1; // skip TTM duplicate, use the filing
     }
 
-    // Extract the most recent annual data
-    const annual = financials.annual ?? financials;
-    const years = annual.fiscalYear ?? [];
-    const latestIdx = 0; // First entry = most recent
+    const extractArray = (key: string): number | null => {
+      const match = html.match(new RegExp(`${key}:\\[([^\\]]+)\\]`));
+      if (!match) return null;
+      const values = match[1].split(",");
+      if (latestIdx >= values.length) return null;
+      const raw = values[latestIdx].trim();
+      if (raw === "null") return null;
+      const num = parseFloat(raw);
+      return isNaN(num) ? null : num;
+    };
+
+    const totalAssets = extractArray("assets");
+    const totalDebt = extractArray("debt");
+    const cashAndEquivalents = extractArray("cashneq");
+    const receivables = extractArray("otherReceivables") ?? extractArray("accruedInterestReceivables");
+
+    if (totalAssets === null) {
+      console.warn(`[stockanalysis] No totalAssets data for ${symbol}`);
+      return null;
+    }
 
     return {
-      totalAssets: parseNumber(annual.totalAssets?.[latestIdx]),
-      totalDebt: parseNumber(annual.totalDebt?.[latestIdx]),
-      cashAndEquivalents: parseNumber(annual.cashAndShortTermInvestments?.[latestIdx]),
-      receivables: parseNumber(annual.receivables?.[latestIdx]),
-      marketCap: parseNumber(annual.marketCap?.[latestIdx]),
-      totalRevenue: parseNumber(annual.revenue?.[latestIdx]),
-      fiscalYear: years[latestIdx] ?? new Date().getFullYear(),
+      totalAssets,
+      totalDebt,
+      cashAndEquivalents,
+      receivables,
+      marketCap: null, // not available on balance sheet page
+      totalRevenue: null, // available on income statement page, not fetched here
+      fiscalYear: fiscalYears[latestIdx] ?? new Date().getFullYear(),
     };
   } catch (error) {
     console.error(
@@ -80,10 +96,4 @@ export async function scrapeStockAnalysis(
     );
     return null;
   }
-}
-
-function parseNumber(value: unknown): number | null {
-  if (value == null) return null;
-  const num = typeof value === "string" ? parseFloat(value) : Number(value);
-  return isNaN(num) ? null : num;
 }

@@ -174,4 +174,33 @@ app.post("/bulk", async (c) => {
   return c.json({ created, updated, errors }, 201);
 });
 
+// Bulk price update — lightweight endpoint for price-only updates
+app.post("/prices", async (c) => {
+  const items = await c.req.json<
+    Array<{ symbol: string; price: number; marketCap?: number | null }>
+  >();
+
+  const now = new Date().toISOString();
+  let updated = 0;
+
+  for (const item of items) {
+    if (!item.symbol || item.price == null) continue;
+
+    const result = await db(c)
+      .update(stocks)
+      .set({
+        lastPrice: item.price,
+        lastPriceUpdatedAt: now,
+        updatedAt: now,
+      })
+      .where(eq(stocks.symbol, item.symbol.toUpperCase()))
+      .returning({ id: stocks.id })
+      .get();
+
+    if (result) updated++;
+  }
+
+  return c.json({ updated, total: items.length });
+});
+
 export default app;

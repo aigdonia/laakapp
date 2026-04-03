@@ -66,7 +66,7 @@ export interface DataSource extends BaseEntity {
 }
 
 export type ScrapeJobStatus = "pending" | "running" | "completed" | "failed";
-export type ScrapeJobType = "full_refresh" | "incremental" | "single_stock";
+export type ScrapeJobType = "full_refresh" | "incremental" | "single_stock" | "price_update";
 export type ScrapeJobCreator = "admin" | "cron" | "system";
 
 export interface ScrapeJobProgress {

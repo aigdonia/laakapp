@@ -91,6 +91,11 @@ export function ScrapeJobsTable({
                   </td>
                   <td className="px-4 py-3 text-muted-foreground capitalize">
                     {job.jobType.replace(/_/g, " ")}
+                    {job.jobType === "price_update" && job.targetSymbols?.length ? (
+                      <span className="ml-1 text-xs text-foreground">
+                        ({job.targetSymbols.join(", ")})
+                      </span>
+                    ) : null}
                   </td>
                   <td className="px-4 py-3">
                     <Badge variant={STATUS_VARIANT[job.status] ?? "secondary"}>

@@ -427,7 +427,7 @@ export const scrapeJobs = sqliteTable("scrape_jobs", {
     .notNull()
     .default("pending"),
   jobType: text("job_type", {
-    enum: ["full_refresh", "incremental", "single_stock"],
+    enum: ["full_refresh", "incremental", "single_stock", "price_update"],
   }).notNull(),
   targetSymbols: text("target_symbols", { mode: "json" })
     .$type<string[] | null>()
