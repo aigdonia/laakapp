@@ -7,26 +7,25 @@ function headers(secretKey: string) {
   };
 }
 
-type BalanceEntry = { balance: number; currency_code: string };
-type BalancesResponse = { balances: Record<string, BalanceEntry> };
+type BalanceItem = { balance: number; currency_code: string };
+type BalancesResponse = { items: BalanceItem[] };
 
 export async function getBalance(
   secretKey: string,
   projectId: string,
   customerId: string,
 ): Promise<number> {
-  const url = `${RC_BASE}/projects/${projectId}/customers/${encodeURIComponent(customerId)}/virtual_currencies/balances?include_empty_balances=true`;
+  const url = `${RC_BASE}/projects/${projectId}/customers/${encodeURIComponent(customerId)}/virtual_currencies?include_empty_balances=true`;
 
   const res = await fetch(url, { headers: headers(secretKey) });
   if (!res.ok) throw new Error(`RC balance fetch failed: ${res.status}`);
 
   const data = (await res.json()) as BalancesResponse;
-  return data.balances?.LAK?.balance ?? 0;
+  const lak = data.items?.find((i) => i.currency_code === "LAK");
+  return lak?.balance ?? 0;
 }
 
-type TransactionResponse = {
-  balances: Record<string, BalanceEntry>;
-};
+type TransactionResponse = { items: BalanceItem[] };
 
 async function adjustCredits(
   secretKey: string,
@@ -54,7 +53,8 @@ async function adjustCredits(
   if (!res.ok) throw new Error(`RC transaction failed: ${res.status}`);
 
   const data = (await res.json()) as TransactionResponse;
-  return { balance: data.balances?.LAK?.balance ?? 0 };
+  const lak = data.items?.find((i) => i.currency_code === "LAK");
+  return { balance: lak?.balance ?? 0 };
 }
 
 export async function debitCredits(

@@ -33,8 +33,21 @@ export async function generateContent(
     generationConfig: {
       maxOutputTokens: maxTokens,
       temperature,
+      // Gemini 2.5+ uses thinking tokens by default which eat into maxOutputTokens.
+      // Set thinkingConfig to disable or budget thinking separately.
+      ...(model.includes("2.5") && {
+        thinkingConfig: { thinkingBudget: 0 },
+      }),
     },
   };
+
+  console.log("[gemini] Request:", JSON.stringify({
+    model,
+    systemPrompt: systemPrompt.slice(0, 200) + "...",
+    userPrompt: userPrompt.slice(0, 500),
+    maxOutputTokens: maxTokens,
+    temperature,
+  }));
 
   const res = await fetch(url, {
     method: "POST",
@@ -58,8 +71,11 @@ export async function generateContent(
     candidates?: { content?: { parts?: { text?: string }[] } }[];
   };
 
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  const parts = data.candidates?.[0]?.content?.parts;
+  console.log("[gemini] Response parts:", JSON.stringify(parts).slice(0, 1000));
+  const text = parts?.map((p) => p.text ?? "").join("") ?? "";
   if (!text) {
+    console.error("[gemini] Empty response. Raw:", JSON.stringify(data).slice(0, 500));
     throw new GeminiError("Empty response from Gemini", 500, "EMPTY_RESPONSE");
   }
 
