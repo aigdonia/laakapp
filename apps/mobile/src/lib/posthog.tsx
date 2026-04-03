@@ -1,6 +1,6 @@
 import { PostHogProvider as PHProvider, usePostHog } from 'posthog-react-native'
 import type { PostHog } from 'posthog-react-native'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { requestTrackingPermissionsAsync, getTrackingPermissionsAsync } from 'expo-tracking-transparency'
 import { Platform } from 'react-native'
 
@@ -32,17 +32,10 @@ function Capture({ children }: { children: React.ReactNode }) {
 }
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
-  const [allowed, setAllowed] = useState<boolean | null>(null)
+  if (!POSTHOG_API_KEY) return <>{children}</>
 
-  useEffect(() => {
-    if (!POSTHOG_API_KEY) { setAllowed(false); return }
-    // Check existing permission (don't prompt yet — prompt happens after onboarding)
-    getTrackingConsent().then(setAllowed)
-  }, [])
-
-  // No API key or tracking not yet determined/allowed — render children without PostHog
-  if (!POSTHOG_API_KEY || allowed !== true) return <>{children}</>
-
+  // Always mount PostHog so the instance is available.
+  // ATT consent controls identify vs optOut in _layout.tsx.
   return (
     <PHProvider
       apiKey={POSTHOG_API_KEY}
