@@ -445,9 +445,14 @@ export default function HoldingDetailScreen() {
 
               {/* About */}
               {stockMatch?.about ? (
-                <Text className="text-sm text-muted leading-5 mb-4">
-                  {stockMatch.about}
-                </Text>
+                <View className="mb-4">
+                  <Text className="text-xs font-semibold uppercase tracking-wider text-muted mb-1">
+                    {t('about')}
+                  </Text>
+                  <Text className="text-sm text-muted leading-5">
+                    {stockMatch.about}
+                  </Text>
+                </View>
               ) : null}
 
               {/* Non-equity details */}

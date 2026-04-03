@@ -51,6 +51,7 @@ export const defaults = {
     total_cost_basis: 'Total Cost Basis',
     txns: '{{count}} txns',
     details_tab: 'Details',
+    about: 'About',
     transactions_tab: 'Transactions',
     analysis_tab: '{{name}} Analysis',
     pinned: 'Pinned',
