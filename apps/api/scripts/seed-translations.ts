@@ -167,6 +167,18 @@ const en = {
     sign_out_title: 'Sign Out?',
     sign_out_message: 'You will lose access to your credits and linked data until you sign back in.',
     sign_in_failed: 'Sign in failed. Please try again.',
+
+    // Account deletion
+    delete_account: 'Delete Account',
+    delete_account_title: 'Delete Account?',
+    delete_account_message: 'This will permanently delete your account and all associated data from our servers, including credits, backups, and activity history. Your local portfolio data will also be erased. This cannot be undone.',
+    delete_account_confirm: 'Delete My Account',
+    delete_account_success: 'Your account has been deleted.',
+    delete_account_failed: 'Account deletion failed. Please try again.',
+
+    // Support
+    contact_support: 'Contact Support',
+
     default_market: 'Default Market',
     base_currency: 'Base Currency',
     sharia_authority: 'Sharia Authority',
@@ -456,6 +468,18 @@ const ar: Record<string, Record<string, string>> = {
     sign_out_title: 'تسجيل الخروج؟',
     sign_out_message: 'ستفقد الوصول إلى رصيدك وبياناتك المرتبطة حتى تعيد تسجيل الدخول.',
     sign_in_failed: 'فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.',
+
+    // Account deletion
+    delete_account: 'حذف الحساب',
+    delete_account_title: 'حذف الحساب؟',
+    delete_account_message: 'سيتم حذف حسابك وجميع بياناتك المرتبطة من خوادمنا نهائياً، بما في ذلك الرصيد والنسخ الاحتياطية وسجل النشاط. ستُمحى بيانات محفظتك المحلية أيضاً. لا يمكن التراجع عن هذا الإجراء.',
+    delete_account_confirm: 'حذف حسابي',
+    delete_account_success: 'تم حذف حسابك.',
+    delete_account_failed: 'فشل حذف الحساب. يرجى المحاولة مرة أخرى.',
+
+    // Support
+    contact_support: 'تواصل مع الدعم',
+
     default_market: 'السوق الافتراضي',
     base_currency: 'العملة الأساسية',
     sharia_authority: 'الهيئة الشرعية',

@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
-import { ActivityIndicator, Alert, Platform, ScrollView } from 'react-native'
+import { ActivityIndicator, Alert, Linking, Platform, ScrollView } from 'react-native'
 import { useRouter } from 'expo-router'
 import Constants from 'expo-constants'
 import {
@@ -25,6 +25,9 @@ import {
   IconArrowsLeftRight,
   IconCloudUpload,
   IconCloudDownload,
+  IconTrash,
+  IconMail,
+  IconHelp,
 } from '@tabler/icons-react-native'
 import type { BottomSheetModal } from '@gorhom/bottom-sheet'
 
@@ -66,6 +69,8 @@ import { reportEvent } from '@/src/lib/activity'
 import { useAuth } from '@/src/hooks/use-auth'
 import { useBackupMeta, useBackup, useRestore } from '@/src/hooks/use-backup'
 import { signInWithApple, signOut } from '@/src/lib/apple-auth'
+import { api } from '@/src/lib/api'
+import { supabase } from '@/src/lib/supabase'
 import { IconBug } from '@tabler/icons-react-native'
 import { useOnboarding } from '@/src/store/onboarding'
 import { createMMKV } from 'react-native-mmkv'
@@ -300,7 +305,39 @@ export default function SettingsScreen() {
     )
   }, [backupMeta, restoreMutation, t])
 
-  const comingSoon = () => Alert.alert(t('common:coming_soon'))
+  const [deleteLoading, setDeleteLoading] = useState(false)
+
+  const handleDeleteAccount = useCallback(() => {
+    Alert.alert(
+      t('delete_account_title'),
+      t('delete_account_message'),
+      [
+        { text: t('common:cancel'), style: 'cancel' },
+        {
+          text: t('delete_account_confirm'),
+          style: 'destructive',
+          onPress: async () => {
+            setDeleteLoading(true)
+            try {
+              await api.delete('/account')
+              resetUserDb()
+              createMMKV({ id: 'narrative-cache' }).clearAll()
+              createMMKV({ id: 'deep-analysis-cache' }).clearAll()
+              queryClient.clear()
+              await supabase.auth.signOut()
+              await supabase.auth.signInAnonymously()
+              track('account_deleted')
+              Alert.alert(t('delete_account_success'))
+            } catch {
+              Alert.alert(t('delete_account_failed'))
+            } finally {
+              setDeleteLoading(false)
+            }
+          },
+        },
+      ],
+    )
+  }, [queryClient, t])
 
   return (
     <SwipeAnimatedScreen>
@@ -369,6 +406,14 @@ export default function SettingsScreen() {
                   : <IconLogout size={22} color="#ef4444" />}
                 label={t('sign_out')}
                 onPress={authLoading ? undefined : handleSignOut}
+                destructive
+              />
+              <SettingsMenuCard
+                icon={deleteLoading
+                  ? <ActivityIndicator size="small" />
+                  : <IconTrash size={22} color="#ef4444" />}
+                label={t('delete_account')}
+                onPress={deleteLoading ? undefined : handleDeleteAccount}
                 destructive
               />
             </>
@@ -496,6 +541,17 @@ export default function SettingsScreen() {
         </SettingsSection>
 
         <SettingsSection title={t('about_support')}>
+          <SettingsMenuCard
+            icon={<IconHelp size={22} color={colors.muted} />}
+            label={t('help_center')}
+            onPress={() => Linking.openURL('https://laakapp.olanai.tech/support')}
+          />
+          <SettingsMenuCard
+            icon={<IconMail size={22} color={colors.muted} />}
+            label={t('contact_support')}
+            subtitle="laak@olanai.tech"
+            onPress={() => Linking.openURL('mailto:laak@olanai.tech')}
+          />
           <SettingsMenuCard
             icon={<IconInfoCircle size={22} color={colors.muted} />}
             label={t('version')}

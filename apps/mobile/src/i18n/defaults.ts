@@ -164,6 +164,17 @@ export const defaults = {
     sign_out_message: 'You will lose access to your credits and linked data until you sign back in.',
     sign_in_failed: 'Sign in failed. Please try again.',
 
+    // Account deletion
+    delete_account: 'Delete Account',
+    delete_account_title: 'Delete Account?',
+    delete_account_message: 'This will permanently delete your account and all associated data from our servers, including credits, backups, and activity history. Your local portfolio data will also be erased. This cannot be undone.',
+    delete_account_confirm: 'Delete My Account',
+    delete_account_success: 'Your account has been deleted.',
+    delete_account_failed: 'Account deletion failed. Please try again.',
+
+    // Support
+    contact_support: 'Contact Support',
+
     base_currency: 'Base Currency',
     sharia_authority: 'Sharia Authority',
     sharia_authority_description: 'Choose the screening standard used to evaluate your holdings.',

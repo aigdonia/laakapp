@@ -1,7 +1,7 @@
 import { Image, Linking, Platform, useColorScheme, View } from 'react-native'
 import { Text } from 'react-native'
 
-const IOS_STORE_URL = 'https://apps.apple.com/app/id_PLACEHOLDER'
+const IOS_STORE_URL = 'https://apps.apple.com/app/id6761325373'
 const ANDROID_STORE_URL = 'https://play.google.com/store/apps/details?id=tech.olanai.finapp'
 
 function getStoreUrl() {
