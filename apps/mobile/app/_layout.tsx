@@ -33,6 +33,10 @@ import { useNotificationStore } from '@/src/store/notifications'
 import { ensureAuth } from '@/src/lib/supabase'
 import { ActivityToastOverlay } from '@/src/components/activity-toast'
 import { ConfettiOverlay } from '@/src/components/confetti-overlay'
+import { CreditsAlertOverlay } from '@/src/components/credits-alert'
+import { LearningCardOverlay } from '@/src/components/learning-card-overlay'
+import { MicroLessonSheet, microLessonSheetRef } from '@/src/components/micro-lesson-sheet'
+import { useDevEventPoll } from '@/src/hooks/use-dev-event-poll'
 
 export { ErrorBoundary } from 'expo-router'
 
@@ -58,6 +62,7 @@ export default function RootLayout() {
 function RootLayoutInner() {
   ScreenCapture.usePreventScreenCapture()
   useAppStateLock()
+  useDevEventPoll()
   const colorScheme = useColorScheme()
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -153,12 +158,16 @@ function RootLayoutInner() {
             <Stack.Screen name="credits" options={{ presentation: 'modal', headerShown: false }} />
             <Stack.Screen name="terms" options={{ presentation: 'modal', headerShown: false }} />
             <Stack.Screen name="privacy" options={{ presentation: 'modal', headerShown: false }} />
+            <Stack.Screen name="dev-event-tester" options={{ presentation: 'modal', headerShown: false }} />
           </Stack>
+          <MicroLessonSheet ref={microLessonSheetRef} />
         </BottomSheetModalProvider>
       </ThemeProvider>
       <LockScreen />
       <ActivityToastOverlay />
       <ConfettiOverlay />
+      <CreditsAlertOverlay />
+      <LearningCardOverlay />
     </GestureHandlerRootView>
   )
 }

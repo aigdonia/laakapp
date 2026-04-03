@@ -19,6 +19,8 @@ import { t } from '@/src/lib/translate'
 import type { OnboardingScreen, OnboardingScreenType } from '@fin-ai/shared'
 import { track } from '@/src/lib/analytics'
 import { reportEvent } from '@/src/lib/activity'
+import { api } from '@/src/lib/api'
+import { usePreferences } from '@/src/store/preferences'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 
@@ -53,10 +55,21 @@ export default function OnboardingRoute() {
     }
   }, [index, screen?.slug])
 
-  const finish = useCallback(() => {
+  const finish = useCallback(async () => {
+    // Send answers to API, apply derived preferences
+    try {
+      const res = await api.post<{ preferences: Record<string, string> }>('/profile', { answers })
+      if (res.preferences) {
+        const { setCountryCode, setBaseCurrency } = usePreferences.getState()
+        if (res.preferences.countryCode) setCountryCode(res.preferences.countryCode)
+        if (res.preferences.baseCurrency) setBaseCurrency(res.preferences.baseCurrency)
+      }
+    } catch {
+      // Non-blocking — answers are in MMKV, can retry later
+    }
     markCompleted()
     router.replace('/(tabs)')
-  }, [markCompleted, router])
+  }, [markCompleted, router, answers])
 
   const next = useCallback(() => {
     if (isLast) {

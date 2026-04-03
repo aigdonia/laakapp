@@ -66,6 +66,9 @@ import { reportEvent } from '@/src/lib/activity'
 import { useAuth } from '@/src/hooks/use-auth'
 import { useBackupMeta, useBackup, useRestore } from '@/src/hooks/use-backup'
 import { signInWithApple, signOut } from '@/src/lib/apple-auth'
+import { IconBug } from '@tabler/icons-react-native'
+import { useOnboarding } from '@/src/store/onboarding'
+import { createMMKV } from 'react-native-mmkv'
 
 export default function SettingsScreen() {
   const colors = useThemeColors()
@@ -500,6 +503,35 @@ export default function SettingsScreen() {
             showChevron={false}
           />
         </SettingsSection>
+
+        {__DEV__ && (
+          <SettingsSection title="Dev Tools">
+            <SettingsMenuCard
+              icon={<IconAlertTriangle size={22} color="#ff9500" />}
+              label="Reset Onboarding"
+              onPress={() => {
+                useOnboarding.getState().reset()
+                Alert.alert('Done', 'Restart the app to see onboarding again.')
+              }}
+            />
+            <SettingsMenuCard
+              icon={<IconAlertTriangle size={22} color="#ff9500" />}
+              label="Clear AI Caches"
+              subtitle="Narrative + Deep Analysis"
+              onPress={() => {
+                createMMKV({ id: 'narrative-cache' }).clearAll()
+                createMMKV({ id: 'deep-analysis-cache' }).clearAll()
+                Alert.alert('Done', 'AI caches cleared. Reload the insights tab.')
+              }}
+            />
+            <SettingsMenuCard
+              icon={<IconBug size={22} color="#ff9500" />}
+              label="Event Tester"
+              subtitle="Fire activity events to test rules"
+              onPress={() => router.push('/dev-event-tester' as any)}
+            />
+          </SettingsSection>
+        )}
       </ScrollView>
 
       <ScreeningRulePickerSheet ref={screeningRuleSheetRef} />

@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import * as Haptics from 'expo-haptics'
 import type { BottomSheetModal } from '@gorhom/bottom-sheet'
@@ -18,6 +18,8 @@ import { useNarrative } from '@/src/hooks/use-narrative'
 import { useDeepAnalysis } from '@/src/hooks/use-deep-analysis'
 import { useAiFeatures, getFeatureConfig } from '@/src/hooks/use-ai-features'
 import { buildRateMap, convertCurrency } from '@/src/lib/currency'
+import { useCredits } from '@/src/store/credits'
+import { showCreditsAlert } from '@/src/components/credits-alert'
 import type { ComplianceSummary, ConcentrationInsight } from '@/src/types/insights'
 
 import { PortfolioScoreGauge } from '@/src/components/insights/portfolio-score-gauge'
@@ -129,8 +131,21 @@ export default function InsightsScreen() {
 
   // --- AI Features ---
   const { data: aiFeatures } = useAiFeatures()
+  const creditBalance = useCredits((s) => s.balance)
   const narrativeConfig = getFeatureConfig(aiFeatures, 'narrative')
   const deepAnalysisConfig = getFeatureConfig(aiFeatures, 'deep_analysis')
+
+  const guardCredits = useCallback((cost: number, onProceed: () => void) => {
+    if (cost > 0 && creditBalance < cost) {
+      showCreditsAlert({
+        title: t('insufficient_credits'),
+        message: t('insufficient_credits_message', { count: cost }),
+        actionLabel: t('buy_credits'),
+      })
+      return
+    }
+    onProceed()
+  }, [creditBalance, t])
 
   const portfolioHash = usePortfolioHash(allHoldings)
   const narrativeState = useNarrative(
@@ -195,33 +210,33 @@ export default function InsightsScreen() {
           </View>
         )}
 
-        {/* 3. AI Narrative */}
-        <View className="mb-3">
+        {/* 3. AI Narrative — show if already generated or has credits */}
+        {(narrativeState.narrative || creditBalance >= 1) && <View className="mb-3">
           <NarrativeBlock
             narrative={narrativeState.narrative}
             isStale={narrativeState.isStale}
             isLoading={narrativeState.isLoading}
             creditCost={narrativeState.creditCost}
-            onGenerate={() => {
+            onGenerate={() => guardCredits(narrativeState.creditCost, () => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
               narrativeState.generate()
-            }}
+            })}
           />
-        </View>
+        </View>}
 
-        {/* 4. Deep Portfolio Analysis */}
-        <View className="mb-3">
+        {/* 4. Deep Portfolio Analysis — appears after narrative is generated */}
+        {narrativeState.narrative && <View className="mb-3">
           <DeepAnalysisBlock
             analysis={deepAnalysisState.analysis}
             isStale={deepAnalysisState.isStale}
             isLoading={deepAnalysisState.isLoading}
             creditCost={deepAnalysisConfig.creditCost}
-            onGenerate={() => {
+            onGenerate={() => guardCredits(deepAnalysisConfig.creditCost, () => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
               deepAnalysisState.generate()
-            }}
+            })}
           />
-        </View>
+        </View>}
 
         {/* 5. Concentration Insight */}
         {concentration && (

@@ -79,7 +79,7 @@ export function NarrativeBlock({
     )
   }
 
-  // --- Has narrative (possibly stale) ---
+  // --- Has narrative — full content ---
   return (
     <View className="mx-4 gap-3">
       {/* Summary Card */}
@@ -95,12 +95,11 @@ export function NarrativeBlock({
             <Text className="text-[10px] text-muted">{t('ai_generated')}</Text>
           </View>
         </View>
-        <Text className="text-sm text-text leading-5">{narrative.summary}</Text>
+        <Text className="text-base text-text leading-6 text-justify">{narrative.summary}</Text>
 
-        {/* Stale refresh nudge */}
         {isStale && (
           <Pressable
-            className="flex-row items-center gap-1.5 mt-3 pt-3 border-t border-border"
+            className="flex-row items-center gap-1.5 mt-3 pt-3 border-t border-border active:opacity-70"
             onPress={onGenerate}
           >
             <IconRefresh size={14} color={colors.accent} />

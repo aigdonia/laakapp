@@ -68,19 +68,40 @@ export function useNarrative(
     setError(null)
 
     try {
-      // Build minimal payload — privacy first
-      const holdingsPayload = holdings.map((h) => ({
-        name: h.symbol ?? h.name ?? h.assetType,
-        type: h.assetType,
-        weight: h.totalCost,
-      }))
+      // Build rich summary payload — no raw data, just aggregated insights
+      const totalValue = holdings.reduce((sum, h) => sum + (h.marketValue ?? h.totalCost), 0)
+      const totalCost = holdings.reduce((sum, h) => sum + h.totalCost, 0)
+      const gainLossPct = totalCost > 0 ? ((totalValue - totalCost) / totalCost) * 100 : 0
+
+      // Asset class breakdown
+      const classMap = new Map<string, number>()
+      for (const h of holdings) {
+        const cls = h.assetType
+        classMap.set(cls, (classMap.get(cls) ?? 0) + (h.marketValue ?? h.totalCost))
+      }
+      const classes = Array.from(classMap.entries())
+        .map(([name, value]) => ({ name, pct: Math.round((value / totalValue) * 100) }))
+        .sort((a, b) => b.pct - a.pct)
+
+      // Top holdings by weight
+      const top = [...holdings]
+        .sort((a, b) => (b.marketValue ?? b.totalCost) - (a.marketValue ?? a.totalCost))
+        .slice(0, 5)
+        .map((h) => ({
+          symbol: h.symbol ?? h.name ?? h.assetType,
+          pct: Math.round(((h.marketValue ?? h.totalCost) / totalValue) * 100),
+          gainPct: h.gainLossPct != null ? Math.round(h.gainLossPct * 10) / 10 : null,
+        }))
 
       const isRefresh = !isFirstTime
       const response = await api.post<FriendResponse>('/friend', {
         feature: 'narrative',
         language,
         payload: {
-          holdings: holdingsPayload,
+          baseCurrency: holdings[0]?.currency ?? 'USD',
+          gainLossPct: Math.round(gainLossPct * 10) / 10,
+          classes,
+          top,
           compliance,
           isRefresh,
         },

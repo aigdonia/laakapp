@@ -95,7 +95,12 @@ export const defaults = {
     unlock_stock_analysis: 'Unlock AI Analysis',
     new_analysis_available: 'New analysis available. Tap to refresh.',
     generating_narrative: 'Generating your narrative...',
+    tap_to_read_more: 'Tap to read more',
+    regenerate: 'Regenerate',
     narrative_refresh: 'Portfolio changed. Tap to refresh.',
+    insufficient_credits: 'Not Enough Credits',
+    insufficient_credits_message: 'This feature requires {{count}} credits. Purchase more to continue.',
+    buy_credits: 'Buy Credits',
     data_as_of: 'Based on data as of {{date}}',
     // Score zone labels
     zone_poor: 'Poor',
