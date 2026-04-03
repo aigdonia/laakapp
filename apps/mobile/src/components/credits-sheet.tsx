@@ -102,8 +102,9 @@ export const CreditsSheet = forwardRef<BottomSheetModal>(function CreditsSheet(_
       setShowCheck(true)
       setTimeout(() => setShowCheck(false), 1500)
     } catch (e: any) {
-      if (!e.userCancelled) {
-        Alert.alert(t('purchase_failed'))
+      // RevenueCat errors have userCancelled; test store may throw plain errors
+      if (e?.userCancelled !== true) {
+        Alert.alert(t('purchase_failed'), e?.message ?? '')
       }
     } finally {
       setLoadingPkgId(null)
