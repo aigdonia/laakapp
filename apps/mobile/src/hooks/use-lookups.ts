@@ -57,12 +57,12 @@ export function useLookups() {
 /** Build a map of category → options[] from all lookups */
 export function buildLookupOptionsMap(
   lookups: Lookup[] | undefined
-): Record<string, { label: string; value: string }[]> {
+): Record<string, { label: string; value: string; shortLabel?: string }[]> {
   if (!lookups) return {}
-  const map: Record<string, { label: string; value: string }[]> = {}
+  const map: Record<string, { label: string; value: string; shortLabel?: string }[]> = {}
   for (const l of lookups) {
     if (!map[l.category]) map[l.category] = []
-    map[l.category].push({ label: l.label, value: l.value })
+    map[l.category].push({ label: l.label, value: l.value, shortLabel: l.value })
   }
   return map
 }

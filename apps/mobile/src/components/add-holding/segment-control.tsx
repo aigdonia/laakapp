@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from 'react-native'
 import * as Haptics from 'expo-haptics'
 
-type Option = { label: string; value: string }
+type Option = { label: string; value: string; shortLabel?: string }
 
 type Props = {
   options: Option[]
@@ -29,7 +29,7 @@ export function SegmentControl({ options, value, onChange }: Props) {
               style={{ color: isActive ? '#1c1c1e' : undefined }}
               numberOfLines={1}
             >
-              {opt.label}
+              {opt.shortLabel ?? opt.label}
             </Text>
           </Pressable>
         )
