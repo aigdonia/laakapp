@@ -52,6 +52,7 @@ export function HoldingCard({ holding, typeName, color, amountsVisible = true, o
 
   // For cash & gold, the currency is already in the title or subtitle
   const { assetType } = parseHoldingKey(holding.holdingKey)
+  const isEquity = assetType === 'stock' || assetType === 'etf'
   const showCurrencyUnderAmount = assetType !== 'cash' && assetType !== 'gold'
 
   return (
@@ -87,7 +88,21 @@ export function HoldingCard({ holding, typeName, color, amountsVisible = true, o
             {formattedValue}
           </Text>
         </Redacted>
-        {holding.gainLossPct != null && (
+        {isEquity && holding.lastPrice != null ? (
+          <Redacted visible={amountsVisible}>
+            <Text
+              className="text-xs font-medium mt-0.5"
+              style={{ fontVariant: ['tabular-nums'] }}
+            >
+              <Text style={{ color: holding.gainLossPct != null && holding.gainLossPct >= 0 ? '#34c759' : '#ff3b30' }}>
+                {holding.gainLossPct != null ? `${holding.gainLossPct >= 0 ? '+' : ''}${holding.gainLossPct.toFixed(1)}%` : ''}
+              </Text>
+              <Text className="text-muted">
+                {holding.gainLossPct != null ? ' · ' : ''}{holding.currency} {holding.lastPrice.toLocaleString()}
+              </Text>
+            </Text>
+          </Redacted>
+        ) : holding.gainLossPct != null ? (
           <Redacted visible={amountsVisible}>
             <Text
               className="text-xs font-medium mt-0.5"
@@ -99,8 +114,8 @@ export function HoldingCard({ holding, typeName, color, amountsVisible = true, o
               {holding.gainLossPct >= 0 ? '+' : ''}{holding.gainLossPct.toFixed(1)}%
             </Text>
           </Redacted>
-        )}
-        {showCurrencyUnderAmount && (
+        ) : null}
+        {showCurrencyUnderAmount && !isEquity && (
           <Text className="text-xs text-muted mt-0.5">
             {holding.currency}
             {holding.transactionCount > 1 ? ` · ${t('txns', { count: holding.transactionCount })}` : ''}
