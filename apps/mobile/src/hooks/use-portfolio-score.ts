@@ -4,10 +4,13 @@ import type { HoldingGroup } from './use-holdings'
 import type { ClassContribution, PortfolioScore } from '@/src/types/insights'
 import { getScoreZone } from '@/src/types/insights'
 
+/** Default allocation when no preset is selected */
+export const DEFAULT_ALLOCATIONS: Record<string, number> = { cash: 34, etf: 33, gold: 33 }
+
 /**
  * Computes a Portfolio Health Score (0-100) based on asset class diversification.
  *
- * All available asset classes share equal ideal weight (100 / numClasses).
+ * Uses preset allocations when selected, otherwise DEFAULT_ALLOCATIONS.
  * Each class contributes min(actualPct, idealPct) to the total score.
  * A perfectly diversified portfolio across all classes = 100.
  *
@@ -25,14 +28,12 @@ export function usePortfolioScore(
     const totalValue = groups.reduce((sum, g) => sum + g.totalCostInBase, 0)
     if (totalValue === 0) return null
 
-    // When a preset is active, only show classes defined in the preset
-    const relevantClasses = presetAllocations
-      ? assetClasses.filter((ac) => ac.slug in presetAllocations)
-      : assetClasses
+    const allocations = presetAllocations ?? DEFAULT_ALLOCATIONS
+
+    // Only show classes defined in the allocations
+    const relevantClasses = assetClasses.filter((ac) => ac.slug in allocations)
 
     if (relevantClasses.length === 0) return null
-
-    const equalPct = 100 / relevantClasses.length
 
     // Build a map of actual percentages by slug
     const actualBySlug = new Map<string, number>()
@@ -44,7 +45,7 @@ export function usePortfolioScore(
     // Compute per-class contribution
     const classes: ClassContribution[] = relevantClasses.map((ac) => {
       const actualPct = actualBySlug.get(ac.slug) ?? 0
-      const idealPct = presetAllocations ? (presetAllocations[ac.slug] ?? 0) : equalPct
+      const idealPct = allocations[ac.slug] ?? 0
       return {
         slug: ac.slug,
         name: ac.name,

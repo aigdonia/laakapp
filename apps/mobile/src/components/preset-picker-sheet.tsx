@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { useThemeColors } from '@/src/theme/colors'
 import { usePreferences } from '@/src/store/preferences'
 import { usePortfolioPresets } from '@/src/hooks/use-portfolio-presets'
+import { DEFAULT_ALLOCATIONS } from '@/src/hooks/use-portfolio-score'
 import { track } from '@/src/lib/analytics'
 
 function Backdrop(props: BottomSheetBackdropProps) {
@@ -59,7 +60,7 @@ export const PresetPickerSheet = forwardRef<BottomSheetModal>(function PresetPic
           >
             <View className="flex-1">
               <Text className="text-base font-medium text-text">{t('equal_weight')}</Text>
-              <Text className="text-xs text-muted mt-0.5">{t('equal_weight_description')}</Text>
+              <Text className="text-xs text-muted mt-0.5">{formatAllocations(DEFAULT_ALLOCATIONS)}</Text>
             </View>
             <View
               className={`w-5 h-5 rounded-full border-2 items-center justify-center ${
