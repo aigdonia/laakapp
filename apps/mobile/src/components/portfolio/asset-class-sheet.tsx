@@ -57,16 +57,18 @@ export const AssetClassSheet = forwardRef<BottomSheetModal, Props>(
             <Text className="text-sm text-muted">({count})</Text>
           </View>
 
-          {group.holdings.map((holding) => (
-            <HoldingCard
-              key={holding.holdingKey}
-              holding={holding}
-              typeName={name}
-              color={color}
-              amountsVisible={amountsVisible}
-              onPress={() => handleHoldingPress(holding.holdingKey)}
-            />
-          ))}
+          <View className="gap-1.5">
+            {group.holdings.map((holding) => (
+              <HoldingCard
+                key={holding.holdingKey}
+                holding={holding}
+                typeName={name}
+                color={color}
+                amountsVisible={amountsVisible}
+                onPress={() => handleHoldingPress(holding.holdingKey)}
+              />
+            ))}
+          </View>
         </BottomSheetScrollView>
       </BottomSheetModal>
     )
