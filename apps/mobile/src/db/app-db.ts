@@ -225,6 +225,11 @@ export function initAppDb() {
       `ALTER TABLE cached_stocks ADD COLUMN last_price_updated_at TEXT`
     )
   }
+  if (!stockCols.some((c) => c.name === 'about')) {
+    expoDb.execSync(
+      `ALTER TABLE cached_stocks ADD COLUMN about TEXT`
+    )
+  }
 }
 
 /** Wipe all cached app data (stocks, articles, rates, etc). Does NOT touch user data.

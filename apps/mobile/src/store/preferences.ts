@@ -107,7 +107,7 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
     {
       name: 'preferences',
       storage: createJSONStorage(() => mmkvStorage),
-      version: 7,
+      version: 8,
       migrate: (persisted: unknown, version: number) => {
         const raw = persisted as Record<string, unknown>
         const state = raw as unknown as PreferencesState & PreferencesActions
@@ -134,6 +134,9 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
         }
         if (version < 7) {
           state.activityRhythm = 'biweekly'
+        }
+        if (version < 8) {
+          state.stocksSyncedAt = null
         }
         return state
       },
