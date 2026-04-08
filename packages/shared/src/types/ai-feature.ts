@@ -7,5 +7,6 @@ export interface AiFeature extends BaseEntity {
   creditCost: number;
   freeRefresh: boolean;
   promptSlug: string;
+  useProfile: boolean;
   enabled: boolean;
 }

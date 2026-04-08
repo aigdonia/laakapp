@@ -17,5 +17,6 @@ export interface OnboardingScreen extends BaseEntity {
   choices: OnboardingChoice[];
   order: number;
   enabled: boolean;
+  skippable: boolean;
   translations: Translations;
 }
