@@ -1,10 +1,13 @@
 "use client"
 
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
-import { IconNote } from "@tabler/icons-react"
+import { IconNote, IconTrash } from "@tabler/icons-react"
 import type { UserSummary } from "./actions"
+import { deleteUser } from "./actions"
 
 function truncateId(id: string) {
   return id.slice(0, 8) + "…"
@@ -21,7 +24,23 @@ function timeAgo(dateStr: string | null) {
   return `${days}d ago`
 }
 
-export function UsersTable({ users }: { users: UserSummary[] }) {
+export function UsersTable({ users: initialUsers }: { users: UserSummary[] }) {
+  const router = useRouter()
+  const [users, setUsers] = useState(initialUsers)
+  const [deleting, setDeleting] = useState<string | null>(null)
+
+  async function handleDelete(userId: string) {
+    if (!confirm(`Delete ALL data for user ${userId.slice(0, 8)}…? This cannot be undone.`)) return
+    setDeleting(userId)
+    try {
+      await deleteUser(userId)
+      setUsers((prev) => prev.filter((u) => u.id !== userId))
+      router.refresh()
+    } finally {
+      setDeleting(null)
+    }
+  }
+
   if (users.length === 0) {
     return (
       <p className="py-12 text-center text-sm text-muted-foreground">
@@ -42,6 +61,7 @@ export function UsersTable({ users }: { users: UserSummary[] }) {
             <th className="px-4 py-3 text-end font-medium">Credits Spent</th>
             <th className="px-4 py-3 text-start font-medium">First Seen</th>
             <th className="px-4 py-3 text-start font-medium">Last Active</th>
+            <th className="px-4 py-3 text-end font-medium"></th>
           </tr>
         </thead>
         <tbody>
@@ -97,6 +117,15 @@ export function UsersTable({ users }: { users: UserSummary[] }) {
               </td>
               <td className="px-4 py-3 text-xs text-muted-foreground">
                 {timeAgo(user.lastActive)}
+              </td>
+              <td className="px-4 py-3 text-end">
+                <button
+                  onClick={() => handleDelete(user.id)}
+                  disabled={deleting === user.id}
+                  className="inline-flex items-center justify-center rounded-md p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-50"
+                >
+                  <IconTrash className="size-4" />
+                </button>
               </td>
             </tr>
           ))}

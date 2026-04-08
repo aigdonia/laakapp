@@ -70,6 +70,14 @@ export async function getUser(id: string) {
 
 export type UserDataCategory = "profile" | "activity" | "credits" | "devices" | "completions" | "backups"
 
+export async function deleteUser(userId: string) {
+  const result = await api<{ success: boolean }>(`/admin/users/${userId}`, {
+    method: "DELETE",
+  })
+  revalidatePath("/users")
+  return result
+}
+
 export async function resetUserData(userId: string, category: UserDataCategory) {
   const result = await api<{ success: boolean }>(`/admin/users/${userId}/${category}`, {
     method: "DELETE",

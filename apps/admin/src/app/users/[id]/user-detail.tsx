@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -69,6 +70,7 @@ function ResetButton({
   label: string
   count: number
 }) {
+  const router = useRouter()
   const [resetting, setResetting] = useState(false)
 
   if (count === 0) return null
@@ -78,6 +80,7 @@ function ResetButton({
     setResetting(true)
     try {
       await resetUserData(userId, category)
+      router.refresh()
       toast.success(`${label} cleared`)
     } catch {
       toast.error(`Failed to clear ${label.toLowerCase()}`)
@@ -133,6 +136,7 @@ function TestActionPanel({ userId, learningCards, microLessons }: {
   learningCards: PickItem[]
   microLessons: PickItem[]
 }) {
+  const router = useRouter()
   const [actionType, setActionType] = useState("")
   const [payload, setPayload] = useState<Record<string, string>>({})
   const [firing, setFiring] = useState(false)
@@ -158,6 +162,7 @@ function TestActionPanel({ userId, learningCards, microLessons }: {
         typed[k] = /^\d+$/.test(v) ? Number(v) : v
       }
       const result = await fireTestAction(userId, actionType, typed)
+      router.refresh()
       toast.success(`Sent to device (${result.queued} queued)`)
     } catch {
       toast.error("Failed to send")
@@ -517,6 +522,7 @@ export function UserDetail({ user, learningCards, microLessons }: {
 }
 
 function NotesEditor({ userId, notes: initialNotes }: { userId: string; notes: string }) {
+  const router = useRouter()
   const [notes, setNotes] = useState(initialNotes)
   const [saving, setSaving] = useState(false)
 
@@ -524,6 +530,7 @@ function NotesEditor({ userId, notes: initialNotes }: { userId: string; notes: s
     setSaving(true)
     try {
       await updateUserNotes(userId, notes)
+      router.refresh()
       toast.success("Notes saved")
     } catch {
       toast.error("Failed to save notes")

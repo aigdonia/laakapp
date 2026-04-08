@@ -188,6 +188,22 @@ app.get("/:id", async (c) => {
   });
 });
 
+/** Delete entire user across all tables */
+app.delete("/:id", async (c) => {
+  const userId = c.req.param("id");
+
+  await Promise.all([
+    db(c).delete(userProfiles).where(eq(userProfiles.userId, userId)),
+    db(c).delete(activityEvents).where(eq(activityEvents.customerId, userId)),
+    db(c).delete(creditTransactions).where(eq(creditTransactions.customerId, userId)),
+    db(c).delete(pushTokens).where(eq(pushTokens.userId, userId)),
+    db(c).delete(activityCompletions).where(eq(activityCompletions.customerId, userId)),
+    db(c).delete(backupSnapshots).where(eq(backupSnapshots.userId, userId)),
+  ]);
+
+  return c.json({ success: true, userId });
+});
+
 /** Reset a specific data category for a user */
 app.delete("/:id/:category", async (c) => {
   const userId = c.req.param("id");
