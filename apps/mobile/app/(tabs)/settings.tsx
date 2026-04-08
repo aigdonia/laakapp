@@ -360,9 +360,9 @@ export default function SettingsScreen() {
           />
         </SettingsSection>
 
+        {(Platform.OS === 'ios' || !isAnonymous) && (
         <SettingsSection title={t('account')}>
           {isAnonymous ? (
-            Platform.OS === 'ios' && (
               <SettingsMenuCard
                 icon={authLoading
                   ? <ActivityIndicator size="small" />
@@ -371,7 +371,6 @@ export default function SettingsScreen() {
                 subtitle={t('sign_in_subtitle')}
                 onPress={authLoading ? undefined : handleAppleSignIn}
               />
-            )
           ) : (
             <>
               <SettingsMenuCard
@@ -419,6 +418,7 @@ export default function SettingsScreen() {
             </>
           )}
         </SettingsSection>
+        )}
 
         <SettingsSection title={t('screening')}>
           <SettingsMenuCard

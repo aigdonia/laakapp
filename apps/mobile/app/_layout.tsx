@@ -8,6 +8,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react'
 import { useColorScheme } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 import Constants from 'expo-constants'
 import type { AppSettings } from '@fin-ai/shared'
@@ -22,7 +23,7 @@ import { SplashView } from '@/src/components/splash-view'
 import { ForceUpdateScreen } from '@/src/components/force-update-screen'
 import { LockScreen } from '@/src/components/app-lock/lock-screen'
 import { useAppStateLock } from '@/src/hooks/use-app-state-lock'
-import { migrateFromSecureStore, applyThemePreference } from '@/src/store/preferences'
+import { migrateFromSecureStore, applyThemePreference, initProfileSync } from '@/src/store/preferences'
 import { initPurchases } from '@/src/lib/purchases'
 import { PostHogProvider, getPostHog, requestTrackingConsent } from '@/src/lib/posthog'
 import { useCredits } from '@/src/store/credits'
@@ -37,6 +38,7 @@ import { CreditsAlertOverlay } from '@/src/components/credits-alert'
 import { LearningCardOverlay } from '@/src/components/learning-card-overlay'
 import { MicroLessonSheet, microLessonSheetRef } from '@/src/components/micro-lesson-sheet'
 import { useDevEventPoll } from '@/src/hooks/use-dev-event-poll'
+import { modalPresentation } from '@/src/lib/navigation'
 
 export { ErrorBoundary } from 'expo-router'
 
@@ -48,6 +50,7 @@ SplashScreen.preventAutoHideAsync()
 initAppDb()
 migrateFromSecureStore()
 applyThemePreference()
+initProfileSync()
 
 export default function RootLayout() {
   return (
@@ -144,21 +147,22 @@ function RootLayoutInner() {
   }
 
   return (
+    <SafeAreaProvider>
     <GestureHandlerRootView className="flex-1">
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <BottomSheetModalProvider>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="onboarding" options={{ presentation: 'fullScreenModal', headerShown: false, gestureEnabled: false }} />
-            <Stack.Screen name="add-holding" options={{ presentation: 'modal', headerShown: false }} />
-            <Stack.Screen name="holding/[id]" options={{ presentation: 'modal', headerShown: false }} />
+            <Stack.Screen name="add-holding" options={modalPresentation} />
+            <Stack.Screen name="holding/[id]" options={modalPresentation} />
             <Stack.Screen name="stock/[symbol]" options={{ title: 'Stock Detail' }} />
             <Stack.Screen name="category/[id]" options={{ headerShown: false }} />
-            <Stack.Screen name="article/[id]" options={{ presentation: 'modal', headerShown: false }} />
-            <Stack.Screen name="credits" options={{ presentation: 'modal', headerShown: false }} />
-            <Stack.Screen name="terms" options={{ presentation: 'modal', headerShown: false }} />
-            <Stack.Screen name="privacy" options={{ presentation: 'modal', headerShown: false }} />
-            <Stack.Screen name="dev-event-tester" options={{ presentation: 'modal', headerShown: false }} />
+            <Stack.Screen name="article/[id]" options={modalPresentation} />
+            <Stack.Screen name="credits" options={modalPresentation} />
+            <Stack.Screen name="terms" options={modalPresentation} />
+            <Stack.Screen name="privacy" options={modalPresentation} />
+            <Stack.Screen name="dev-event-tester" options={modalPresentation} />
           </Stack>
           <MicroLessonSheet ref={microLessonSheetRef} />
         </BottomSheetModalProvider>
@@ -169,5 +173,6 @@ function RootLayoutInner() {
       <CreditsAlertOverlay />
       <LearningCardOverlay />
     </GestureHandlerRootView>
+    </SafeAreaProvider>
   )
 }

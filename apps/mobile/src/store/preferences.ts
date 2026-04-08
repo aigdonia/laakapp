@@ -159,6 +159,55 @@ export const usePreferences = create<PreferencesState & PreferencesActions>()(
   ),
 )
 
+// --- Profile sync: push profile-related preference changes to server ---
+
+const PROFILE_ANSWER_MAP: Record<string, string> = {
+  countryCode: 'country',
+  portfolioPresetSlug: 'investment_style',
+  activityRhythm: 'check_frequency',
+}
+
+const PROFILE_KEYS = Object.keys(PROFILE_ANSWER_MAP) as (keyof PreferencesState)[]
+
+let profileSyncInitialized = false
+let profileSyncPaused = false
+
+/** Pause profile sync (e.g., during onboarding when API sets preferences) */
+export function pauseProfileSync() { profileSyncPaused = true }
+export function resumeProfileSync() { profileSyncPaused = false }
+
+export function initProfileSync() {
+  if (profileSyncInitialized) return
+  profileSyncInitialized = true
+
+  let prev = usePreferences.getState()
+
+  usePreferences.subscribe((state) => {
+    if (profileSyncPaused) {
+      prev = state
+      return
+    }
+
+    const changed: Record<string, string> = {}
+
+    for (const key of PROFILE_KEYS) {
+      if (state[key] !== prev[key] && state[key] != null) {
+        changed[PROFILE_ANSWER_MAP[key]] = state[key] as string
+      }
+    }
+
+    prev = state
+
+    if (Object.keys(changed).length > 0) {
+      import('../lib/api').then(({ api }) => {
+        api.patch('/profile', { answers: changed }).catch(() => {
+          // Non-blocking — local is source of truth
+        })
+      })
+    }
+  })
+}
+
 // --- Module-level helpers (sync, safe to call before first render) ---
 
 /** Restore persisted theme on app launch — call at module level. */
