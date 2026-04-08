@@ -1,0 +1,1 @@
+ALTER TABLE `onboarding_screens` ADD `skippable` integer DEFAULT true NOT NULL;
