@@ -48,10 +48,16 @@ const { locale = 'en' } = Astro.props;
     <!-- CTA Button (observed by nav to show/hide nav CTA) -->
     <div id="hero-ctas" class="mt-8 sm:mt-10">
       <a
-        href="#"
-        class="inline-flex items-center justify-center gap-2.5 bg-accent text-surface font-bold rounded-full px-8 py-4 text-base hover:scale-105 hover:shadow-[0_0_30px_rgba(255,214,10,0.3)] transition-all duration-200"
+        href="https://apps.apple.com/us/app/visualise-investments-laak/id6761325373"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-block hover:opacity-80 transition-opacity duration-200"
       >
-        {t(locale, 'hero.cta')}
+        <img
+          src="/images/app-store-badge.svg"
+          alt="Download on the App Store"
+          class="h-[54px] sm:h-[60px] w-auto"
+        />
       </a>
     </div>
 
