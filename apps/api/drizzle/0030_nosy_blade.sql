@@ -1,0 +1,1 @@
+ALTER TABLE `user_profiles` ADD `notes` text DEFAULT '' NOT NULL;

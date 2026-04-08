@@ -283,6 +283,7 @@ export const onboardingScreens = sqliteTable("onboarding_screens", {
     .default([]),
   order: integer("order").notNull().default(0),
   enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+  skippable: integer("skippable", { mode: "boolean" }).notNull().default(true),
   translations: text("translations", { mode: "json" })
     .notNull()
     .$type<Record<string, Record<string, string>>>()
@@ -559,6 +560,7 @@ export const userProfiles = sqliteTable("user_profiles", {
     .notNull()
     .$type<Record<string, string | string[]>>()
     .default({}),
+  notes: text("notes").notNull().default(""),
 });
 
 // ─── Backup Snapshots ───────────────────────────────────────

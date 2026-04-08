@@ -60,7 +60,7 @@ app.get("/", async (c) => {
     [...allIds].map(async (userId) => {
       const [profile, eventAgg, deviceAgg, creditAgg] = await Promise.all([
         db(c)
-          .select({ answers: userProfiles.answers })
+          .select({ answers: userProfiles.answers, notes: userProfiles.notes })
           .from(userProfiles)
           .where(eq(userProfiles.userId, userId))
           .get(),
@@ -100,6 +100,7 @@ app.get("/", async (c) => {
       return {
         id: userId,
         country: answers.country ?? answers.initial_country ?? null,
+        notes: profile?.notes ?? "",
         devices: deviceAgg?.count ?? 0,
         platforms: deviceAgg?.platforms ?? "",
         events: eventAgg?.count ?? 0,
@@ -177,7 +178,7 @@ app.get("/:id", async (c) => {
   return c.json({
     id: userId,
     profile: profile
-      ? { answers: profile.answers, createdAt: profile.createdAt }
+      ? { answers: profile.answers, notes: profile.notes ?? "", createdAt: profile.createdAt }
       : null,
     events,
     transactions,
@@ -226,6 +227,31 @@ app.delete("/:id/:category", async (c) => {
 
   await handler();
   return c.json({ success: true, category, userId });
+});
+
+/** Update admin notes for a user */
+app.patch("/:id/notes", async (c) => {
+  const userId = c.req.param("id");
+  const { notes } = await c.req.json<{ notes: string }>();
+
+  const existing = await db(c)
+    .select()
+    .from(userProfiles)
+    .where(eq(userProfiles.userId, userId))
+    .get();
+
+  if (existing) {
+    await db(c)
+      .update(userProfiles)
+      .set({ notes: notes ?? "", updatedAt: new Date().toISOString() })
+      .where(eq(userProfiles.userId, userId));
+  } else {
+    await db(c)
+      .insert(userProfiles)
+      .values({ userId, notes: notes ?? "" });
+  }
+
+  return c.json({ success: true });
 });
 
 // ─── Dev-only test action queue (in-memory, ephemeral) ──────
