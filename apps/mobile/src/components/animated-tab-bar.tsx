@@ -9,6 +9,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import * as Haptics from 'expo-haptics'
 import { router } from 'expo-router'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { useThemeColors } from '@/src/theme/colors'
 import { useTabSwipe } from './tab-swipe-context'
@@ -62,6 +63,7 @@ export function AnimatedTabBar({
   navigation,
 }: any) {
   const colors = useThemeColors()
+  const insets = useSafeAreaInsets()
   const { progress, activeIndex } = useTabSwipe()
   const isRTL = I18nManager.isRTL
   const barWidth = useSharedValue(0)
@@ -129,7 +131,7 @@ export function AnimatedTabBar({
       onLayout={onBarLayout}
       style={{
         position: 'absolute',
-        bottom: 24,
+        bottom: Platform.OS === 'android' ? Math.max(24, insets.bottom + 8) : 24,
         left: 16,
         right: 16,
         borderRadius: 24,

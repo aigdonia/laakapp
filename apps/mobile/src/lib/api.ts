@@ -1,7 +1,11 @@
 import { getAccessToken } from './supabase'
 
+import { Platform } from 'react-native'
+
+const DEV_HOST = Platform.OS === 'android' ? '10.0.2.2' : 'localhost'
+
 const API_BASE_URL = __DEV__
-  ? 'http://localhost:12003'
+  ? `http://${DEV_HOST}:12003`
   : 'https://laak-api.ahmedgaber-1988-masterai.workers.dev'
 
 type RequestOptions = {
@@ -47,6 +51,7 @@ export const api = {
   get: <T>(path: string) => request<T>(path),
   post: <T>(path: string, body: unknown) => request<T>(path, { method: 'POST', body }),
   put: <T>(path: string, body: unknown) => request<T>(path, { method: 'PUT', body }),
+  patch: <T>(path: string, body: unknown) => request<T>(path, { method: 'PATCH', body }),
   delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
   postWithHeaders: <T>(path: string, body: unknown, headers: Record<string, string>) =>
     request<T>(path, { method: 'POST', body, headers }),
