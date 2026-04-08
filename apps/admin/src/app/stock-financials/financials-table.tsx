@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { StockFinancial, Stock } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -29,6 +30,7 @@ export function FinancialsTable({
   financials: StockFinancial[]
   stocks: Stock[]
 }) {
+  const router = useRouter()
   const [search, setSearch] = useState("")
   const stockById = Object.fromEntries(stocks.map((s) => [s.id, s]))
 
@@ -42,6 +44,7 @@ export function FinancialsTable({
   async function handleDelete(item: StockFinancial) {
     try {
       await deleteStockFinancial(item.id)
+      router.refresh()
       toast.success("Deleted financial record")
     } catch {
       toast.error("Failed to delete")

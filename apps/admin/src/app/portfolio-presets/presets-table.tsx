@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { AssetClass, Language, PortfolioPreset } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -30,6 +31,7 @@ export function PresetsTable({
   languages: Language[]
   assetClasses: AssetClass[]
 }) {
+  const router = useRouter()
   const sorted = [...presets].sort((a, b) => a.order - b.order)
   const [items, setItems] = useState(sorted)
   const [editingPreset, setEditingPreset] = useState<PortfolioPreset | null>(
@@ -40,6 +42,7 @@ export function PresetsTable({
   async function handleDelete(preset: PortfolioPreset) {
     try {
       await deletePortfolioPreset(preset.id)
+      router.refresh()
       toast.success(`Deleted ${preset.name}`)
     } catch {
       toast.error("Failed to delete preset")
@@ -49,7 +52,9 @@ export function PresetsTable({
   function handleReorder(newIds: string[]) {
     const reordered = newIds.map((id) => items.find((i) => i.id === id)!)
     setItems(reordered)
-    reorderPortfolioPresets(newIds).catch(() => {
+    reorderPortfolioPresets(newIds).then(() => {
+      router.refresh()
+    }).catch(() => {
       toast.error("Failed to save order")
       setItems(sorted)
     })

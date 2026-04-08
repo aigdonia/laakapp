@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { LearningCard, Language } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import {
@@ -27,6 +28,7 @@ export function LearningCardsTable({
   learningCards: LearningCard[]
   languages: Language[]
 }) {
+  const router = useRouter()
   const sorted = [...learningCards].sort((a, b) => a.order - b.order)
   const [items, setItems] = useState(sorted)
   const [editingCard, setEditingCard] = useState<LearningCard | null>(null)
@@ -35,6 +37,7 @@ export function LearningCardsTable({
   async function handleDelete(card: LearningCard) {
     try {
       await deleteLearningCard(card.id)
+      router.refresh()
       toast.success(`Deleted ${card.title}`)
     } catch {
       toast.error("Failed to delete learning card")
@@ -44,7 +47,9 @@ export function LearningCardsTable({
   function handleReorder(newIds: string[]) {
     const reordered = newIds.map((id) => items.find((i) => i.id === id)!)
     setItems(reordered)
-    reorderLearningCards(newIds).catch(() => {
+    reorderLearningCards(newIds).then(() => {
+      router.refresh()
+    }).catch(() => {
       toast.error("Failed to save order")
       setItems(sorted)
     })

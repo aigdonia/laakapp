@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { NotificationWithStats, NotificationCategory, NotificationTarget } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -72,6 +73,7 @@ export function NotificationsTable({
 }: {
   notifications: NotificationWithStats[]
 }) {
+  const router = useRouter()
   const [sheetOpen, setSheetOpen] = useState(false)
   const [editing, setEditing] = useState<NotificationWithStats | null>(null)
   const [form, setForm] = useState<FormData>(emptyForm)
@@ -114,6 +116,7 @@ export function NotificationsTable({
         await createNotification(data)
         toast.success("Notification created")
       }
+      router.refresh()
       setSheetOpen(false)
     } catch {
       toast.error("Failed to save notification")
@@ -125,6 +128,7 @@ export function NotificationsTable({
   async function handleDelete(id: string) {
     try {
       await deleteNotification(id)
+      router.refresh()
       toast.success("Notification deleted")
     } catch {
       toast.error("Failed to delete")
@@ -134,6 +138,7 @@ export function NotificationsTable({
   async function handleSend(id: string) {
     try {
       const result = await sendNotification(id)
+      router.refresh()
       toast.success(`Sent to ${result.sent} devices (${result.errors} errors)`)
     } catch {
       toast.error("Failed to send notification")

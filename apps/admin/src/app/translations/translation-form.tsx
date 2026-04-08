@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { Language } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -41,6 +42,7 @@ export function TranslationForm({
   existingNamespace?: string
   existingValues?: Record<string, string> // languageCode → value
 }) {
+  const router = useRouter()
   const isEditing = !!existingKey
   const [loading, setLoading] = useState(false)
   const enabledLanguages = languages.filter((l) => l.enabled)
@@ -77,6 +79,7 @@ export function TranslationForm({
     if (result.error) {
       toast.error(result.error)
     } else {
+      router.refresh()
       toast.success(isEditing ? `Updated "${key}"` : `Created "${key}"`)
       onOpenChange(false)
     }

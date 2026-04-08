@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { EventType } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -45,6 +46,7 @@ const emptyForm: FormData = {
 }
 
 export function EventTypesTable({ eventTypes }: { eventTypes: EventType[] }) {
+  const router = useRouter()
   const [sheetOpen, setSheetOpen] = useState(false)
   const [editing, setEditing] = useState<EventType | null>(null)
   const [form, setForm] = useState<FormData>(emptyForm)
@@ -78,6 +80,7 @@ export function EventTypesTable({ eventTypes }: { eventTypes: EventType[] }) {
         await createEventType(form)
         toast.success("Event type created")
       }
+      router.refresh()
       setSheetOpen(false)
     } catch {
       toast.error("Failed to save event type")
@@ -89,6 +92,7 @@ export function EventTypesTable({ eventTypes }: { eventTypes: EventType[] }) {
   async function handleDelete(id: string) {
     try {
       await deleteEventType(id)
+      router.refresh()
       toast.success("Event type deleted")
     } catch {
       toast.error("Failed to delete")

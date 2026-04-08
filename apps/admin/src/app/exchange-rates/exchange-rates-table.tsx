@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useState } from "react"
+import { useRouter } from "next/navigation"
 import type { ExchangeRate, Lookup } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -115,6 +116,7 @@ export function ExchangeRatesTable({
   currencyLookups: Lookup[]
   baseCurrency: string
 }) {
+  const router = useRouter()
   const [showCreate, setShowCreate] = useState(false)
 
   const existingCurrencies = new Set(rates.map((r) => r.currency))
@@ -129,12 +131,14 @@ export function ExchangeRatesTable({
 
   async function handleRateSave(id: string, ratePerUsd: number) {
     await updateExchangeRate(id, { ratePerUsd })
+    router.refresh()
     toast.success("Rate updated")
   }
 
   async function handleToggleEnabled(rate: ExchangeRate) {
     try {
       await updateExchangeRate(rate.id, { enabled: !rate.enabled })
+      router.refresh()
       toast.success(`${rate.currency} ${rate.enabled ? "disabled" : "enabled"}`)
     } catch {
       toast.error("Failed to update status")
@@ -144,6 +148,7 @@ export function ExchangeRatesTable({
   async function handleDelete(rate: ExchangeRate) {
     try {
       await deleteExchangeRate(rate.id)
+      router.refresh()
       toast.success(`Deleted ${rate.currency}`)
     } catch {
       toast.error("Failed to delete")

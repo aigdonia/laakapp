@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type {
   ActivityRule,
   ActivityActionType,
@@ -117,6 +118,7 @@ export function ActivityRulesTable({
   microLessons: MicroLesson[]
   learningCards: LearningCard[]
 }) {
+  const router = useRouter()
   const sorted = [...rules].sort((a, b) => a.order - b.order)
   const [items, setItems] = useState(sorted)
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -202,6 +204,7 @@ export function ActivityRulesTable({
         await createActivityRule(data)
         toast.success("Rule created")
       }
+      router.refresh()
       setSheetOpen(false)
     } catch {
       toast.error("Failed to save rule")
@@ -213,6 +216,7 @@ export function ActivityRulesTable({
   async function handleDelete(id: string) {
     try {
       await deleteActivityRule(id)
+      router.refresh()
       toast.success("Rule deleted")
     } catch {
       toast.error("Failed to delete")
@@ -238,7 +242,9 @@ export function ActivityRulesTable({
   function handleReorder(newIds: string[]) {
     const reordered = newIds.map((id) => items.find((i) => i.id === id)!)
     setItems(reordered)
-    reorderActivityRules(newIds).catch(() => {
+    reorderActivityRules(newIds).then(() => {
+      router.refresh()
+    }).catch(() => {
       toast.error("Failed to save order")
       setItems(sorted)
     })

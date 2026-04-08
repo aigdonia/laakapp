@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import type { Article, ArticleCategory, Language } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
@@ -30,9 +31,12 @@ export function ArticlesTable({
   languages: Language[]
   categories: ArticleCategory[]
 }) {
+  const router = useRouter()
+
   async function handleDelete(article: Article) {
     try {
       await deleteArticle(article.id)
+      router.refresh()
       toast.success(`Deleted ${article.title}`)
     } catch {
       toast.error("Failed to delete article")

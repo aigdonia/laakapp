@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { Language, Lookup } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -35,6 +36,7 @@ export function LookupForm({
   categories: string[]
   defaultCategory?: string
 }) {
+  const router = useRouter()
   const isEditing = !!lookup
   const [loading, setLoading] = useState(false)
   const [useNewCategory, setUseNewCategory] = useState(false)
@@ -74,6 +76,7 @@ export function LookupForm({
         await createLookup(data)
         toast.success(`Created ${data.label}`)
       }
+      router.refresh()
       onOpenChange(false)
     } catch {
       toast.error(isEditing ? "Failed to update" : "Failed to create")

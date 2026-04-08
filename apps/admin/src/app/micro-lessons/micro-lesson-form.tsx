@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { MicroLesson, Language } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -38,6 +39,7 @@ export function MicroLessonForm({
   microLesson?: MicroLesson
   languages: Language[]
 }) {
+  const router = useRouter()
   const isEditing = !!microLesson
   const [loading, setLoading] = useState(false)
   const [slug, setSlug] = useState(microLesson?.slug ?? "")
@@ -77,6 +79,7 @@ export function MicroLessonForm({
         await createMicroLesson(data)
         toast.success(`Created ${data.title}`)
       }
+      router.refresh()
       onOpenChange(false)
     } catch {
       toast.error(isEditing ? "Failed to update" : "Failed to create")

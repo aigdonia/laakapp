@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type {
   AssetClass,
   Language,
@@ -55,6 +56,7 @@ export function PresetForm({
   languages: Language[]
   assetClasses: AssetClass[]
 }) {
+  const router = useRouter()
   const isEditing = !!preset
   const [loading, setLoading] = useState(false)
   const [allocations, setAllocations] = useState<Allocation[]>(
@@ -115,6 +117,7 @@ export function PresetForm({
         await createPortfolioPreset(data)
         toast.success(`Created ${data.name}`)
       }
+      router.refresh()
       onOpenChange(false)
     } catch {
       toast.error(isEditing ? "Failed to update" : "Failed to create")

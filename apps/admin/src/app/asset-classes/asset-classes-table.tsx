@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { AssetClass, Language } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -30,6 +31,7 @@ export function AssetClassesTable({
   languages: Language[]
   lookupCategories?: string[]
 }) {
+  const router = useRouter()
   const sorted = [...assetClasses].sort((a, b) => a.order - b.order)
   const [items, setItems] = useState(sorted)
   const [editingAssetClass, setEditingAssetClass] =
@@ -39,6 +41,7 @@ export function AssetClassesTable({
   async function handleDelete(assetClass: AssetClass) {
     try {
       await deleteAssetClass(assetClass.id)
+      router.refresh()
       toast.success(`Deleted ${assetClass.name}`)
     } catch {
       toast.error("Failed to delete asset class")
@@ -48,7 +51,9 @@ export function AssetClassesTable({
   function handleReorder(newIds: string[]) {
     const reordered = newIds.map((id) => items.find((i) => i.id === id)!)
     setItems(reordered)
-    reorderAssetClasses(newIds).catch(() => {
+    reorderAssetClasses(newIds).then(() => {
+      router.refresh()
+    }).catch(() => {
       toast.error("Failed to save order")
       setItems(sorted)
     })

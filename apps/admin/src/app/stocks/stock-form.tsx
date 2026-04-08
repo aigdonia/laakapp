@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { Stock, Language, Lookup } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -34,6 +35,7 @@ export function StockForm({
   exchangeLookups: Lookup[]
   onSaved?: () => void
 }) {
+  const router = useRouter()
   const isEditing = !!stock
   const [loading, setLoading] = useState(false)
 
@@ -63,6 +65,7 @@ export function StockForm({
         await createStock(data)
         toast.success(`Created ${data.symbol}`)
       }
+      router.refresh()
       onOpenChange(false)
       onSaved?.()
     } catch {

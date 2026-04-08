@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { useRouter } from "next/navigation"
 import type { Language, UiTranslation } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -56,11 +57,14 @@ function InlineEditCell({
   const [editing, setEditing] = useState(false)
   const [text, setText] = useState(value)
 
+  const router = useRouter()
+
   async function save() {
     setEditing(false)
     if (text === value) return
     try {
       await updateUiTranslation(translationId, { value: text })
+      router.refresh()
       toast.success("Updated")
     } catch {
       setText(value)
@@ -117,6 +121,7 @@ export function TranslationsTable({
   translations: UiTranslation[]
   languages: Language[]
 }) {
+  const router = useRouter()
   const [showCreate, setShowCreate] = useState(false)
   const [editingGroup, setEditingGroup] = useState<GroupedKey | null>(null)
   const [namespaceFilter, setNamespaceFilter] = useState("all")
@@ -140,6 +145,7 @@ export function TranslationsTable({
       for (const entry of Object.values(group.values)) {
         await deleteUiTranslation(entry.id)
       }
+      router.refresh()
       toast.success(`Deleted "${group.key}"`)
     } catch {
       toast.error("Failed to delete")

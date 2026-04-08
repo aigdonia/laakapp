@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { Country, Language, Lookup } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -17,12 +18,14 @@ import { CountryForm } from "./country-form"
 import { toast } from "sonner"
 
 export function CountriesTable({ countries, languages, currencyLookups }: { countries: Country[]; languages: Language[]; currencyLookups: Lookup[] }) {
+  const router = useRouter()
   const [editingCountry, setEditingCountry] = useState<Country | null>(null)
   const [showCreate, setShowCreate] = useState(false)
 
   async function handleDelete(country: Country) {
     try {
       await deleteCountry(country.id)
+      router.refresh()
       toast.success(`Deleted ${country.name}`)
     } catch {
       toast.error("Failed to delete country")

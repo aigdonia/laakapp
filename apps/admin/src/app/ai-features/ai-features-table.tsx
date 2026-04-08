@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { AiFeature, Prompt } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -46,6 +47,7 @@ function FeatureForm({
   feature?: AiFeature
   prompts: Prompt[]
 }) {
+  const router = useRouter()
   const isEditing = !!feature
   const [loading, setLoading] = useState(false)
   const [slug, setSlug] = useState(feature?.slug ?? "")
@@ -80,6 +82,7 @@ function FeatureForm({
         await createAiFeature(data)
         toast.success(`Created ${data.name}`)
       }
+      router.refresh()
       onOpenChange(false)
     } catch {
       toast.error(isEditing ? "Failed to update" : "Failed to create")
@@ -229,12 +232,14 @@ export function AiFeaturesTable({
   features: AiFeature[]
   prompts: Prompt[]
 }) {
+  const router = useRouter()
   const [editingFeature, setEditingFeature] = useState<AiFeature | null>(null)
   const [showCreate, setShowCreate] = useState(false)
 
   async function handleDelete(feature: AiFeature) {
     try {
       await deleteAiFeature(feature.id)
+      router.refresh()
       toast.success(`Deleted ${feature.name}`)
     } catch {
       toast.error("Failed to delete feature")

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { AppSettings, ExchangeRate, Language } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -22,6 +23,7 @@ export function SettingsForm({
   languages: Language[]
   exchangeRates: ExchangeRate[]
 }) {
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
 
   const enabledCurrencies = exchangeRates.filter((r) => r.enabled)
@@ -41,6 +43,7 @@ export function SettingsForm({
 
     try {
       await updateAppSettings(data)
+      router.refresh()
       toast.success("Settings updated")
     } catch {
       toast.error("Failed to update settings")

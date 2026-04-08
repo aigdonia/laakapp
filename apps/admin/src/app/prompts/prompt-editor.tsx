@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { Prompt } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -36,6 +37,7 @@ export function PromptEditor({
   onSaved: (prompt: Prompt) => void
   onDeleted?: (id: string) => void
 }) {
+  const router = useRouter()
   const isNew = !prompt?.id
   const [loading, setLoading] = useState(false)
   const [slug, setSlug] = useState(prompt?.slug ?? "")
@@ -86,6 +88,7 @@ export function PromptEditor({
         result = await updatePrompt(prompt!.id, data)
         toast.success(`Saved ${data.name}`)
       }
+      router.refresh()
       onSaved(result)
     } catch {
       toast.error("Failed to save")
@@ -101,6 +104,7 @@ export function PromptEditor({
     setLoading(true)
     try {
       await deletePrompt(prompt.id)
+      router.refresh()
       toast.success(`Deleted ${prompt.name}`)
       onDeleted?.(prompt.id)
     } catch {

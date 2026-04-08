@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useId } from "react"
+import { useRouter } from "next/navigation"
 import type { AssetClass, FieldConfig, Language } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -33,6 +34,7 @@ export function AssetClassForm({
   languages: Language[]
   lookupCategories?: string[]
 }) {
+  const router = useRouter()
   const isEditing = !!assetClass
   const [loading, setLoading] = useState(false)
   const [color, setColor] = useState(assetClass?.color ?? "#6b7280")
@@ -65,6 +67,7 @@ export function AssetClassForm({
         await createAssetClass(data)
         toast.success(`Created ${data.name}`)
       }
+      router.refresh()
       onOpenChange(false)
     } catch {
       toast.error(isEditing ? "Failed to update" : "Failed to create")

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { Lookup } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -29,6 +30,7 @@ export function ExchangeRateForm({
   existingCurrencies: Set<string>
   baseCurrency: string
 }) {
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [search, setSearch] = useState("")
   const [selected, setSelected] = useState<Lookup | null>(null)
@@ -64,6 +66,7 @@ export function ExchangeRateForm({
         ratePerUsd,
         enabled: true,
       })
+      router.refresh()
       toast.success(`Added ${selected.value}`)
       reset()
       onOpenChange(false)

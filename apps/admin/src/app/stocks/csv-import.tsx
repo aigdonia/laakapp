@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import Papa from "papaparse"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -85,6 +86,7 @@ export function CsvImport({
   onOpenChange: (open: boolean) => void
   onImported?: () => void
 }) {
+  const router = useRouter()
   const [rows, setRows] = useState<ParsedRow[]>([])
   const [importing, setImporting] = useState(false)
 
@@ -113,6 +115,7 @@ export function CsvImport({
       toast.success(
         `Created ${result.created}, updated ${result.updated}${result.errors.length ? `, ${result.errors.length} errors` : ""}`
       )
+      router.refresh()
       onImported?.()
       if (result.errors.length > 0) {
         result.errors.forEach((err) => toast.error(err))

@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { useRouter } from "next/navigation"
 import type { Language, Lookup } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -47,6 +48,7 @@ function CategoryCard({
   languages: Language[]
   allCategories: string[]
 }) {
+  const router = useRouter()
   const [rows, setRows] = useState<LookupRow[]>(() => rowsFromItems(items))
   const [saving, setSaving] = useState(false)
   const [editingLookup, setEditingLookup] = useState<Lookup | null>(null)
@@ -105,6 +107,7 @@ function CategoryCard({
         }),
       )
 
+      router.refresh()
       toast.success(`Saved ${formatCategory(category)}`)
     } catch {
       toast.error("Failed to save")

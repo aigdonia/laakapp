@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { LearningCard, Language } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -31,6 +32,7 @@ export function LearningCardForm({
   learningCard?: LearningCard
   languages: Language[]
 }) {
+  const router = useRouter()
   const isEditing = !!learningCard
   const [loading, setLoading] = useState(false)
   const [content, setContent] = useState(learningCard?.content ?? "")
@@ -63,6 +65,7 @@ export function LearningCardForm({
         await createLearningCard(data)
         toast.success(`Created ${data.title}`)
       }
+      router.refresh()
       onOpenChange(false)
     } catch {
       toast.error(isEditing ? "Failed to update" : "Failed to create")

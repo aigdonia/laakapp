@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, useTransition } from "react"
+import { useRouter } from "next/navigation"
 import type {
   Stock,
   Lookup,
@@ -73,6 +74,7 @@ export function StocksTable({
   sectorLookups: Lookup[]
   languages: import("@fin-ai/shared").Language[]
 }) {
+  const router = useRouter()
   const [stocks, setStocks] = useState<Stock[]>([])
   const [compliance, setCompliance] = useState<StockCompliance[]>([])
   const [total, setTotal] = useState(0)
@@ -196,6 +198,7 @@ export function StocksTable({
         }
         return updated
       })
+      router.refresh()
       toast.success(`Updated ${stock.symbol} → ${STATUS_LABELS[newStatus]}`)
     } catch {
       toast.error("Failed to update compliance")
@@ -207,6 +210,7 @@ export function StocksTable({
       const stockIds = stocks.map((s) => s.id)
       const result = await runScreening(stockIds)
       toast.success(`Screened ${result.stocks} stocks × ${result.rules} rules`)
+      router.refresh()
       fetchData()
     } catch {
       toast.error("Screening failed")
@@ -219,6 +223,7 @@ export function StocksTable({
     setScreeningStockId(stock.id)
     try {
       await runScreening([stock.id])
+      router.refresh()
       toast.success(`Screened ${stock.symbol}`)
       // Refresh compliance for this stock
       const comp = await listComplianceForStocks([stock.id])
@@ -236,6 +241,7 @@ export function StocksTable({
   async function handleDelete(id: string) {
     try {
       await deleteStock(id)
+      router.refresh()
       toast.success("Stock deleted")
       fetchData()
     } catch {

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { ScreeningRule, Language } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -17,12 +18,14 @@ import { ScreeningRuleForm } from "./screening-rule-form"
 import { toast } from "sonner"
 
 export function ScreeningRulesTable({ rules, languages }: { rules: ScreeningRule[]; languages: Language[] }) {
+  const router = useRouter()
   const [editingRule, setEditingRule] = useState<ScreeningRule | null>(null)
   const [showCreate, setShowCreate] = useState(false)
 
   async function handleDelete(rule: ScreeningRule) {
     try {
       await deleteScreeningRule(rule.id)
+      router.refresh()
       toast.success(`Deleted ${rule.name}`)
     } catch {
       toast.error("Failed to delete screening rule")

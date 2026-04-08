@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type {
   OnboardingScreen,
   OnboardingScreenType,
@@ -81,6 +82,7 @@ function ScreenForm({
   screen?: OnboardingScreen
   languages: Language[]
 }) {
+  const router = useRouter()
   const isEditing = !!screen
   const [loading, setLoading] = useState(false)
   const [slug, setSlug] = useState(screen?.slug ?? "")
@@ -204,6 +206,7 @@ function ScreenForm({
         await createOnboardingScreen(data)
         toast.success("Created screen")
       }
+      router.refresh()
       onOpenChange(false)
     } catch {
       toast.error(isEditing ? "Failed to update" : "Failed to create")
@@ -373,6 +376,7 @@ export function OnboardingTable({
   screens: OnboardingScreen[]
   languages: Language[]
 }) {
+  const router = useRouter()
   const sorted = [...screens].sort((a, b) => a.order - b.order)
   const [items, setItems] = useState(sorted)
   const [editingScreen, setEditingScreen] = useState<OnboardingScreen | null>(null)
@@ -381,6 +385,7 @@ export function OnboardingTable({
   async function handleDelete(screen: OnboardingScreen) {
     try {
       await deleteOnboardingScreen(screen.id)
+      router.refresh()
       toast.success("Deleted screen")
     } catch {
       toast.error("Failed to delete screen")
@@ -390,7 +395,9 @@ export function OnboardingTable({
   function handleReorder(newIds: string[]) {
     const reordered = newIds.map((id) => items.find((i) => i.id === id)!)
     setItems(reordered)
-    reorderOnboardingScreens(newIds).catch(() => {
+    reorderOnboardingScreens(newIds).then(() => {
+      router.refresh()
+    }).catch(() => {
       toast.error("Failed to save order")
       setItems(sorted)
     })

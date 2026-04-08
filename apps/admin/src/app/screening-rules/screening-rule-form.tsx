@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { ScreeningRule, Language } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -47,6 +48,7 @@ export function ScreeningRuleForm({
   rule?: ScreeningRule
   languages: Language[]
 }) {
+  const router = useRouter()
   const isEditing = !!rule
   const [loading, setLoading] = useState(false)
   const [slug, setSlug] = useState(rule?.slug ?? "")
@@ -112,6 +114,7 @@ export function ScreeningRuleForm({
         await createScreeningRule(data)
         toast.success(`Created ${data.name}`)
       }
+      router.refresh()
       onOpenChange(false)
     } catch {
       toast.error(isEditing ? "Failed to update" : "Failed to create")

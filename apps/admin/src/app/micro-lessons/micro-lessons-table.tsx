@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { MicroLesson, Language } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import {
@@ -27,6 +28,7 @@ export function MicroLessonsTable({
   microLessons: MicroLesson[]
   languages: Language[]
 }) {
+  const router = useRouter()
   const sorted = [...microLessons].sort((a, b) => a.order - b.order)
   const [items, setItems] = useState(sorted)
   const [editingLesson, setEditingLesson] = useState<MicroLesson | null>(null)
@@ -35,6 +37,7 @@ export function MicroLessonsTable({
   async function handleDelete(lesson: MicroLesson) {
     try {
       await deleteMicroLesson(lesson.id)
+      router.refresh()
       toast.success(`Deleted ${lesson.title}`)
     } catch {
       toast.error("Failed to delete micro lesson")
@@ -44,7 +47,9 @@ export function MicroLessonsTable({
   function handleReorder(newIds: string[]) {
     const reordered = newIds.map((id) => items.find((i) => i.id === id)!)
     setItems(reordered)
-    reorderMicroLessons(newIds).catch(() => {
+    reorderMicroLessons(newIds).then(() => {
+      router.refresh()
+    }).catch(() => {
       toast.error("Failed to save order")
       setItems(sorted)
     })

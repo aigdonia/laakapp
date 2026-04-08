@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { ArticleCategory, Language } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -56,6 +57,7 @@ function CategoryForm({
   category?: ArticleCategory
   languages: Language[]
 }) {
+  const router = useRouter()
   const isEditing = !!category
   const [loading, setLoading] = useState(false)
   const [slug, setSlug] = useState(category?.slug ?? "")
@@ -88,6 +90,7 @@ function CategoryForm({
         await createArticleCategory(data)
         toast.success(`Created ${data.title}`)
       }
+      router.refresh()
       onOpenChange(false)
     } catch {
       toast.error(isEditing ? "Failed to update" : "Failed to create")
@@ -173,6 +176,7 @@ export function ArticleCategoriesTable({
   categories: ArticleCategory[]
   languages: Language[]
 }) {
+  const router = useRouter()
   const sorted = [...categories].sort((a, b) => a.order - b.order)
   const [items, setItems] = useState(sorted)
   const [editingCategory, setEditingCategory] =
@@ -182,6 +186,7 @@ export function ArticleCategoriesTable({
   async function handleDelete(category: ArticleCategory) {
     try {
       await deleteArticleCategory(category.id)
+      router.refresh()
       toast.success(`Deleted ${category.title}`)
     } catch {
       toast.error("Failed to delete category")
@@ -191,7 +196,9 @@ export function ArticleCategoriesTable({
   function handleReorder(newIds: string[]) {
     const reordered = newIds.map((id) => items.find((i) => i.id === id)!)
     setItems(reordered)
-    reorderArticleCategories(newIds).catch(() => {
+    reorderArticleCategories(newIds).then(() => {
+      router.refresh()
+    }).catch(() => {
       toast.error("Failed to save order")
       setItems(sorted)
     })

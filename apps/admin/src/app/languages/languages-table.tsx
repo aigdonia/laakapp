@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { Language } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -17,12 +18,14 @@ import { LanguageForm } from "./language-form"
 import { toast } from "sonner"
 
 export function LanguagesTable({ languages }: { languages: Language[] }) {
+  const router = useRouter()
   const [editingLanguage, setEditingLanguage] = useState<Language | null>(null)
   const [showCreate, setShowCreate] = useState(false)
 
   async function handleDelete(language: Language) {
     try {
       await deleteLanguage(language.id)
+      router.refresh()
       toast.success(`Deleted ${language.name}`)
     } catch {
       toast.error("Failed to delete language")
