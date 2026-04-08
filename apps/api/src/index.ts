@@ -31,6 +31,8 @@ import stockComplianceRoute from "./routes/stock-compliance";
 import stockFinancialsRoute from "./routes/stock-financials";
 import dataSourcesRoute from "./routes/data-sources";
 import scrapeJobsRoute from "./routes/scrape-jobs";
+import scrapeExecutionsRoute from "./routes/scrape-executions";
+import { processScheduledScrapeJobs } from "./lib/job-scheduler";
 import eventTypesRoute from "./routes/event-types";
 import activityRulesRoute from "./routes/activity-rules";
 import activityRoute, {
@@ -119,6 +121,7 @@ app.route("/stock-compliance", stockComplianceRoute);
 app.route("/stock-financials", stockFinancialsRoute);
 app.route("/data-sources", dataSourcesRoute);
 app.route("/scrape-jobs", scrapeJobsRoute);
+app.route("/scrape-executions", scrapeExecutionsRoute);
 app.route("/event-types", eventTypesRoute);
 app.route("/activity-rules", activityRulesRoute);
 app.route("/activity", activityRoute);
@@ -136,11 +139,12 @@ export default {
   fetch: app.fetch,
   async scheduled(
     _event: ScheduledEvent,
-    env: { DB: D1Database },
+    env: { DB: D1Database; BACKUP_BUCKET: R2Bucket },
     _ctx: ExecutionContext
   ) {
     const db = createDb(env.DB);
     await processScheduledNotifications(db);
     await purgeOldActivityEvents(db);
+    await processScheduledScrapeJobs(db, env.BACKUP_BUCKET);
   },
 };

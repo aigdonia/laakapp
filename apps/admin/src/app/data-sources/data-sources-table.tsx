@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import type { DataSource } from "@fin-ai/shared"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -17,12 +18,14 @@ import { DataSourceForm } from "./data-source-form"
 import { toast } from "sonner"
 
 export function DataSourcesTable({ dataSources }: { dataSources: DataSource[] }) {
+  const router = useRouter()
   const [editing, setEditing] = useState<DataSource | null>(null)
   const [showCreate, setShowCreate] = useState(false)
 
   async function handleDelete(item: DataSource) {
     try {
       await deleteDataSource(item.id)
+      router.refresh()
       toast.success(`Deleted ${item.name}`)
     } catch {
       toast.error("Failed to delete")
@@ -44,10 +47,7 @@ export function DataSourcesTable({ dataSources }: { dataSources: DataSource[] })
             <tr className="border-b bg-muted/50 text-muted-foreground">
               <th className="px-4 py-3 text-start font-medium">Name</th>
               <th className="px-4 py-3 text-start font-medium">Slug</th>
-              <th className="px-4 py-3 text-start font-medium">Type</th>
-              <th className="px-4 py-3 text-start font-medium">Countries</th>
-              <th className="px-4 py-3 text-start font-medium">Rate Limit</th>
-              <th className="px-4 py-3 text-start font-medium">Last Run</th>
+              <th className="px-4 py-3 text-start font-medium">Params</th>
               <th className="px-4 py-3 text-start font-medium">Status</th>
               <th className="px-4 py-3 text-end font-medium">Actions</th>
             </tr>
@@ -55,7 +55,7 @@ export function DataSourcesTable({ dataSources }: { dataSources: DataSource[] })
           <tbody>
             {dataSources.length === 0 && (
               <tr>
-                <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
+                <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
                   No data sources yet. Add your first source.
                 </td>
               </tr>
@@ -67,20 +67,13 @@ export function DataSourcesTable({ dataSources }: { dataSources: DataSource[] })
                     {item.name}
                   </button>
                 </td>
-                <td className="px-4 py-3 text-muted-foreground">{item.slug}</td>
-                <td className="px-4 py-3 text-muted-foreground capitalize">
-                  {item.type.replace(/_/g, " ")}
+                <td className="px-4 py-3 text-muted-foreground font-mono text-xs">
+                  {item.slug}
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
-                  {item.countryCodes.join(", ")}
-                </td>
-                <td className="px-4 py-3 text-muted-foreground tabular-nums">
-                  {item.rateLimitMs}ms
-                </td>
-                <td className="px-4 py-3 text-muted-foreground">
-                  {item.lastRunAt
-                    ? new Date(item.lastRunAt).toLocaleDateString()
-                    : "Never"}
+                  {item.params.length > 0
+                    ? item.params.map((p) => p.key).join(", ")
+                    : "—"}
                 </td>
                 <td className="px-4 py-3">
                   <Badge variant={item.enabled ? "success" : "secondary"}>

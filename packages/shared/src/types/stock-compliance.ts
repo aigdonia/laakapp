@@ -45,47 +45,54 @@ export interface StockFinancial extends BaseEntity {
   fetchedAt: string;
 }
 
-export type DataSourceType =
-  | "scraper"
-  | "index_list"
-  | "etf_holdings"
-  | "manual_csv";
+export interface DataSourceParam {
+  key: string;
+  label: string;
+  type: "string" | "number" | "enum";
+  required: boolean;
+  options?: Record<string, string>;
+}
 
 export interface DataSource extends BaseEntity {
   name: string;
   slug: string;
-  type: DataSourceType;
   urlTemplate: string;
-  countryCodes: string[];
-  config: Record<string, unknown>;
-  rateLimitMs: number;
-  maxRetries: number;
+  params: DataSourceParam[];
   enabled: boolean;
-  lastRunAt: string | null;
-  lastRunStatus: string | null;
 }
 
-export type ScrapeJobStatus = "pending" | "running" | "completed" | "failed";
-export type ScrapeJobType = "full_refresh" | "incremental" | "single_stock" | "price_update";
-export type ScrapeJobCreator = "admin" | "cron" | "system";
+export interface ScrapeJob extends BaseEntity {
+  dataSourceId: string;
+  params: Record<string, string | number | null>;
+  schedule: string | null;
+  enabled: boolean;
+}
 
-export interface ScrapeJobProgress {
+export type ScrapeExecutionStatus = "pending" | "running" | "completed" | "failed";
+export type ScrapeExecutionTrigger = "manual" | "cron" | "retry";
+
+export interface ScrapeExecutionProgress {
   total: number;
   completed: number;
   failed: number;
   errors: string[];
 }
 
-export interface ScrapeJob extends BaseEntity {
-  dataSourceId: string;
-  status: ScrapeJobStatus;
-  jobType: ScrapeJobType;
-  targetSymbols: string[] | null;
-  progress: ScrapeJobProgress;
+export interface ScrapeExecution extends BaseEntity {
+  jobId: string;
+  status: ScrapeExecutionStatus;
+  progress: ScrapeExecutionProgress;
   startedAt: string | null;
   completedAt: string | null;
   errorMessage: string | null;
-  createdBy: ScrapeJobCreator;
+  logKey: string | null;
+  trigger: ScrapeExecutionTrigger;
+}
+
+/** Job with its latest execution for list views */
+export interface ScrapeJobWithLastRun extends ScrapeJob {
+  lastExecution: ScrapeExecution | null;
+  dataSourceName?: string;
 }
 
 /** Lean compliance result for mobile endpoint */

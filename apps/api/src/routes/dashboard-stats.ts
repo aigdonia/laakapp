@@ -5,7 +5,7 @@ import type { Database } from "../db";
 import {
   stocks,
   stockCompliance,
-  scrapeJobs,
+  scrapeExecutions,
   articles,
   microLessons,
   creditTransactions,
@@ -67,26 +67,26 @@ app.get("/", async (c) => {
       .groupBy(stockCompliance.status)
       .all(),
 
-    // 3. Last scrape job
+    // 3. Last scrape execution
     d.select({
-      completedAt: scrapeJobs.completedAt,
-      status: scrapeJobs.status,
+      completedAt: scrapeExecutions.completedAt,
+      status: scrapeExecutions.status,
     })
-      .from(scrapeJobs)
-      .orderBy(sql`${scrapeJobs.createdAt} desc`)
+      .from(scrapeExecutions)
+      .orderBy(sql`${scrapeExecutions.createdAt} desc`)
       .limit(1)
       .get(),
 
     // 4. Recent scrape success rate (last 10)
     d.select({
-      status: scrapeJobs.status,
+      status: scrapeExecutions.status,
       count: sql<number>`count(*)`,
     })
-      .from(scrapeJobs)
+      .from(scrapeExecutions)
       .where(
-        sql`${scrapeJobs.id} in (select id from scrape_jobs order by created_at desc limit 10)`
+        sql`${scrapeExecutions.id} in (select id from scrape_executions order by created_at desc limit 10)`
       )
-      .groupBy(scrapeJobs.status)
+      .groupBy(scrapeExecutions.status)
       .all(),
 
     // 5. Articles by status

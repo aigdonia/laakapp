@@ -394,45 +394,49 @@ export const stockFinancials = sqliteTable("stock_financials", {
     .default(sql`(current_timestamp)`),
 });
 
+// ─── Data Source Param Schema ──────────────────────────────
+export interface DataSourceParam {
+  key: string;
+  label: string;
+  type: "string" | "number" | "enum";
+  required: boolean;
+  options?: Record<string, string>; // For enum: { displayLabel: actualValue }
+}
+
 // ─── Data Sources ──────────────────────────────────────────
 export const dataSources = sqliteTable("data_sources", {
   ...timestamps,
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
-  type: text("type", {
-    enum: ["scraper", "index_list", "etf_holdings", "manual_csv"],
-  }).notNull(),
   urlTemplate: text("url_template").notNull().default(""),
-  countryCodes: text("country_codes", { mode: "json" })
+  params: text("params", { mode: "json" })
     .notNull()
-    .$type<string[]>()
+    .$type<DataSourceParam[]>()
     .default([]),
-  config: text("config", { mode: "json" })
-    .notNull()
-    .$type<Record<string, unknown>>()
-    .default({}),
-  rateLimitMs: integer("rate_limit_ms").notNull().default(3000),
-  maxRetries: integer("max_retries").notNull().default(3),
   enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
-  lastRunAt: text("last_run_at"),
-  lastRunStatus: text("last_run_status"),
 });
 
 // ─── Scrape Jobs ───────────────────────────────────────────
 export const scrapeJobs = sqliteTable("scrape_jobs", {
   ...timestamps,
   dataSourceId: text("data_source_id").notNull(),
+  params: text("params", { mode: "json" })
+    .notNull()
+    .$type<Record<string, string | number | null>>()
+    .default({}),
+  schedule: text("schedule"), // e.g. "every 24h", null = one-time
+  enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+});
+
+// ─── Scrape Executions ────────────────────────────────────
+export const scrapeExecutions = sqliteTable("scrape_executions", {
+  ...timestamps,
+  jobId: text("job_id").notNull(),
   status: text("status", {
     enum: ["pending", "running", "completed", "failed"],
   })
     .notNull()
     .default("pending"),
-  jobType: text("job_type", {
-    enum: ["full_refresh", "incremental", "single_stock", "price_update"],
-  }).notNull(),
-  targetSymbols: text("target_symbols", { mode: "json" })
-    .$type<string[] | null>()
-    .default(null),
   progress: text("progress", { mode: "json" })
     .notNull()
     .$type<{ total: number; completed: number; failed: number; errors: string[] }>()
@@ -440,9 +444,10 @@ export const scrapeJobs = sqliteTable("scrape_jobs", {
   startedAt: text("started_at"),
   completedAt: text("completed_at"),
   errorMessage: text("error_message"),
-  createdBy: text("created_by", { enum: ["admin", "cron", "system"] })
+  logKey: text("log_key"),
+  trigger: text("trigger", { enum: ["manual", "cron", "retry"] })
     .notNull()
-    .default("admin"),
+    .default("manual"),
 });
 
 // ─── Event Types (activity registry) ────────────────────────
