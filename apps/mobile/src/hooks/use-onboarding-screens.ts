@@ -18,6 +18,7 @@ async function syncOnboardingScreensToCache(data: OnboardingScreen[]) {
         choices: JSON.stringify(s.choices ?? []),
         order: s.order,
         enabled: s.enabled,
+        skippable: s.skippable,
         translations: JSON.stringify(s.translations ?? {}),
         fetchedAt: new Date(),
       })),

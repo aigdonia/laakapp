@@ -109,6 +109,7 @@ export function initAppDb() {
       choices TEXT NOT NULL DEFAULT '[]',
       "order" INTEGER NOT NULL DEFAULT 0,
       enabled INTEGER NOT NULL DEFAULT 1,
+      skippable INTEGER NOT NULL DEFAULT 1,
       translations TEXT NOT NULL DEFAULT '{}',
       fetched_at INTEGER NOT NULL
     );
@@ -228,6 +229,16 @@ export function initAppDb() {
   if (!stockCols.some((c) => c.name === 'about')) {
     expoDb.execSync(
       `ALTER TABLE cached_stocks ADD COLUMN about TEXT`
+    )
+  }
+
+  // Add skippable column to existing cached_onboarding_screens tables
+  const obCols = expoDb.getAllSync<{ name: string }>(
+    'PRAGMA table_info(cached_onboarding_screens)'
+  )
+  if (!obCols.some((c) => c.name === 'skippable')) {
+    expoDb.execSync(
+      'ALTER TABLE cached_onboarding_screens ADD COLUMN skippable INTEGER NOT NULL DEFAULT 1'
     )
   }
 }

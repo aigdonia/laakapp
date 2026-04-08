@@ -122,6 +122,7 @@ export const cachedOnboardingScreens = sqliteTable('cached_onboarding_screens', 
   choices: text('choices').notNull().default('[]'),
   order: integer('order').notNull().default(0),
   enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
+  skippable: integer('skippable', { mode: 'boolean' }).notNull().default(true),
   translations: text('translations').notNull().default('{}'),
   fetchedAt: integer('fetched_at', { mode: 'timestamp' })
     .notNull()
