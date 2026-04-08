@@ -6,6 +6,7 @@ import { api } from "@/lib/api"
 export type UserSummary = {
   id: string
   country: string | null
+  notes: string
   devices: number
   platforms: string
   events: number
@@ -18,6 +19,7 @@ export type UserDetail = {
   id: string
   profile: {
     answers: Record<string, string | string[]>
+    notes: string
     createdAt: string
   } | null
   events: Array<{
@@ -82,6 +84,15 @@ export async function listLearningCardsForTest() {
 
 export async function listMicroLessonsForTest() {
   return api<Array<{ id: string; title: string }>>("/micro-lessons")
+}
+
+export async function updateUserNotes(userId: string, notes: string) {
+  const result = await api<{ success: boolean }>(`/admin/users/${userId}/notes`, {
+    method: "PATCH",
+    body: JSON.stringify({ notes }),
+  })
+  revalidatePath(`/users/${userId}`)
+  return result
 }
 
 export async function fireTestAction(

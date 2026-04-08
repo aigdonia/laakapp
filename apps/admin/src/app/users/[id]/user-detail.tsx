@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { IconPlayerPlay, IconTrash } from "@tabler/icons-react"
 import { toast } from "sonner"
-import { resetUserData, fireTestAction, type UserDataCategory } from "../actions"
+import { resetUserData, fireTestAction, updateUserNotes, type UserDataCategory } from "../actions"
 import type { UserDetail as UserDetailType } from "../actions"
 
 function formatDate(d: string | null) {
@@ -321,6 +321,7 @@ export function UserDetail({ user, learningCards, microLessons }: {
               {user.backups.length}
             </Badge>
           </TabsTrigger>
+          <TabsTrigger value="notes">Notes</TabsTrigger>
         </TabsList>
 
         {/* Profile Tab */}
@@ -505,7 +506,46 @@ export function UserDetail({ user, learningCards, microLessons }: {
             ])}
           />
         </TabsContent>
+
+        {/* Notes Tab */}
+        <TabsContent value="notes">
+          <NotesEditor userId={user.id} notes={user.profile?.notes ?? ""} />
+        </TabsContent>
       </Tabs>
+    </div>
+  )
+}
+
+function NotesEditor({ userId, notes: initialNotes }: { userId: string; notes: string }) {
+  const [notes, setNotes] = useState(initialNotes)
+  const [saving, setSaving] = useState(false)
+
+  async function handleSave() {
+    setSaving(true)
+    try {
+      await updateUserNotes(userId, notes)
+      toast.success("Notes saved")
+    } catch {
+      toast.error("Failed to save notes")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      <textarea
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
+        placeholder="Add notes about this user..."
+        rows={8}
+        className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-y"
+      />
+      <div className="flex justify-end">
+        <Button size="sm" onClick={handleSave} disabled={saving}>
+          {saving ? "Saving..." : "Save Notes"}
+        </Button>
+      </div>
     </div>
   )
 }

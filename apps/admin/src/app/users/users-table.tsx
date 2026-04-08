@@ -2,6 +2,8 @@
 
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
+import { IconNote } from "@tabler/icons-react"
 import type { UserSummary } from "./actions"
 
 function truncateId(id: string) {
@@ -46,12 +48,26 @@ export function UsersTable({ users }: { users: UserSummary[] }) {
           {users.map((user) => (
             <tr key={user.id} className="border-b last:border-0 hover:bg-muted/30">
               <td className="px-4 py-3">
-                <Link
-                  href={`/users/${user.id}`}
-                  className="font-mono text-xs text-blue-400 hover:underline"
-                >
-                  {truncateId(user.id)}
-                </Link>
+                <div className="flex items-center gap-1.5">
+                  <Link
+                    href={`/users/${user.id}`}
+                    className="font-mono text-xs text-blue-400 hover:underline"
+                  >
+                    {truncateId(user.id)}
+                  </Link>
+                  {user.notes && (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger className="cursor-help text-muted-foreground hover:text-foreground transition-colors">
+                          <IconNote className="size-3.5" />
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="max-w-xs whitespace-pre-wrap">
+                          {user.notes}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </div>
               </td>
               <td className="px-4 py-3">
                 {user.country ? (
