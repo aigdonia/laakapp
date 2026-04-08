@@ -12,10 +12,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   scheme: "halalwealth",
   userInterfaceStyle: "automatic",
   splash: {
+    image: "./assets/images/splash-icon.png",
     backgroundColor: "#f2f2f7",
   },
   ios: {
     supportsTablet: false,
+    buildNumber: "8",
     bundleIdentifier: "tech.olanai.finapp",
     usesAppleSignIn: true,
     entitlements: {
@@ -39,11 +41,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       monochromeImage: "./assets/images/android-icon-monochrome.png",
     },
     predictiveBackGestureEnabled: false,
+    versionCode: 4,
     package: "tech.olanai.finapp",
     permissions: [
       "android.permission.USE_BIOMETRIC",
       "android.permission.USE_FINGERPRINT",
-      "com.google.android.gms.permission.AD_ID",
     ],
   },
   web: {
@@ -80,6 +82,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     "./plugins/withCcache",
+    "./plugins/withIAPCapability",
   ],
   buildCacheProvider: {
     plugin: "expo-build-disk-cache",
