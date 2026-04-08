@@ -191,6 +191,7 @@ function ScreenForm({
       slug: form.get("slug") as string,
       imageUrl: (form.get("imageUrl") as string) || "",
       enabled: form.get("enabled") === "on",
+      skippable: form.get("skippable") === "on",
       choices: validChoices,
       translations,
     }
@@ -272,19 +273,18 @@ function ScreenForm({
             defaultValue={screen?.translations?.en?.description}
             translations={screen?.translations}
             placeholder="A brief description..."
+            multiline={type === "informative"}
           />
 
-          {type === "informative" && (
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="imageUrl">Image URL</Label>
-              <Input
-                id="imageUrl"
-                name="imageUrl"
-                placeholder="https://..."
-                defaultValue={screen?.imageUrl}
-              />
-            </div>
-          )}
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="imageUrl">Image URL</Label>
+            <Input
+              id="imageUrl"
+              name="imageUrl"
+              placeholder="https://..."
+              defaultValue={screen?.imageUrl}
+            />
+          </div>
 
           {(type === "single_choice" || type === "multiple_choice") && (
             <div className="flex flex-col gap-3">
@@ -343,6 +343,15 @@ function ScreenForm({
               id="enabled"
               name="enabled"
               defaultChecked={screen?.enabled ?? true}
+            />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <Label htmlFor="skippable">Skippable</Label>
+            <Switch
+              id="skippable"
+              name="skippable"
+              defaultChecked={screen?.skippable ?? true}
             />
           </div>
 

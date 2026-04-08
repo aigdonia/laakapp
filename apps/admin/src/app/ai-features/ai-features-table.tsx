@@ -68,6 +68,7 @@ function FeatureForm({
       creditCost: parseInt(form.get("creditCost") as string) || 0,
       freeRefresh: form.get("freeRefresh") === "on",
       promptSlug: form.get("promptSlug") as string,
+      useProfile: form.get("useProfile") === "on",
       enabled: form.get("enabled") === "on",
     }
 
@@ -186,6 +187,20 @@ function FeatureForm({
           </div>
 
           <div className="flex items-center justify-between">
+            <div>
+              <Label htmlFor="useProfile">Use Profile</Label>
+              <p className="text-xs text-muted-foreground">
+                Inject user onboarding answers into AI payload
+              </p>
+            </div>
+            <Switch
+              id="useProfile"
+              name="useProfile"
+              defaultChecked={feature?.useProfile ?? false}
+            />
+          </div>
+
+          <div className="flex items-center justify-between">
             <Label htmlFor="enabled">Enabled</Label>
             <Switch
               id="enabled"
@@ -243,6 +258,7 @@ export function AiFeaturesTable({
               <th className="px-4 py-3 text-start font-medium">Slug</th>
               <th className="px-4 py-3 text-start font-medium">Credits</th>
               <th className="px-4 py-3 text-start font-medium">Free Refresh</th>
+              <th className="px-4 py-3 text-start font-medium">Profile</th>
               <th className="px-4 py-3 text-start font-medium">Prompt</th>
               <th className="px-4 py-3 text-start font-medium">Status</th>
               <th className="px-4 py-3 text-end font-medium">Actions</th>
@@ -251,7 +267,7 @@ export function AiFeaturesTable({
           <tbody>
             {features.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+                <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
                   No AI features configured. Add your first feature.
                 </td>
               </tr>
@@ -275,6 +291,9 @@ export function AiFeaturesTable({
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
                   {feature.freeRefresh ? "Yes" : "—"}
+                </td>
+                <td className="px-4 py-3 text-muted-foreground">
+                  {feature.useProfile ? "Yes" : "—"}
                 </td>
                 <td className="px-4 py-3 text-muted-foreground font-mono text-xs">
                   {feature.promptSlug}
