@@ -32,7 +32,7 @@ function Capture({ children }: { children: React.ReactNode }) {
 }
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
-  if (!POSTHOG_API_KEY) return <>{children}</>
+  if (__DEV__ || !POSTHOG_API_KEY) return <>{children}</>
 
   // Always mount PostHog so the instance is available.
   // ATT consent controls identify vs optOut in _layout.tsx.
