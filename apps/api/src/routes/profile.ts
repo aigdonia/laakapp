@@ -47,7 +47,7 @@ app.post("/", async (c) => {
   const preferences: Record<string, string> = {};
 
   const countryAnswer = body.answers.country ?? body.answers.initial_country;
-  if (typeof countryAnswer === "string" && countryAnswer) {
+  if (typeof countryAnswer === "string" && countryAnswer && countryAnswer !== "OTHER") {
     const country = await db(c)
       .select({ code: countries.code, currency: countries.currency })
       .from(countries)
@@ -58,9 +58,57 @@ app.post("/", async (c) => {
       preferences.countryCode = country.code;
       preferences.baseCurrency = country.currency;
     }
+  } else if (countryAnswer === "OTHER") {
+    preferences.countryCode = "GLO";
+    preferences.baseCurrency = "USD";
+  }
+
+  const styleAnswer = body.answers.investment_style;
+  if (typeof styleAnswer === "string" && styleAnswer) {
+    preferences.portfolioPresetSlug = styleAnswer;
+  }
+
+  const frequencyAnswer = body.answers.check_frequency;
+  if (typeof frequencyAnswer === "string" && frequencyAnswer) {
+    preferences.activityRhythm = frequencyAnswer;
   }
 
   return c.json({ preferences });
+});
+
+/** Patch specific answers (merge into existing) */
+app.patch("/", async (c) => {
+  const userId = c.get("userId");
+  const raw = await c.req.json();
+  const parsed = profileSchema.safeParse(raw);
+  if (!parsed.success) {
+    return c.json({ error: "validation_error", issues: parsed.error.issues }, 400);
+  }
+  const body = parsed.data;
+
+  const existing = await db(c)
+    .select()
+    .from(userProfiles)
+    .where(eq(userProfiles.userId, userId))
+    .get();
+
+  const merged = {
+    ...(existing?.answers as Record<string, string | string[]> ?? {}),
+    ...body.answers,
+  };
+
+  if (existing) {
+    await db(c)
+      .update(userProfiles)
+      .set({ answers: merged, updatedAt: new Date().toISOString() })
+      .where(eq(userProfiles.userId, userId));
+  } else {
+    await db(c)
+      .insert(userProfiles)
+      .values({ userId, answers: merged });
+  }
+
+  return c.json({ ok: true });
 });
 
 /** Get current user profile */
