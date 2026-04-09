@@ -45,8 +45,8 @@ const { locale = 'en' } = Astro.props;
       {t(locale, 'hero.subtitle')}
     </p>
 
-    <!-- CTA Button (observed by nav to show/hide nav CTA) -->
-    <div id="hero-ctas" class="mt-8 sm:mt-10">
+    <!-- CTA Buttons (observed by nav to show/hide nav CTA) -->
+    <div id="hero-ctas" class="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center gap-4">
       <a
         href="https://apps.apple.com/us/app/visualise-investments-laak/id6761325373"
         target="_blank"
@@ -56,6 +56,18 @@ const { locale = 'en' } = Astro.props;
         <img
           src="/images/app-store-badge.svg"
           alt="Download on the App Store"
+          class="h-[54px] sm:h-[60px] w-auto"
+        />
+      </a>
+      <a
+        href="https://play.google.com/store/apps/details?id=tech.olanai.finapp"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-block hover:opacity-80 transition-opacity duration-200"
+      >
+        <img
+          src="/images/google-play-badge.png"
+          alt="Get it on Google Play"
           class="h-[54px] sm:h-[60px] w-auto"
         />
       </a>
